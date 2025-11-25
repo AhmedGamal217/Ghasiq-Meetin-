@@ -585,43 +585,52 @@
             </a>
 
            <nav class="nav-links">
-                <a href="index.html#about">عن Ghasiq</a>
-                <a href="services.html">الخدمات</a>
-                <a href="call-system.html">نظام الاتصال</a>
-                <a href="notifications.html">الإشعارات</a>
+                <a href="index.html#about" data-i18n="nav_about">عن Ghasiq</a>
+                <a href="services.html" data-i18n="nav_services">الخدمات</a>
+                <a href="call-system.html" data-i18n="nav_call_system">نظام الاتصال</a>
+                <a href="notifications.html" data-i18n="nav_notifications">الإشعارات</a>
             </nav>
 
         </div>
 
         <div class="nav-actions">
             <span id="userChip" class="user-chip">User</span>
-            <button class="btn-sm-outline" onclick="window.location.href='call-system.html'">نظام الاتصال</button>
+
+            <!-- زر اللغة -->
+            <button class="btn-toggle-theme" id="langToggle" type="button">
+                <span id="langLabel">AR</span>
+            </button>
+
+            <!-- الثيم -->
             <button class="btn-toggle-theme" id="themeToggle" type="button">
                 <span id="themeLabel">Dark</span>
                 <span id="themeIcon">☾</span>
             </button>
-            <button class="btn-logout" type="button" onclick="logout()">تسجيل الخروج</button>
+
+            <button class="btn-logout" type="button" onclick="logout()" data-i18n="btn_logout">
+                تسجيل الخروج
+            </button>
         </div>
     </header>
-
+    
     <!-- HERO -->
     <section class="hero" id="about">
         <div class="hero-main">
             <div class="tagline">LOGISTICAL SUPPORT & OPERATIONS</div>
-            <h1 class="hero-title">
-                <span>مصممة لعمليات Ghasiq اليومية.</span>
-                <br>
-                <br>
+            <h1 class="hero-title" data-i18n="hero_title">
+                <span>مصممة لعمليات Ghasiq اليومية.</span><br><br>
             </h1>
-            <p class="hero-subtitle">
+            <p class="hero-subtitle" data-i18n="hero_subtitle">
+                منصة تشغيل داخلية تربط التشغيل والصيانة والإدارات الداعمة في مكان واحد،
+                مع نظام اتصال بسيط وسريع بين الفرق.
             </p>
 
             <div class="hero-actions">
-                <button class="btn-primary" onclick="window.location.href='call-system.html'">
+                <button class="btn-primary" onclick="window.location.href='call-system.html'" data-i18n="btn_enter_call">
                     دخول نظام الاتصال الآن
                     <span>↗</span>
                 </button>
-                <button class="btn-ghost" onclick="window.location.href='services.html'">
+                <button class="btn-ghost" onclick="window.location.href='services.html'" data-i18n="btn_view_services">
                     عرض خدمات Ghasiq
                 </button>
             </div>
@@ -629,15 +638,21 @@
             <ul class="hero-list">
                 <li>
                     <div class="check-icon">✓</div>
-                    <span>متابعة تشغيلية لحظية بين فرق التشغيل، الموارد البشرية، المالية والإدارة.</span>
+                    <span data-i18n="hero_li1">
+                        متابعة تشغيلية لحظية بين فرق التشغيل، الموارد البشرية، المالية والإدارة.
+                    </span>
                 </li>
                 <li>
                     <div class="check-icon">✓</div>
-                    <span>دمج أنظمة الاتصال مع خطط الشحن والصيانة وإدارة المرافق.</span>
+                    <span data-i18n="hero_li2">
+                        دمج أنظمة الاتصال مع خطط الشحن والصيانة وإدارة المرافق.
+                    </span>
                 </li>
                 <li>
                     <div class="check-icon">✓</div>
-                    <span>لوحات متابعة للإدارة مع مؤشرات أداء واضحة وسهلة القراءة.</span>
+                    <span data-i18n="hero_li3">
+                        لوحات متابعة للإدارة مع مؤشرات أداء واضحة وسهلة القراءة.
+                    </span>
                 </li>
             </ul>
         </div>
@@ -645,51 +660,53 @@
         <aside class="hero-side">
             <div class="side-header">
                 <div>
-                    <div class="side-title">لوحة متابعة الفريق</div>
-                    <div style="font-size:11px; color:var(--text-muted);">آخر نشاط · فريق Ghasiq</div>
+                    <div class="side-title" data-i18n="side_title">لوحة متابعة الفريق</div>
+                    <div style="font-size:11px; color:var(--text-muted);" data-i18n="side_sub">
+                        آخر نشاط · فريق Ghasiq
+                    </div>
                 </div>
-                <span class="status-pill">Online</span>
+                <span class="status-pill" data-i18n="status_online">Online</span>
             </div>
             <div class="team-list">
                 <div class="team-row">
                     <div class="team-left">
                         <div class="avatar">HA</div>
                         <div class="team-info">
-                            <div class="team-name">حمد العنزي</div>
-                            <div class="team-role">المدير العام</div>
+                            <div class="team-name" data-i18n="team1_name">حمد العنزي</div>
+                            <div class="team-role" data-i18n="team1_role">المدير العام</div>
                         </div>
                     </div>
-                    <div class="status-text">متابع العمليات اليومية</div>
+                    <div class="status-text" data-i18n="team1_status">متابع العمليات اليومية</div>
                 </div>
                 <div class="team-row">
                     <div class="team-left">
                         <div class="avatar" style="background:linear-gradient(145deg,#0ea5e9,#38bdf8);">MH</div>
                         <div class="team-info">
-                            <div class="team-name">محمد حمدي</div>
-                            <div class="team-role">رئيس قسم الموارد البشرية</div>
+                            <div class="team-name" data-i18n="team2_name">محمد حمدي</div>
+                            <div class="team-role" data-i18n="team2_role">رئيس قسم الموارد البشرية</div>
                         </div>
                     </div>
-                    <div class="status-text">اجتماعات دورية مع الفروع</div>
+                    <div class="status-text" data-i18n="team2_status">اجتماعات دورية مع الفروع</div>
                 </div>
                 <div class="team-row">
                     <div class="team-left">
                         <div class="avatar" style="background:linear-gradient(145deg,#4f46e5,#6366f1);">EE</div>
                         <div class="team-info">
-                            <div class="team-name">عماد الدين</div>
-                            <div class="team-role">رئيس قسم المالية</div>
+                            <div class="team-name" data-i18n="team3_name">عماد الدين</div>
+                            <div class="team-role" data-i18n="team3_role">رئيس قسم المالية</div>
                         </div>
                     </div>
-                    <div class="status-text">متابعة التقارير المالية</div>
+                    <div class="status-text" data-i18n="team3_status">متابعة التقارير المالية</div>
                 </div>
                 <div class="team-row">
                     <div class="team-left">
                         <div class="avatar" style="background:linear-gradient(145deg,#16a34a,#22c55e);">AG</div>
                         <div class="team-info">
-                            <div class="team-name">أحمد جمال</div>
-                            <div class="team-role"> قسم تقنية المعلومات</div>
+                            <div class="team-name" data-i18n="team4_name">أحمد جمال</div>
+                            <div class="team-role" data-i18n="team4_role">قسم تقنية المعلومات</div>
                         </div>
                     </div>
-                    <div class="status-text">إدارة النظام  الداخلي</div>
+                    <div class="status-text" data-i18n="team4_status">إدارة النظام الداخلي</div>
                 </div>
             </div>
         </aside>
@@ -698,72 +715,86 @@
     <!-- SECTIONS -->
     <section class="sections">
         <article class="card-section">
-            <h2 class="section-title">عن Ghasiq وخدمات التشغيل والصيانة</h2>
-            <p class="section-sub">
+            <h2 class="section-title" data-i18n="section_about_title">
+                عن Ghasiq وخدمات التشغيل والصيانة
+            </h2>
+            <p class="section-sub" data-i18n="section_about_sub">
                 Ghasiq تجمع بين خبرة التشغيل والصيانة، إدارة المرافق، وتوفير القوى العاملة
                 الماهرة، مع أنظمة اتصال داخلية تضمن سرعة القرار وجودة التنفيذ على مستوى
                 جميع الفروع والمواقع التشغيلية.
             </p>
 
             <div class="pill-row">
-                <span class="pill pill-primary">إدارة المرافق</span>
-                <span class="pill">تشغيل الفنادق والضيافة</span>
-                <span class="pill">الرعاية الصحية</span>
-                <span class="pill">توريد العمالة</span>
-                <span class="pill">مشاريع الإنشاءات</span>
+                <span class="pill pill-primary" data-i18n="pill_facilities">إدارة المرافق</span>
+                <span class="pill" data-i18n="pill_hotels">تشغيل الفنادق والضيافة</span>
+                <span class="pill" data-i18n="pill_healthcare">الرعاية الصحية</span>
+                <span class="pill" data-i18n="pill_manpower">توريد العمالة</span>
+                <span class="pill" data-i18n="pill_projects">مشاريع الإنشاءات</span>
             </div>
 
             <ul class="steps">
                 <li>
                     <div class="step-index">1</div>
-                    <div>تحليل وضع التشغيل الحالي وتحديد الفجوات في الاتصال بين الفرق.</div>
+                    <div data-i18n="step1">
+                        تحليل وضع التشغيل الحالي وتحديد الفجوات في الاتصال بين الفرق.
+                    </div>
                 </li>
                 <li>
                     <div class="step-index">2</div>
-                    <div>تصميم نموذج تشغيل يربط أنظمة Ghasiq مع أنظمة العميل (إن وجدت).</div>
+                    <div data-i18n="step2">
+                        تصميم نموذج تشغيل يربط أنظمة Ghasiq مع أنظمة العميل (إن وجدت).
+                    </div>
                 </li>
                 <li>
                     <div class="step-index">3</div>
-                    <div>تفعيل نظام الاتصال الداخلي، وتدريب الموظفين على استخدامه وربطه بالمهام اليومية.</div>
+                    <div data-i18n="step3">
+                        تفعيل نظام الاتصال الداخلي، وتدريب الموظفين على استخدامه وربطه بالمهام اليومية.
+                    </div>
                 </li>
             </ul>
 
-            <p class="callout">
+            <p class="callout" data-i18n="about_callout">
                 مع <span>Ghasiq</span> تقدر توصل لتشغيل مستقر، فرق متصلة، وتجربة أفضل للعميل النهائي.
             </p>
         </article>
 
         <article class="card-section">
-            <h2 class="section-title">نظام الاتصال الداخلي Ghasiq Call System</h2>
-            <p class="section-sub">
+            <h2 class="section-title" data-i18n="section_call_title">
+                نظام الاتصال الداخلي Ghasiq Call System
+            </h2>
+            <p class="section-sub" data-i18n="section_call_sub">
                 غرفة اتصال بسيطة وآمنة للموظفين، تشتغل في المتصفح بدون تنصيب برامج، مخصّصة
                 لاجتماعات التشغيل السريعة بين المشرفين، مناديب التسليم، الموارد البشرية، والمالية.
             </p>
 
             <div class="call-system-card">
                 <div class="call-system-header">
-                    <div>Ghasiq Call System</div>
-                    <div class="call-system-status">Secure · Peer-to-Peer</div>
+                    <div data-i18n="call_card_title">Ghasiq Call System</div>
+                    <div class="call-system-status" data-i18n="call_card_status">
+                        Secure · Peer-to-Peer
+                    </div>
                 </div>
-                <div style="font-size:12px; color:var(--text-muted);">
+                <div style="font-size:12px; color:var(--text-muted);" data-i18n="call_card_body">
                     افتح غرفة الاتصال على جهازين مختلفين، انسخ المعرّف بين الموظفين، وابدأ مكالمة مباشرة
                     لمتابعة شحنة، حل مشكلة طارئة، أو تنسيق فريق التشغيل في لحظتها.
                 </div>
                 <div class="call-system-footer">
-                    <div>يمكن ربط النظام مع لوحات المتابعة والتقارير التشغيلية.</div>
-                    <button class="btn-primary" style="padding:8px 16px; font-size:13px;" onclick="window.location.href='call-system.html'">
+                    <div data-i18n="call_card_footer">
+                        يمكن ربط النظام مع لوحات المتابعة والتقارير التشغيلية.
+                    </div>
+                    <button class="btn-primary" style="padding:8px 16px; font-size:13px;" onclick="window.location.href='call-system.html'" data-i18n="btn_enter_call_small">
                         دخول غرفة الاتصال
                     </button>
                 </div>
             </div>
 
-            <p class="callout">
+            <p class="callout" data-i18n="call_callout">
                 لاحقًا يمكن إضافة إشعارات، سجل مكالمات، وربط مع جداول الشحن والصيانة.
             </p>
         </article>
     </section>
 
-    <footer class="footer">
+    <footer class="footer" data-i18n="footer_text">
         © <span>Ghasiq</span> Logistical Support & Operations — جميع الحقوق محفوظة.
     </footer>
 </div>
@@ -815,6 +846,174 @@
         localStorage.removeItem("ghasiq_user");
         window.location.href = "login.html";
     }
+
+    // ========== جدول الترجمة ==========
+    const translations = {
+        ar: {
+            page_title: "Ghasiq - التشغيل والصيانة والاتصال الداخلي",
+            nav_about: "عن Ghasiq",
+            nav_services: "الخدمات",
+            nav_call_system: "نظام الاتصال",
+            nav_notifications: "الإشعارات",
+            btn_logout: "تسجيل الخروج",
+
+            hero_title: "<span>مصممة لعمليات Ghasiq اليومية.</span><br><br>",
+            hero_subtitle: "منصة تشغيل داخلية تربط التشغيل والصيانة والإدارات الداعمة في مكان واحد، مع نظام اتصال بسيط وسريع بين الفرق.",
+            btn_enter_call: "دخول نظام الاتصال الآن",
+            btn_view_services: "عرض خدمات Ghasiq",
+            hero_li1: "متابعة تشغيلية لحظية بين فرق التشغيل، الموارد البشرية، المالية والإدارة.",
+            hero_li2: "دمج أنظمة الاتصال مع خطط الشحن والصيانة وإدارة المرافق.",
+            hero_li3: "لوحات متابعة للإدارة مع مؤشرات أداء واضحة وسهلة القراءة.",
+
+            side_title: "لوحة متابعة الفريق",
+            side_sub: "آخر نشاط · فريق Ghasiq",
+            status_online: "Online",
+            team1_name: "حمد العنزي",
+            team1_role: "المدير العام",
+            team1_status: "متابع العمليات اليومية",
+            team2_name: "محمد حمدي",
+            team2_role: "رئيس قسم الموارد البشرية",
+            team2_status: "اجتماعات دورية مع الفروع",
+            team3_name: "عماد الدين",
+            team3_role: "رئيس قسم المالية",
+            team3_status: "متابعة التقارير المالية",
+            team4_name: "أحمد جمال",
+            team4_role: "قسم تقنية المعلومات",
+            team4_status: "إدارة النظام الداخلي",
+
+            section_about_title: "عن Ghasiq وخدمات التشغيل والصيانة",
+            section_about_sub: "Ghasiq تجمع بين خبرة التشغيل والصيانة، إدارة المرافق، وتوفير القوى العاملة الماهرة، مع أنظمة اتصال داخلية تضمن سرعة القرار وجودة التنفيذ على مستوى جميع الفروع والمواقع التشغيلية.",
+            pill_facilities: "إدارة المرافق",
+            pill_hotels: "تشغيل الفنادق والضيافة",
+            pill_healthcare: "الرعاية الصحية",
+            pill_manpower: "توريد العمالة",
+            pill_projects: "مشاريع الإنشاءات",
+            step1: "تحليل وضع التشغيل الحالي وتحديد الفجوات في الاتصال بين الفرق.",
+            step2: "تصميم نموذج تشغيل يربط أنظمة Ghasiq مع أنظمة العميل (إن وجدت).",
+            step3: "تفعيل نظام الاتصال الداخلي، وتدريب الموظفين على استخدامه وربطه بالمهام اليومية.",
+            about_callout: "مع <span>Ghasiq</span> تقدر توصل لتشغيل مستقر، فرق متصلة، وتجربة أفضل للعميل النهائي.",
+
+            section_call_title: "نظام الاتصال الداخلي Ghasiq Call System",
+            section_call_sub: "غرفة اتصال بسيطة وآمنة للموظفين، تشتغل في المتصفح بدون تنصيب برامج، مخصّصة لاجتماعات التشغيل السريعة بين المشرفين، مناديب التسليم، الموارد البشرية، والمالية.",
+            call_card_title: "Ghasiq Call System",
+            call_card_status: "Secure · Peer-to-Peer",
+            call_card_body: "افتح غرفة الاتصال على جهازين مختلفين، انسخ المعرّف بين الموظفين، وابدأ مكالمة مباشرة لمتابعة شحنة، حل مشكلة طارئة، أو تنسيق فريق التشغيل في لحظتها.",
+            call_card_footer: "يمكن ربط النظام مع لوحات المتابعة والتقارير التشغيلية.",
+            btn_enter_call_small: "دخول غرفة الاتصال",
+            call_callout: "لاحقًا يمكن إضافة إشعارات، سجل مكالمات، وربط مع جداول الشحن والصيانة.",
+
+            footer_text: "© <span>Ghasiq</span> Logistical Support & Operations — جميع الحقوق محفوظة."
+        },
+        en: {
+            page_title: "Ghasiq - Operations, Maintenance & Internal Calls",
+            nav_about: "About Ghasiq",
+            nav_services: "Services",
+            nav_call_system: "Call System",
+            nav_notifications: "Notifications",
+            btn_logout: "Log out",
+
+            hero_title: "<span>Designed for Ghasiq daily operations.</span><br><br>",
+            hero_subtitle: "An internal operations platform that connects operations, maintenance and support departments in one place, with a simple and fast call system between teams.",
+            btn_enter_call: "Enter Call System",
+            btn_view_services: "View Ghasiq Services",
+            hero_li1: "Live operational follow-up between operations, HR, finance and management teams.",
+            hero_li2: "Integrate communication with shipping, maintenance and facilities management plans.",
+            hero_li3: "Management dashboards with clear and easy-to-read performance indicators.",
+
+            side_title: "Team activity overview",
+            side_sub: "Latest activity · Ghasiq team",
+            status_online: "Online",
+            team1_name: "Hamad Al-Anzi",
+            team1_role: "General Manager",
+            team1_status: "Monitoring daily operations",
+            team2_name: "Mohammed Hamdi",
+            team2_role: "Head of HR",
+            team2_status: "Regular meetings with branches",
+            team3_name: "Emad Eldin",
+            team3_role: "Head of Finance",
+            team3_status: "Reviewing financial reports",
+            team4_name: "Ahmed Gamal",
+            team4_role: "IT Department",
+            team4_status: "Managing internal system",
+
+            section_about_title: "About Ghasiq & operations services",
+            section_about_sub: "Ghasiq brings together experience in operations, maintenance, facilities management and skilled manpower, with internal communication systems that ensure fast decisions and high-quality execution across all branches and operation sites.",
+            pill_facilities: "Facilities management",
+            pill_hotels: "Hotels & hospitality operations",
+            pill_healthcare: "Healthcare",
+            pill_manpower: "Manpower supply",
+            pill_projects: "Construction projects",
+            step1: "Analyze the current operation setup and identify communication gaps between teams.",
+            step2: "Design an operating model that links Ghasiq systems with the client systems (if any).",
+            step3: "Activate the internal call system, train employees and connect it to daily tasks.",
+            about_callout: "With <span>Ghasiq</span> you reach stable operations, connected teams and a better end-customer experience.",
+
+            section_call_title: "Ghasiq Internal Call System",
+            section_call_sub: "A simple and secure call room for employees that runs in the browser without installing software, designed for quick operational meetings between supervisors, delivery reps, HR and finance.",
+            call_card_title: "Ghasiq Call System",
+            call_card_status: "Secure · Peer-to-Peer",
+            call_card_body: "Open the call room on two different devices, share the ID between employees and start a direct call to follow a shipment, solve an urgent issue or coordinate the operations team in real time.",
+            call_card_footer: "The system can be integrated with dashboards and operational reports.",
+            btn_enter_call_small: "Enter call room",
+            call_callout: "Later, we can add notifications, call history and integration with shipping and maintenance schedules.",
+
+            footer_text: "© <span>Ghasiq</span> Logistical Support & Operations — All rights reserved."
+        }
+    };
+
+    // ========== ترجمة العناصر ==========
+    function applyTranslations(lang) {
+        document.querySelectorAll("[data-i18n]").forEach(el => {
+            const key = el.getAttribute("data-i18n");
+            const value = translations[lang] && translations[lang][key];
+            if (!value) return;
+
+            // لو العنصر input وعايز placeholder
+            if (el.tagName === "INPUT" && el.hasAttribute("placeholder")) {
+                el.placeholder = value;
+            } else {
+                el.innerHTML = value;
+            }
+        });
+
+        // العنوان
+        if (translations[lang].page_title) {
+            document.title = translations[lang].page_title;
+        }
+    }
+
+    // ==================== Language Toggle ====================
+    function applyLanguage(lang) {
+        localStorage.setItem("ghasiq_lang", lang);
+
+        if (lang === "en") {
+            document.documentElement.setAttribute("dir", "ltr");
+            document.documentElement.lang = "en";
+            document.getElementById("langLabel").textContent = "EN";
+        } else {
+            document.documentElement.setAttribute("dir", "rtl");
+            document.documentElement.lang = "ar";
+            document.getElementById("langLabel").textContent = "AR";
+        }
+
+        applyTranslations(lang);
+    }
+
+    function initLanguageToggle() {
+        const saved = localStorage.getItem("ghasiq_lang") || "ar";
+        applyLanguage(saved);
+
+        const langToggle = document.getElementById("langToggle");
+        if (!langToggle) return;
+
+        langToggle.addEventListener("click", () => {
+            const current = localStorage.getItem("ghasiq_lang") || "ar";
+            const nextLang = current === "ar" ? "en" : "ar";
+            applyLanguage(nextLang);
+        });
+    }
+
+    initLanguageToggle();
 </script>
 
 </body>
