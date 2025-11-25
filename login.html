@@ -158,7 +158,7 @@
             gap: 24px;
             align-items: stretch;
             flex: 1;
-            align-content: center; /* يخلي الجريد في نص الصفحة رأسيًا */
+            align-content: center;
         }
 
         @media(max-width: 900px) {
@@ -310,17 +310,23 @@
             <a href="index.html">
                 <img src="logo.png" alt="GHASIQ Logo" class="logo" />
             </a>
-           <nav class="nav-links">
-    <a href="index.html#about">عن Ghasiq</a>
-    <a href="services.html">الخدمات</a>
-    <a href="call-system.html">نظام الاتصال</a>
-    <a href="notifications.html">الإشعارات</a>
-</nav>
-
+            <nav class="nav-links">
+                <a href="index.html#about" data-i18n="nav_about">عن Ghasiq</a>
+                <a href="services.html" data-i18n="nav_services">الخدمات</a>
+                <a href="call-system.html" data-i18n="nav_call_system">نظام الاتصال</a>
+                <a href="notifications.html" data-i18n="nav_notifications">الإشعارات</a>
+            </nav>
         </div>
 
         <div class="nav-actions">
-            <span class="user-chip">غير مسجّل</span>
+            <span class="user-chip" data-i18n="user_guest">غير مسجّل</span>
+
+            <!-- زر اللغة -->
+            <button class="btn-toggle-theme" id="langToggle" type="button">
+                <span id="langLabel">AR</span>
+            </button>
+
+            <!-- زر الثيم -->
             <button class="btn-toggle-theme" id="themeToggle" type="button">
                 <span id="themeLabel">Dark</span>
                 <span id="themeIcon">☾</span>
@@ -332,43 +338,41 @@
     <section class="login-layout">
         <!-- نص تعريفي -->
         <article class="login-hero">
-            <div class="hero-kicker">INTERNAL ACCESS</div>
-            <h1 class="hero-title">دخول موظفي Ghasiq للنظام الداخلي</h1>
-            <p class="hero-sub">
+            <div class="hero-kicker" data-i18n="hero_kicker">INTERNAL ACCESS</div>
+            <h1 class="hero-title" data-i18n="hero_title">دخول موظفي Ghasiq للنظام الداخلي</h1>
+            <p class="hero-sub" data-i18n="hero_sub">
                 هذه البوابة مخصصة لرؤساء الأقسام في Ghasiq (التشغيل، الموارد البشرية، المالية، تقنية المعلومات)
                 للوصول إلى لوحة المتابعة ونظام الاتصال الداخلي والتطبيقات المرتبطة بالعمليات اليومية.
             </p>
             <ul class="hero-list">
-                <li>النظام حاليًا تجريبي، يعتمد على اسم المستخدم لتحديد القسم.</li>
-                <li>يمكن لاحقًا ربطه بـ Active Directory أو نظام الموارد البشرية.</li>
-                <li>إعدادات الثيم (Dark / Light) محفوظة في المتصفح وتطبّق على باقي الصفحات.</li>
+                <li data-i18n="hero_li1">النظام حاليًا تجريبي، يعتمد على اسم المستخدم لتحديد القسم.</li>
+                <li data-i18n="hero_li2">يمكن لاحقًا ربطه بـ Active Directory أو نظام الموارد البشرية.</li>
+                <li data-i18n="hero_li3">إعدادات الثيم (Dark / Light) محفوظة في المتصفح وتطبّق على باقي الصفحات.</li>
             </ul>
         </article>
 
         <!-- كارت تسجيل الدخول -->
         <aside class="login-card">
-            <h2 class="login-title">تسجيل الدخول</h2>
-            <p class="login-sub">أدخل بياناتك للمتابعة.</p>
+            <h2 class="login-title" data-i18n="login_title">تسجيل الدخول</h2>
+            <p class="login-sub" data-i18n="login_sub">أدخل بياناتك للمتابعة.</p>
 
             <div id="errorBox" class="error-box"></div>
 
             <div class="input-group">
-                <label for="username">اسم المستخدم</label>
-                <input id="username" type="text" placeholder="" autocomplete="off" />
+                <label for="username" data-i18n="label_username">اسم المستخدم</label>
+                <input id="username" type="text" placeholder="" autocomplete="off" data-i18n="placeholder_username" />
             </div>
 
             <div class="input-group">
-                <label for="password">كلمة المرور</label>
-                <input id="password" type="password" placeholder="" autocomplete="off" />
+                <label for="password" data-i18n="label_password">كلمة المرور</label>
+                <input id="password" type="password" placeholder="" autocomplete="off" data-i18n="placeholder_password" />
             </div>
 
-   
-
-            <button class="btn-primary" type="button" onclick="login()">تسجيل الدخول</button>
+            <button class="btn-primary" type="button" onclick="login()" data-i18n="btn_login">تسجيل الدخول</button>
         </aside>
     </section>
 
-    <footer class="footer">
+    <footer class="footer" data-i18n="footer_text">
         © <span>Ghasiq</span> Logistical Support & Operations — جميع الحقوق محفوظة.
     </footer>
 </div>
@@ -407,6 +411,122 @@
 
     initTheme();
 
+    // ===== الترجمات =====
+    const translations = {
+        ar: {
+            page_title: "Ghasiq – تسجيل الدخول",
+
+            nav_about: "عن Ghasiq",
+            nav_services: "الخدمات",
+            nav_call_system: "نظام الاتصال",
+            nav_notifications: "الإشعارات",
+
+            user_guest: "غير مسجّل",
+
+            hero_kicker: "INTERNAL ACCESS",
+            hero_title: "دخول موظفي Ghasiq للنظام الداخلي",
+            hero_sub: "هذه البوابة مخصصة لرؤساء الأقسام في Ghasiq (التشغيل، الموارد البشرية، المالية، تقنية المعلومات) للوصول إلى لوحة المتابعة ونظام الاتصال الداخلي والتطبيقات المرتبطة بالعمليات اليومية.",
+            hero_li1: "النظام حاليًا تجريبي، يعتمد على اسم المستخدم لتحديد القسم.",
+            hero_li2: "يمكن لاحقًا ربطه بـ Active Directory أو نظام الموارد البشرية.",
+            hero_li3: "إعدادات الثيم (Dark / Light) محفوظة في المتصفح وتطبّق على باقي الصفحات.",
+
+            login_title: "تسجيل الدخول",
+            login_sub: "أدخل بياناتك للمتابعة.",
+            label_username: "اسم المستخدم",
+            label_password: "كلمة المرور",
+            placeholder_username: "أدخل اسم المستخدم",
+            placeholder_password: "أدخل كلمة المرور",
+            btn_login: "تسجيل الدخول",
+
+            footer_text: "© <span>Ghasiq</span> Logistical Support & Operations — جميع الحقوق محفوظة.",
+
+            error_required: "من فضلك أدخل اسم المستخدم وكلمة المرور.",
+            error_password: "كلمة المرور غير صحيحة.",
+            error_unauthorized: "اسم المستخدم غير مصرح له بالدخول."
+        },
+        en: {
+            page_title: "Ghasiq – Login",
+
+            nav_about: "About Ghasiq",
+            nav_services: "Services",
+            nav_call_system: "Call System",
+            nav_notifications: "Notifications",
+
+            user_guest: "Guest",
+
+            hero_kicker: "INTERNAL ACCESS",
+            hero_title: "Ghasiq internal system login",
+            hero_sub: "This portal is dedicated to Ghasiq department heads (Operations, HR, Finance, IT) to access dashboards, internal call system and applications linked to daily operations.",
+            hero_li1: "System is currently in pilot mode, using username to identify the department.",
+            hero_li2: "Later it can be integrated with Active Directory or HR system.",
+            hero_li3: "Theme settings (Dark / Light) are saved in the browser and applied across pages.",
+
+            login_title: "Sign in",
+            login_sub: "Enter your credentials to continue.",
+            label_username: "Username",
+            label_password: "Password",
+            placeholder_username: "Enter username",
+            placeholder_password: "Enter password",
+            btn_login: "Sign in",
+
+            footer_text: "© <span>Ghasiq</span> Logistical Support & Operations — All rights reserved.",
+
+            error_required: "Please enter username and password.",
+            error_password: "Incorrect password.",
+            error_unauthorized: "This username is not authorized to access."
+        }
+    };
+
+    function applyTranslations(lang) {
+        document.querySelectorAll("[data-i18n]").forEach(el => {
+            const key = el.getAttribute("data-i18n");
+            const value = translations[lang] && translations[lang][key];
+            if (!value) return;
+
+            if (el.tagName === "INPUT" && el.hasAttribute("placeholder")) {
+                el.placeholder = value;
+            } else {
+                el.innerHTML = value;
+            }
+        });
+
+        if (translations[lang].page_title) {
+            document.title = translations[lang].page_title;
+        }
+    }
+
+    function applyLanguage(lang) {
+        localStorage.setItem("ghasiq_lang", lang);
+
+        if (lang === "en") {
+            document.documentElement.setAttribute("dir", "ltr");
+            document.documentElement.lang = "en";
+            document.getElementById("langLabel").textContent = "EN";
+        } else {
+            document.documentElement.setAttribute("dir", "rtl");
+            document.documentElement.lang = "ar";
+            document.getElementById("langLabel").textContent = "AR";
+        }
+
+        applyTranslations(lang);
+    }
+
+    function initLanguageToggle() {
+        const saved = localStorage.getItem("ghasiq_lang") || "ar";
+        applyLanguage(saved);
+
+        const langToggle = document.getElementById("langToggle");
+        if (!langToggle) return;
+
+        langToggle.addEventListener("click", () => {
+            const current = localStorage.getItem("ghasiq_lang") || "ar";
+            const nextLang = current === "ar" ? "en" : "ar";
+            applyLanguage(nextLang);
+        });
+    }
+
+    initLanguageToggle();
+
     // ===== Role Mapping =====
     function mapRole(username) {
         const u = username.toLowerCase();
@@ -428,25 +548,28 @@
         const username = usernameInput.value.trim();
         const password = passwordInput.value.trim();
 
+        const lang = localStorage.getItem("ghasiq_lang") || "ar";
+        const t = translations[lang] || translations.ar;
+
         errorBox.style.display = "none";
         errorBox.textContent = "";
 
         if (!username || !password) {
             errorBox.style.display = "block";
-            errorBox.textContent = "من فضلك أدخل اسم المستخدم وكلمة المرور.";
+            errorBox.textContent = t.error_required;
             return;
         }
 
         if (password !== "12345") {
             errorBox.style.display = "block";
-            errorBox.textContent = "كلمة المرور غير صحيحة.";
+            errorBox.textContent = t.error_password;
             return;
         }
 
         const role = mapRole(username);
         if (!role) {
             errorBox.style.display = "block";
-            errorBox.textContent = "اسم المستخدم غير مصرح له بالدخول.";
+            errorBox.textContent = t.error_unauthorized;
             return;
         }
 
