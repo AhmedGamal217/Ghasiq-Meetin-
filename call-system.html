@@ -360,20 +360,29 @@
             </a>
 
             <nav class="nav-links">
-                <a href="index.html#about">عن Ghasiq</a>
-                <a href="services.html">الخدمات</a>
-                <a href="call-system.html" class="active">نظام الاتصال</a>
-                <a href="notifications.html">الإشعارات</a>
+                <a href="index.html#about" data-i18n="nav_about">عن Ghasiq</a>
+                <a href="services.html" data-i18n="nav_services">الخدمات</a>
+                <a href="call-system.html" class="active" data-i18n="nav_call_system">نظام الاتصال</a>
+                <a href="notifications.html" data-i18n="nav_notifications">الإشعارات</a>
             </nav>
+
         </div>
 
         <div class="nav-actions">
             <span id="userChip" class="user-chip">User</span>
+
+            <!-- زر اللغة -->
+            <button class="btn-toggle-theme" id="langToggle" type="button">
+                <span id="langLabel">AR</span>
+            </button>
+
+            <!-- الثيم -->
             <button class="btn-toggle-theme" id="themeToggle" type="button">
                 <span id="themeLabel">Dark</span>
                 <span id="themeIcon">☾</span>
             </button>
-            <button class="btn-logout" type="button" onclick="logout()">تسجيل الخروج</button>
+
+            <button class="btn-logout" type="button" onclick="logout()" data-i18n="btn_logout">تسجيل الخروج</button>
         </div>
     </header>
 
@@ -381,8 +390,8 @@
         <!-- فيديو -->
         <div class="call-card">
             <div class="call-header">
-                <div class="call-header-title">غرفة الاتصال الداخلي للموظفين</div>
-                <div class="call-header-sub">
+                <div class="call-header-title" data-i18n="call_title_main">غرفة الاتصال الداخلي للموظفين</div>
+                <div class="call-header-sub" data-i18n="call_sub_main">
                     استخدم هذه الغرفة لاجتماعات التشغيل السريعة بين أقسام Ghasiq
                     (التشغيل، الصيانة، الموارد البشرية، المالية، الإدارة العامة).
                 </div>
@@ -390,55 +399,58 @@
 
             <div class="video-grid">
                 <div class="video-box">
-                    <div class="video-label">الفيديو الخاص بك</div>
+                    <div class="video-label" data-i18n="video_label_local">الفيديو الخاص بك</div>
                     <video id="localVideo" autoplay muted playsinline></video>
                 </div>
                 <div class="video-box">
-                    <div class="video-label">الطرف الآخر</div>
+                    <div class="video-label" data-i18n="video_label_remote">الطرف الآخر</div>
                     <video id="remoteVideo" autoplay playsinline></video>
                 </div>
             </div>
 
             <div class="status-bar">
-                حالة الاتصال: <span id="callStatus" class="status-green">جاهز لبدء مكالمة</span>
+                <span data-i18n="status_prefix">حالة الاتصال:</span>
+                <span id="callStatus" class="status-green" data-i18n="status_ready">جاهز لبدء مكالمة</span>
             </div>
         </div>
 
         <!-- كنترول -->
         <div class="controls-box">
             <div class="call-header">
-                <div class="call-header-title">إدارة الاتصال</div>
-                <div class="call-header-sub">
+                <div class="call-header-title" data-i18n="call_title_ctrl">إدارة الاتصال</div>
+                <div class="call-header-sub" data-i18n="call_sub_ctrl">
                     يتم توليد معرف ثابت بناءً على دور المستخدم. شارِك المعرف مع الموظف الآخر،
                     واطلب منه إدخاله في خانة "معرّف الطرف الآخر".
                 </div>
             </div>
 
             <div class="id-row">
-                <div style="font-size:13px; margin-bottom:4px;">المعرّف الخاص بك:</div>
+                <div style="font-size:13px; margin-bottom:4px;" data-i18n="label_my_id">المعرّف الخاص بك:</div>
                 <div id="myIdBox" class="my-id">جاري التحميل...</div>
             </div>
 
             <div class="remote-input-row">
-                <label style="font-size:13px;">معرّف الموظف الآخر:</label>
-                <input id="remoteIdInput" type="text" placeholder="مثال: GHASIQ-IT-HEAD أو GHASIQ-HR-HEAD">
+                <label style="font-size:13px;" data-i18n="label_remote_id">معرّف الموظف الآخر:</label>
+                <input id="remoteIdInput"
+                       type="text"
+                       data-i18n-placeholder="remote_id_placeholder"
+                       placeholder="مثال: GHASIQ-IT-HEAD أو GHASIQ-HR-HEAD">
             </div>
 
             <div class="buttons-row">
-                <button class="btn-primary" id="btnStartCall">بدء الاتصال</button>
-                <button class="btn-danger" id="btnEndCall">إنهاء المكالمة</button>
+                <button class="btn-primary" id="btnStartCall" data-i18n="btn_start_call">بدء الاتصال</button>
+                <button class="btn-danger" id="btnEndCall" data-i18n="btn_end_call">إنهاء المكالمة</button>
             </div>
 
-            <div class="hint">
+            <div class="hint" data-i18n="hint_text">
                 • تأكد أن الطرفين متصلين بالإنترنت.<br>
                 • لكل رئيس قسم معرف ثابت، مثل:
-                <span>GHASIQ-IT-HEAD</span>، <span>GHASIQ-HR-HEAD</span>،
-                <span>GHASIQ-FINANCE-HEAD</span>، <span>GHASIQ-GM</span>.
+                <span>GHASIQ-IT-HEAD</span>، <span>GHASIQ-HR-HEAD</span>، <span>GHASIQ-FINANCE-HEAD</span>، <span>GHASIQ-GM</span>.
             </div>
         </div>
     </section>
 
-    <footer class="footer">
+    <footer class="footer" data-i18n="footer_text">
         © <span>Ghasiq</span> Logistical Support & Operations — جميع الحقوق محفوظة.
     </footer>
 </div>
@@ -491,6 +503,45 @@
         window.location.href = "login.html";
     }
 
+    // ===== Helpers: اللغة الحالية =====
+    function getCurrentLang() {
+        return localStorage.getItem("ghasiq_lang") || "ar";
+    }
+
+    // ===== ترجمات الرسائل الديناميكية الخاصة بالمكالمة =====
+    const callTexts = {
+        ar: {
+            ready: "جاهز لبدء مكالمة",
+            peer_error: "خطأ في الاتصال بخادم PeerJS. تأكد من الاتصال بالإنترنت.",
+            incoming_call: "يتم استقبال مكالمة...",
+            media_error: "تعذر فتح الكاميرا/المايك.",
+            call_active: "المكالمة نشطة",
+            call_closed: "تم إنهاء المكالمة",
+            call_error: "حدث خطأ أثناء المكالمة",
+            call_ended_ready: "تم إنهاء المكالمة. جاهز لاتصال جديد.",
+            alert_remote_required: "الرجاء إدخال معرّف الموظف الآخر.",
+            media_error_onload: "تعذر فتح الكاميرا/المايك. تأكد من السماح في المتصفح."
+        },
+        en: {
+            ready: "Ready to start a call",
+            peer_error: "Error connecting to PeerJS server. Please check your internet connection.",
+            incoming_call: "Incoming call...",
+            media_error: "Unable to access camera/microphone.",
+            call_active: "Call is active",
+            call_closed: "Call ended",
+            call_error: "An error occurred during the call",
+            call_ended_ready: "Call ended. Ready for a new call.",
+            alert_remote_required: "Please enter the other employee's ID.",
+            media_error_onload: "Unable to access camera/microphone. Please allow access in the browser."
+        }
+    };
+
+    function trCall(key) {
+        const lang = getCurrentLang();
+        const dict = callTexts[lang] || {};
+        return dict[key] || key;
+    }
+
     // ===== Ghasiq Call System / PeerJS =====
     const user = window.__gh_user || { role: "User" };
 
@@ -514,20 +565,46 @@
     let localStream = null;
     let currentCall = null;
 
-    function setStatus(text, isError) {
+    function setStatus(textKey, isError) {
+        const text = trCall(textKey);
         callStatus.textContent = text;
         callStatus.classList.toggle("status-green", !isError);
-        callStatus.style.color = isError ? "#f97373" : "#22c55e";
+        if (isError) {
+            callStatus.style.color = "#f97373";
+        } else {
+            callStatus.style.color = "#22c55e";
+        }
     }
 
-    // دالة موحّدة لفتح الكاميرا/المايك
+    function initPeer() {
+        peer = new Peer(myPeerId, {
+            debug: 1
+        });
+
+        peer.on("open", (id) => {
+            myIdBox.textContent = id;
+            setStatus("ready", false);
+        });
+
+        peer.on("error", (err) => {
+            console.error(err);
+            setStatus("peer_error", true);
+        });
+
+        peer.on("call", (call) => {
+            setStatus("incoming_call", false);
+            getMediaStream().then((stream) => {
+                call.answer(stream);
+                bindCallEvents(call);
+            }).catch((err) => {
+                console.error(err);
+                setStatus("media_error", true);
+            });
+        });
+    }
+
     function getMediaStream() {
         if (localStream) return Promise.resolve(localStream);
-
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            setStatus("المتصفح لا يدعم الكاميرا/المايك.", true);
-            return Promise.reject(new Error("Media not supported"));
-        }
 
         return navigator.mediaDevices.getUserMedia({ video: true, audio: true })
             .then((stream) => {
@@ -539,114 +616,184 @@
 
     function bindCallEvents(call) {
         currentCall = call;
-        setStatus("المكالمة نشطة", false);
+        setStatus("call_active", false);
 
         call.on("stream", (remoteStream) => {
             remoteVideo.srcObject = remoteStream;
         });
 
         call.on("close", () => {
+            setStatus("call_closed", true);
             remoteVideo.srcObject = null;
-            setStatus("تم إنهاء المكالمة", true);
         });
 
-        call.on("error", (err) => {
-            console.error(err);
-            setStatus("حدث خطأ أثناء المكالمة", true);
+        call.on("error", () => {
+            setStatus("call_error", true);
         });
     }
 
-    function initPeer() {
-        peer = new Peer(myPeerId, { debug: 1 });
-
-        peer.on("open", (id) => {
-            myIdBox.textContent = id;
-            setStatus("جاهز لبدء مكالمة", false);
-        });
-
-        peer.on("error", (err) => {
-            console.error(err);
-            setStatus("خطأ في الاتصال بخادم PeerJS. تأكد من الاتصال بالإنترنت.", true);
-        });
-
-        // مكالمة واردة + إشعار + ضمان فتح الكاميرا
-        peer.on("call", (call) => {
-            const from = call.peer || "موظف آخر";
-
-            const accept = confirm(`يوجد اتصال وارد من:\n${from}\n\nهل ترغب في الرد؟`);
-
-            if (!accept) {
-                call.close();
-                setStatus("تم رفض المكالمة الواردة.", true);
-                return;
-            }
-
-            setStatus("جاري الرد على المكالمة...", false);
-
-            getMediaStream()
-                .then((stream) => {
-                    call.answer(stream);     // نرد بالميديا
-                    bindCallEvents(call);    // نربط الأحداث
-                })
-                .catch((err) => {
-                    console.error(err);
-                    setStatus("تعذر فتح الكاميرا/المايك.", true);
-                    call.close();
-                });
-        });
-    }
-
-    // مكالمة صادرة
     btnStartCall.addEventListener("click", () => {
-        const remoteIdRaw = remoteIdInput.value.trim();
-        if (!remoteIdRaw) {
-            alert("الرجاء إدخال معرّف الموظف الآخر.");
+        const remoteId = remoteIdInput.value.trim();
+        if (!remoteId) {
+            alert(trCall("alert_remote_required"));
             return;
         }
 
-        const remoteId = remoteIdRaw.replace(/\s+/g, "-").toUpperCase();
+        setStatus("incoming_call", false);
 
-        setStatus("جاري بدء المكالمة...", false);
-
-        getMediaStream()
-            .then((stream) => {
-                const call = peer.call(remoteId, stream);
-                if (!call) {
-                    setStatus("تعذر بدء المكالمة. تأكد من المعرّف.", true);
-                    return;
-                }
-                bindCallEvents(call);
-            })
-            .catch((err) => {
-                console.error(err);
-                setStatus("تعذر فتح الكاميرا/المايك.", true);
-            });
+        getMediaStream().then((stream) => {
+            const call = peer.call(remoteId, stream);
+            bindCallEvents(call);
+        }).catch((err) => {
+            console.error(err);
+            setStatus("media_error", true);
+        });
     });
 
-    // إنهاء المكالمة
     btnEndCall.addEventListener("click", () => {
         if (currentCall) {
             currentCall.close();
             currentCall = null;
         }
         if (localStream) {
-            localStream.getTracks().forEach((t) => t.stop());
+            localStream.getTracks().forEach(t => t.stop());
             localStream = null;
             localVideo.srcObject = null;
         }
         remoteVideo.srcObject = null;
-        setStatus("تم إنهاء المكالمة. جاهز لاتصال جديد.", false);
+        setStatus("call_ended_ready", false);
     });
 
-    // تشغيل Peer وفتح الكاميرا عند التحميل
+    // تشغيل Peer
     initPeer();
 
-    window.addEventListener("load", () => {
-        getMediaStream().catch((err) => {
+    // فتح الكاميرا أوتوماتيك عند تحميل الصفحة
+    window.addEventListener('load', () => {
+        getMediaStream().catch(err => {
             console.error(err);
-            setStatus("تعذر فتح الكاميرا/المايك. تأكد من السماح في المتصفح.", true);
+            setStatus("media_error_onload", true);
         });
     });
+</script>
+
+<script>
+    // ========== ترجمات الواجهة الثابتة ==========
+    const translations = {
+        ar: {}, // هتملا أوتوماتيك من الـ DOM
+        en: {
+            page_title: "Ghasiq - Internal Call System",
+            nav_about: "About Ghasiq",
+            nav_services: "Services",
+            nav_call_system: "Call System",
+            nav_notifications: "Notifications",
+            btn_logout: "Log out",
+
+            call_title_main: "Internal call room for employees",
+            call_sub_main: "Use this room for quick operational meetings between Ghasiq departments (operations, maintenance, HR, finance, general management).",
+
+            video_label_local: "Your video",
+            video_label_remote: "Remote side",
+
+            status_prefix: "Call status:",
+            status_ready: "Ready to start a call",
+
+            call_title_ctrl: "Call management",
+            call_sub_ctrl: "A fixed ID is generated based on the user's role. Share this ID with the other employee and ask them to enter it in the 'Remote ID' field.",
+
+            label_my_id: "Your ID:",
+            label_remote_id: "Other employee ID:",
+            remote_id_placeholder: "Example: GHASIQ-IT-HEAD or GHASIQ-HR-HEAD",
+
+            btn_start_call: "Start call",
+            btn_end_call: "End call",
+
+            hint_text: "• Make sure both sides are connected to the internet.<br>• Each department head has a fixed ID such as: <span>GHASIQ-IT-HEAD</span>, <span>GHASIQ-HR-HEAD</span>, <span>GHASIQ-FINANCE-HEAD</span>, <span>GHASIQ-GM</span>.",
+
+            footer_text: "© <span>Ghasiq</span> Logistical Support & Operations — All rights reserved."
+        }
+    };
+
+    function initArabicFromDom() {
+        // عناصر innerHTML
+        document.querySelectorAll("[data-i18n]").forEach(el => {
+            const key = el.getAttribute("data-i18n");
+            if (!translations.ar[key]) {
+                translations.ar[key] = el.innerHTML;
+            }
+        });
+
+        // placeholders
+        document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+            const key = el.getAttribute("data-i18n-placeholder");
+            if (!translations.ar[key]) {
+                translations.ar[key] = el.placeholder || "";
+            }
+        });
+
+        // عنوان الصفحة
+        translations.ar.page_title = document.title;
+    }
+
+    function applyTranslations(lang) {
+        document.querySelectorAll("[data-i18n]").forEach(el => {
+            const key = el.getAttribute("data-i18n");
+            const value = translations[lang] && translations[lang][key];
+            if (!value) return;
+            el.innerHTML = value;
+        });
+
+        document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+            const key = el.getAttribute("data-i18n-placeholder");
+            const value = translations[lang] && translations[lang][key];
+            if (!value) return;
+            el.placeholder = value;
+        });
+
+        if (translations[lang].page_title) {
+            document.title = translations[lang].page_title;
+        }
+
+        // بعد تغيير اللغة، حدّث نص الحالة الحالية حسب اللغة
+        const callStatus = document.getElementById("callStatus");
+        if (callStatus && callStatus.dataset.i18n === "status_ready") {
+            callStatus.innerHTML = translations[lang].status_ready || callStatus.innerHTML;
+        }
+    }
+
+    // ==================== Language Toggle ====================
+    function applyLanguage(lang) {
+        localStorage.setItem("ghasiq_lang", lang);
+
+        if (lang === "en") {
+            document.documentElement.setAttribute("dir", "ltr");
+            document.documentElement.lang = "en";
+            document.getElementById("langLabel").textContent = "EN";
+        } else {
+            document.documentElement.setAttribute("dir", "rtl");
+            document.documentElement.lang = "ar";
+            document.getElementById("langLabel").textContent = "AR";
+        }
+
+        applyTranslations(lang);
+    }
+
+    function initLanguageToggle() {
+        initArabicFromDom();
+
+        const saved = localStorage.getItem("ghasiq_lang") || "ar";
+        applyLanguage(saved);
+
+        const langToggle = document.getElementById("langToggle");
+        if (!langToggle) return;
+
+        langToggle.addEventListener("click", () => {
+            const current = localStorage.getItem("ghasiq_lang") || "ar";
+            const nextLang = current === "ar" ? "en" : "ar";
+            applyLanguage(nextLang);
+        });
+    }
+
+    initLanguageToggle();
 </script>
 
 </body>
