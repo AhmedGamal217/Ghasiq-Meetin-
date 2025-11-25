@@ -332,31 +332,41 @@
                 <img src="logo.png" alt="GHASIQ Logo" class="logo" />
             </a>
 
-           <nav class="nav-links">
-    <a href="index.html#about">عن Ghasiq</a>
-    <a href="services.html">الخدمات</a>
-    <a href="call-system.html">نظام الاتصال</a>
-    <a href="notifications.html">الإشعارات</a>
-</nav>
-
+            <nav class="nav-links">
+                <a href="index.html#about" data-i18n="nav_about">عن Ghasiq</a>
+                <a href="services.html" class="active" data-i18n="nav_services">الخدمات</a>
+                <a href="call-system.html" data-i18n="nav_call_system">نظام الاتصال</a>
+                <a href="notifications.html" data-i18n="nav_notifications">الإشعارات</a>
+            </nav>
         </div>
 
         <div class="nav-actions">
             <span id="userChip" class="user-chip">User</span>
-            <button class="btn-sm-outline" onclick="window.location.href='call-system.html'">نظام الاتصال</button>
+
+            <!-- زر اللغة -->
+            <button class="btn-toggle-theme" id="langToggle" type="button">
+                <span id="langLabel">AR</span>
+            </button>
+
+            <!-- الثيم -->
             <button class="btn-toggle-theme" id="themeToggle" type="button">
                 <span id="themeLabel">Dark</span>
                 <span id="themeIcon">☾</span>
             </button>
-            <button class="btn-logout" type="button" onclick="logout()">تسجيل الخروج</button>
+
+            <button class="btn-logout" type="button" onclick="logout()" data-i18n="btn_logout">
+                تسجيل الخروج
+            </button>
         </div>
     </header>
 
     <!-- HERO -->
     <section class="hero">
-        <div class="hero-kicker">SERVICES & SOLUTIONS</div>
-        <h1 class="hero-title">خدمات Ghasiq في التشغيل والصيانة وإدارة المرافق</h1>
-        <p class="hero-sub">
+        <div class="hero-kicker" data-i18n="hero_kicker">SERVICES &amp; SOLUTIONS</div>
+        <h1 class="hero-title" data-i18n="hero_title">
+            خدمات Ghasiq في التشغيل والصيانة وإدارة المرافق
+        </h1>
+        <p class="hero-sub" data-i18n="hero_sub">
             Ghasiq تقدّم حلول تشغيل وصيانة متكاملة، مع إدارة مرافق، تشغيل فنادق وضيافة،
             خدمات الرعاية الصحية، تشغيل قطاعات التجزئة والمطاعم، وتوريد القوى العاملة
             الماهرة عبر المملكة. بالإضافة إلى ذلك، يتم دعم العمليات بأنظمة اتصال داخلية
@@ -366,8 +376,8 @@
 
     <!-- خدمات -->
     <section>
-        <h2 class="section-title">مجالات العمل الرئيسية</h2>
-        <p class="section-sub">
+        <h2 class="section-title" data-i18n="section_main_title">مجالات العمل الرئيسية</h2>
+        <p class="section-sub" data-i18n="section_main_sub">
             في Ghasiq، يتم تصميم الخدمات لتناسب احتياج العميل، سواء كان إدارة منشأة
             واحدة أو عدة مواقع تشغيلية في قطاعات متنوعة.
         </p>
@@ -375,8 +385,8 @@
         <div class="services-grid">
             <div class="service-card">
                 <div class="service-icon">🏢</div>
-                <div class="service-name">إدارة المرافق والتشغيل</div>
-                <div class="service-desc">
+                <div class="service-name" data-i18n="service1_name">إدارة المرافق والتشغيل</div>
+                <div class="service-desc" data-i18n="service1_desc">
                     تشغيل وصيانة المباني والمرافق، إدارة فرق النظافة، الصيانة الكهربائية
                     والميكانيكية، وضمان استمرارية الخدمات مع أعلى معايير السلامة والجودة.
                 </div>
@@ -384,8 +394,8 @@
 
             <div class="service-card">
                 <div class="service-icon">🏨</div>
-                <div class="service-name">التشغيل الفندقي والضيافة</div>
-                <div class="service-desc">
+                <div class="service-name" data-i18n="service2_name">التشغيل الفندقي والضيافة</div>
+                <div class="service-desc" data-i18n="service2_desc">
                     إدارة وتشغيل خدمات الضيافة، تنظيف الغرف، دعم العمليات اليومية للفنادق
                     والمراكز الفندقية بما يضمن تجربة مميزة للنزيل.
                 </div>
@@ -393,8 +403,8 @@
 
             <div class="service-card">
                 <div class="service-icon">⚕️</div>
-                <div class="service-name">خدمات الرعاية الصحية</div>
-                <div class="service-desc">
+                <div class="service-name" data-i18n="service3_name">خدمات الرعاية الصحية</div>
+                <div class="service-desc" data-i18n="service3_desc">
                     دعم المستشفيات والمراكز الطبية بقوى عاملة مدرّبة في الخدمات المساندة،
                     مع التركيز على الالتزام بالمعايير الصحية والتنظيمية.
                 </div>
@@ -402,8 +412,8 @@
 
             <div class="service-card">
                 <div class="service-icon">👷</div>
-                <div class="service-name">توريد القوى العاملة</div>
-                <div class="service-desc">
+                <div class="service-name" data-i18n="service4_name">توريد القوى العاملة</div>
+                <div class="service-desc" data-i18n="service4_desc">
                     توفير عمالة مؤهلة ومدرّبة في مجالات التشغيل، الصيانة، الضيافة، الخدمات
                     اللوجستية وغيرها، مع إدارة شاملة للعقود والحضور.
                 </div>
@@ -411,8 +421,8 @@
 
             <div class="service-card">
                 <div class="service-icon">🏗️</div>
-                <div class="service-name">مشاريع الإنشاءات والتطوير</div>
-                <div class="service-desc">
+                <div class="service-name" data-i18n="service5_name">مشاريع الإنشاءات والتطوير</div>
+                <div class="service-desc" data-i18n="service5_desc">
                     دعم مشاريع الإنشاءات بأطقم تشغيل وصيانة، إدارة الموقع، وتوفير فرق
                     مساندة لضمان تسليم المشاريع وفق الجداول الزمنية.
                 </div>
@@ -420,8 +430,8 @@
 
             <div class="service-card">
                 <div class="service-icon">📦</div>
-                <div class="service-name">الدعم اللوجستي والتوزيع</div>
-                <div class="service-desc">
+                <div class="service-name" data-i18n="service6_name">الدعم اللوجستي والتوزيع</div>
+                <div class="service-desc" data-i18n="service6_desc">
                     إدارة سلاسل الإمداد، المستودعات، وتنظيم حركة الشحنات بين المواقع، مع
                     ربط العمليات بأنظمة اتصال تسهّل التنسيق بين الفِرق.
                 </div>
@@ -429,8 +439,8 @@
 
             <div class="service-card">
                 <div class="service-icon">🛎️</div>
-                <div class="service-name">الخدمات المساندة والضيافة</div>
-                <div class="service-desc">
+                <div class="service-name" data-i18n="service7_name">الخدمات المساندة والضيافة</div>
+                <div class="service-desc" data-i18n="service7_desc">
                     تقديم فرق خدمة العملاء، الاستقبال، الضيافة، والدعم الميداني في مواقع
                     العملاء، بما يتناسب مع هوية وطبيعة كل جهة.
                 </div>
@@ -438,8 +448,8 @@
 
             <div class="service-card">
                 <div class="service-icon">📊</div>
-                <div class="service-name">المتابعة والتقارير التشغيلية</div>
-                <div class="service-desc">
+                <div class="service-name" data-i18n="service8_name">المتابعة والتقارير التشغيلية</div>
+                <div class="service-desc" data-i18n="service8_desc">
                     إعداد تقارير أداء تشغيلية دورية، تشمل نسب الالتزام، إنتاجية الفِرق،
                     وجودة التنفيذ، لتوفير رؤية واضحة للإدارة العليا.
                 </div>
@@ -447,8 +457,8 @@
 
             <div class="service-card">
                 <div class="service-icon">📞</div>
-                <div class="service-name">أنظمة الاتصال الداخلي Ghasiq Call</div>
-                <div class="service-desc">
+                <div class="service-name" data-i18n="service9_name">أنظمة الاتصال الداخلي Ghasiq Call</div>
+                <div class="service-desc" data-i18n="service9_desc">
                     نظام اتصال داخلي بسيط للموظفين، يربط بين الموارد البشرية، المالية،
                     التشغيل والفروع، لتمرير المعلومات بسرعة وحل المشكلات في وقتها.
                 </div>
@@ -458,22 +468,22 @@
 
     <!-- CTA -->
     <section class="cta">
-        <div class="cta-text">
+        <div class="cta-text" data-i18n="cta_text">
             هل ترغب في توحيد خدمات التشغيل والصيانة مع نظام اتصال واضح بين الفِرق؟
             يمكن تخصيص حزمة خدمات تناسب حجم أعمالك وعدد المواقع التشغيلية لديك.
         </div>
-        <button class="btn-primary" onclick="window.location.href='call-system.html'">
+        <button class="btn-primary" onclick="window.location.href='call-system.html'" data-i18n="btn_cta_enter_call">
             الدخول إلى نظام الاتصال الداخلي
         </button>
     </section>
 
-    <footer class="footer">
+    <footer class="footer" data-i18n="footer_text">
         © <span>Ghasiq</span> Logistical Support & Operations — جميع الحقوق محفوظة.
     </footer>
 </div>
 
 <script>
-    // Theme
+    // ===== Theme shared logic =====
     const bodyEl = document.body;
     const themeToggle = document.getElementById("themeToggle");
     const themeLabel = document.getElementById("themeLabel");
@@ -506,7 +516,7 @@
 
     initTheme();
 
-    // عرض اليوزر
+    // ===== عرض اليوزر في النافبار =====
     (function showUser() {
         const chip = document.getElementById("userChip");
         const user = window.__gh_user;
@@ -514,11 +524,166 @@
         chip.textContent = `${user.username} (${user.role})`;
     })();
 
-    // Logout
+    // ===== Logout =====
     function logout() {
         localStorage.removeItem("ghasiq_user");
         window.location.href = "login.html";
     }
+
+    // ========== جدول الترجمة ==========
+
+    const translations = {
+        ar: {
+            page_title: "Ghasiq - الخدمات التشغيلية والصيانة",
+
+            nav_about: "عن Ghasiq",
+            nav_services: "الخدمات",
+            nav_call_system: "نظام الاتصال",
+            nav_notifications: "الإشعارات",
+            btn_logout: "تسجيل الخروج",
+
+            hero_kicker: "SERVICES &amp; SOLUTIONS",
+            hero_title: "خدمات Ghasiq في التشغيل والصيانة وإدارة المرافق",
+            hero_sub: "Ghasiq تقدّم حلول تشغيل وصيانة متكاملة، مع إدارة مرافق، تشغيل فنادق وضيافة، خدمات الرعاية الصحية، تشغيل قطاعات التجزئة والمطاعم، وتوريد القوى العاملة الماهرة عبر المملكة. بالإضافة إلى ذلك، يتم دعم العمليات بأنظمة اتصال داخلية توحّد الصورة بين الإدارة والفِرق التنفيذية.",
+
+            section_main_title: "مجالات العمل الرئيسية",
+            section_main_sub: "في Ghasiq، يتم تصميم الخدمات لتناسب احتياج العميل، سواء كان إدارة منشأة واحدة أو عدة مواقع تشغيلية في قطاعات متنوعة.",
+
+            service1_name: "إدارة المرافق والتشغيل",
+            service1_desc: "تشغيل وصيانة المباني والمرافق، إدارة فرق النظافة، الصيانة الكهربائية والميكانيكية، وضمان استمرارية الخدمات مع أعلى معايير السلامة والجودة.",
+
+            service2_name: "التشغيل الفندقي والضيافة",
+            service2_desc: "إدارة وتشغيل خدمات الضيافة، تنظيف الغرف، دعم العمليات اليومية للفنادق والمراكز الفندقية بما يضمن تجربة مميزة للنزيل.",
+
+            service3_name: "خدمات الرعاية الصحية",
+            service3_desc: "دعم المستشفيات والمراكز الطبية بقوى عاملة مدرّبة في الخدمات المساندة، مع التركيز على الالتزام بالمعايير الصحية والتنظيمية.",
+
+            service4_name: "توريد القوى العاملة",
+            service4_desc: "توفير عمالة مؤهلة ومدرّبة في مجالات التشغيل، الصيانة، الضيافة، الخدمات اللوجستية وغيرها، مع إدارة شاملة للعقود والحضور.",
+
+            service5_name: "مشاريع الإنشاءات والتطوير",
+            service5_desc: "دعم مشاريع الإنشاءات بأطقم تشغيل وصيانة، إدارة الموقع، وتوفير فرق مساندة لضمان تسليم المشاريع وفق الجداول الزمنية.",
+
+            service6_name: "الدعم اللوجستي والتوزيع",
+            service6_desc: "إدارة سلاسل الإمداد، المستودعات، وتنظيم حركة الشحنات بين المواقع، مع ربط العمليات بأنظمة اتصال تسهّل التنسيق بين الفِرق.",
+
+            service7_name: "الخدمات المساندة والضيافة",
+            service7_desc: "تقديم فرق خدمة العملاء، الاستقبال، الضيافة، والدعم الميداني في مواقع العملاء، بما يتناسب مع هوية وطبيعة كل جهة.",
+
+            service8_name: "المتابعة والتقارير التشغيلية",
+            service8_desc: "إعداد تقارير أداء تشغيلية دورية، تشمل نسب الالتزام، إنتاجية الفِرق، وجودة التنفيذ، لتوفير رؤية واضحة للإدارة العليا.",
+
+            service9_name: "أنظمة الاتصال الداخلي Ghasiq Call",
+            service9_desc: "نظام اتصال داخلي بسيط للموظفين، يربط بين الموارد البشرية، المالية، التشغيل والفروع، لتمرير المعلومات بسرعة وحل المشكلات في وقتها.",
+
+            cta_text: "هل ترغب في توحيد خدمات التشغيل والصيانة مع نظام اتصال واضح بين الفِرق؟ يمكن تخصيص حزمة خدمات تناسب حجم أعمالك وعدد المواقع التشغيلية لديك.",
+            btn_cta_enter_call: "الدخول إلى نظام الاتصال الداخلي",
+
+            footer_text: "© <span>Ghasiq</span> Logistical Support & Operations — جميع الحقوق محفوظة."
+        },
+        en: {
+            page_title: "Ghasiq - Operations & Maintenance Services",
+
+            nav_about: "About Ghasiq",
+            nav_services: "Services",
+            nav_call_system: "Call System",
+            nav_notifications: "Notifications",
+            btn_logout: "Log out",
+
+            hero_kicker: "SERVICES &amp; SOLUTIONS",
+            hero_title: "Ghasiq services in operations, maintenance & facilities",
+            hero_sub: "Ghasiq provides integrated operations and maintenance solutions, facilities management, hotel and hospitality operations, healthcare support, retail and F&B operations and skilled manpower across the Kingdom. Operations are supported with internal communication systems that unify the view between management and execution teams.",
+
+            section_main_title: "Main service domains",
+            section_main_sub: "At Ghasiq, services are designed around the client needs, whether managing a single facility or multiple operational sites across sectors.",
+
+            service1_name: "Facilities management & operations",
+            service1_desc: "Operating and maintaining buildings and facilities, managing cleaning teams, electrical and mechanical maintenance while ensuring service continuity with the highest safety and quality standards.",
+
+            service2_name: "Hotel & hospitality operations",
+            service2_desc: "Managing and operating hospitality services, room cleaning and supporting hotel daily operations to ensure a great guest experience.",
+
+            service3_name: "Healthcare support services",
+            service3_desc: "Supporting hospitals and medical centers with trained manpower in non-clinical services, focusing on compliance with health and regulatory standards.",
+
+            service4_name: "Manpower supply",
+            service4_desc: "Providing qualified and trained manpower in operations, maintenance, hospitality, logistics and more, with full management of contracts and attendance.",
+
+            service5_name: "Construction & development projects",
+            service5_desc: "Supporting construction projects with operations and maintenance teams, site management and support crews to ensure project delivery according to timelines.",
+
+            service6_name: "Logistics & distribution support",
+            service6_desc: "Managing supply chains, warehouses and shipment movements between sites, connecting operations with communication systems that make team coordination easier.",
+
+            service7_name: "Support & hospitality services",
+            service7_desc: "Providing customer service, reception, hospitality and field support teams at client sites, aligned with each client's brand and nature.",
+
+            service8_name: "Operational follow-up & reporting",
+            service8_desc: "Preparing regular operational performance reports including compliance rates, team productivity and execution quality to give clear visibility for top management.",
+
+            service9_name: "Ghasiq internal call system",
+            service9_desc: "A simple internal call system for employees, connecting HR, finance, operations and branches to pass information quickly and solve issues on time.",
+
+            cta_text: "Want to unify operations and maintenance services with a clear communication system between teams? We can tailor a service package that fits your business size and number of operational sites.",
+            btn_cta_enter_call: "Enter internal call system",
+
+            footer_text: "© <span>Ghasiq</span> Logistical Support & Operations — All rights reserved."
+        }
+    };
+
+    // ========== ترجمة العناصر ==========
+
+    function applyTranslations(lang) {
+        document.querySelectorAll("[data-i18n]").forEach(el => {
+            const key = el.getAttribute("data-i18n");
+            const value = translations[lang] && translations[lang][key];
+            if (!value) return;
+
+            if (el.tagName === "INPUT" && el.hasAttribute("placeholder")) {
+                el.placeholder = value;
+            } else {
+                el.innerHTML = value;
+            }
+        });
+
+        if (translations[lang].page_title) {
+            document.title = translations[lang].page_title;
+        }
+    }
+
+    // ==================== Language Toggle ====================
+
+    function applyLanguage(lang) {
+        localStorage.setItem("ghasiq_lang", lang);
+
+        if (lang === "en") {
+            document.documentElement.setAttribute("dir", "ltr");
+            document.documentElement.lang = "en";
+            document.getElementById("langLabel").textContent = "EN";
+        } else {
+            document.documentElement.setAttribute("dir", "rtl");
+            document.documentElement.lang = "ar";
+            document.getElementById("langLabel").textContent = "AR";
+        }
+
+        applyTranslations(lang);
+    }
+
+    function initLanguageToggle() {
+        const saved = localStorage.getItem("ghasiq_lang") || "ar";
+        applyLanguage(saved);
+
+        const langToggle = document.getElementById("langToggle");
+        if (!langToggle) return;
+
+        langToggle.addEventListener("click", () => {
+            const current = localStorage.getItem("ghasiq_lang") || "ar";
+            const nextLang = current === "ar" ? "en" : "ar";
+            applyLanguage(nextLang);
+        });
+    }
+
+    initLanguageToggle();
 </script>
 
 </body>
