@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <title>Ghasiq – الإشعارات الداخلية</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-soft: rgba(37, 99, 235, 0.12);
+            --accent: #22c55e;
+
+            --bg-main: #020617;
+            --bg-elevated: rgba(15, 23, 42, 0.94);
+            --bg-card: rgba(15, 23, 42, 0.98);
+            --border-subtle: rgba(148, 163, 184, 0.35);
+
+            --text-main: #e5e7eb;
+            --text-muted: #9ca3af;
+            --shadow-strong: 0 20px 45px rgba(0, 0, 0, 0.8);
+        }
+
+        body.light {
+            --bg-main: #f5f7fb;
+            --bg-elevated: #ffffff;
+            --bg-card: #ffffff;
+            --border-subtle: rgba(148, 163, 184, 0.5);
+            --text-main: #0f172a;
+            --text-muted: #6b7280;
+            --shadow-strong: 0 20px 45px rgba(15, 23, 42, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Cairo", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(37, 99, 235, 0.35), transparent 55%),
+                radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.28), transparent 55%),
+                linear-gradient(135deg, #00020b, var(--bg-main) 45%, #00010a);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        body.light {
+            background:
+                radial-gradient(circle at top left, rgba(191, 219, 254, 0.7), transparent 55%),
+                radial-gradient(circle at bottom right, rgba(219, 234, 254, 0.7), transparent 55%),
+                linear-gradient(135deg, #e5edff, #f9fafb 50%, #eff6ff);
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        .page {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 20px 18px 40px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            border-radius: 16px;
+            background: var(--bg-elevated);
+            box-shadow:
+                0 16px 35px rgba(0, 0, 0, 0.75),
+                0 0 0 1px rgba(148, 163, 184, 0.3);
+            margin-bottom: 26px;
+            backdrop-filter: blur(14px);
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo {
+            height: 46px;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 16px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .nav-links a {
+            position: relative;
+            padding-bottom: 4px;
+        }
+
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary));
+            transition: width 0.18s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-chip {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.7);
+            color: var(--text-muted);
+        }
+
+        .btn-toggle-theme,
+        .btn-logout {
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            background: transparent;
+            color: var(--text-main);
+            padding: 6px 12px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-logout {
+            border-color: #ef4444;
+            color: #fecaca;
+        }
+
+        /* LAYOUT */
+        .notify-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr);
+            gap: 22px;
+            flex: 1;
+        }
+
+        @media (max-width: 900px) {
+            .notify-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            border-radius: 20px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-strong);
+            padding: 18px 18px 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .card-sub {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+        }
+
+        /* EMPLOYEE LIST */
+        .employee-list {
+            display: grid;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .employee-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        body.light .employee-row {
+            background: #f9fafb;
+        }
+
+        .employee-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .employee-name {
+            font-size: 14px;
+        }
+
+        .employee-role {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .employee-dept {
+            font-size: 11px;
+            color: var(--primary-light);
+        }
+
+        .btn-notify {
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 7px 14px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.6);
+        }
+
+        /* ACTIVITY / HISTORY */
+        .history-list {
+            display: grid;
+            gap: 8px;
+            max-height: 340px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .history-item {
+            font-size: 12px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            color: var(--text-muted);
+        }
+
+        body.light .history-item {
+            background: #f9fafb;
+        }
+
+        .history-item strong {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .history-meta {
+            font-size: 11px;
+            margin-top: 2px;
+            color: var(--primary-light);
+        }
+
+        .empty-state {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 16px;
+            border-radius: 999px;
+            font-size: 13px;
+            background: rgba(22, 163, 74, 0.96);
+            color: #ecfdf5;
+            box-shadow: 0 18px 35px rgba(0, 0, 0, 0.55);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 50;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-4px);
+        }
+
+        .footer {
+            margin-top: 22px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .footer span { color: var(--primary-light); }
+
+        /* ========== NEW STYLES FOR ATTACHMENT UI ========== */
+        .attach-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .attach-toggle-label {
+            font-size: 12px;
+        }
+
+        .radio-pills {
+            display: inline-flex;
+            gap: 6px;
+        }
+
+        .radio-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            cursor: pointer;
+            font-size: 11px;
+            color: var(--text-main);
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        body.light .radio-pill {
+            background: #f9fafb;
+        }
+
+        .radio-pill input {
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .radio-pill.active {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.4);
+        }
+
+        .file-upload-wrapper {
+            margin-top: 10px;
+            margin-bottom: 12px;
+            font-size: 12px;
+        }
+
+        .file-upload-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+            color: var(--text-main);
+            cursor: pointer;
+            font-size: 12px;
+            box-shadow: 0 6px 14px rgba(15, 23, 42, 0.7);
+        }
+
+        body.light .file-upload-label {
+            background: #ffffff;
+        }
+
+        .file-upload-label span.icon {
+            font-size: 14px;
+        }
+
+        .file-upload-input {
+            display: none;
+        }
+
+        .selected-file-name {
+            display: block;
+            margin-top: 6px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body class="dark">
+<div class="page">
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <div class="navbar-left">
+            <a href="index.html">
+                <img src="logo.png" alt="GHASIQ Logo" class="logo" />
+            </a>
+            <nav class="nav-links">
+                <a href="index.html#about">عن Ghasiq</a>
+                <a href="services.html">الخدمات</a>
+                <a href="call-system.html">نظام الاتصال</a>
+                <a href="notifications.html" class="active">الإشعارات</a>
+            </nav>
+        </div>
+
+        <div class="nav-actions">
+            <span class="user-chip" id="userChip">---</span>
+            <button class="btn-toggle-theme" id="themeToggle" type="button">
+                <span id="themeLabel">Dark</span>
+                <span id="themeIcon">☾</span>
+            </button>
+            <button class="btn-logout" type="button" onclick="logout()">تسجيل خروج</button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <section class="notify-layout">
+        <!-- LEFT: EMPLOYEES -->
+        <article class="card">
+            <h2 class="card-title">إرسال إشعار للموظفين</h2>
+            <p class="card-sub">
+                اختر الموظف الذي تريد تنبيهه، وسيتم تسجيل الإشعار هنا في النظام (محاكاة داخلية – بدون إرسال خارجي حقيقي).
+            </p>
+
+            <div class="employee-list" id="employeeList">
+                <!-- يتم ملؤه من الـ JS -->
+            </div>
+        </article>
+
+        <!-- RIGHT: HISTORY -->
+        <aside class="card">
+            <h2 class="card-title">سجل الإشعارات</h2>
+            <p class="card-sub">
+                آخر الإشعارات التي تم إرسالها من خلال النظام، مرتّبة بالأحدث أولاً.
+            </p>
+            <button type="button"
+                    class="btn-toggle-theme"
+                    style="margin-bottom:12px; padding:6px 14px; font-size:12px;"
+                    onclick="clearNotifications()">
+                مسح الإشعارات
+            </button>
+
+            <div id="historyList" class="history-list"></div>
+            <div id="emptyHistory" class="empty-state">لا توجد إشعارات حتى الآن.</div>
+        </aside>
+    </section>
+
+    <!-- إشعار مخصص + ملف مرفق -->
+    <div id="notifyOverlay"
+         style="
+            display:none;
+            position:fixed;
+            inset:0;
+            background:rgba(15,23,42,0.75);
+            backdrop-filter:blur(4px);
+            z-index:80;
+            align-items:center;
+            justify-content:center;
+         ">
+        <div class="card" style="max-width:420px; width:100%;">
+            <h3 class="card-title">إرسال إشعار</h3>
+            <p class="card-sub">
+                اكتب نص الإشعار، ويمكنك اختيار إرفاق ملف إذا احتجت ذلك.
+            </p>
+
+            <div style="font-size:13px; margin-bottom:8px;">
+                إلى: <span id="notifyEmployeeName" style="color:var(--primary-light);"></span>
+            </div>
+
+            <textarea id="notifyMessage"
+                      style="
+                          width:100%;
+                          min-height:90px;
+                          border-radius:10px;
+                          border:1px solid var(--border-subtle);
+                          background:var(--bg-card);
+                          color:var(--text-main);
+                          font-family:inherit;
+                          font-size:13px;
+                          padding:8px 10px;
+                          resize:vertical;
+                      "
+                      placeholder="اكتب نص الإشعار هنا..."></textarea>
+
+            <!-- سؤال: هل تريد إرفاق ملف؟ -->
+            <div class="attach-toggle">
+                <span class="attach-toggle-label">هل تريد إرفاق ملف؟</span>
+                <div class="radio-pills">
+                    <label class="radio-pill active">
+                        <input type="radio" name="attachOption" value="no" checked />
+                        لا
+                    </label>
+                    <label class="radio-pill">
+                        <input type="radio" name="attachOption" value="yes" />
+                        نعم
+                    </label>
+                </div>
+            </div>
+
+            <!-- بلوك رفع الملف (يظهر فقط لو اختار نعم) -->
+            <div id="fileUploadWrapper" class="file-upload-wrapper" style="display:none;">
+                <label for="notifyFile">إضافة ملف مرفق:</label><br />
+                <label for="notifyFile" class="file-upload-label">
+                    <span class="icon">📎</span>
+                    <span>اختر الملف</span>
+                    <span style="font-size:10px; color:var(--text-muted);">(اختياري)</span>
+                </label>
+                <input id="notifyFile" type="file" class="file-upload-input" />
+                <span id="selectedFileName" class="selected-file-name">لم يتم اختيار ملف</span>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:8px;">
+                <button type="button"
+                        onclick="closeNotifyDialog()"
+                        class="btn-toggle-theme"
+                        style="padding-inline:14px;">
+                    إلغاء
+                </button>
+                <button type="button"
+                        onclick="confirmNotification()"
+                        class="btn-notify"
+                        style="padding-inline:18px;">
+                    🚀 إرسال
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        © <span>Ghasiq</span> Logistical Support & Operations — جميع الحقوق محفوظة.
+    </footer>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+    // ===== Theme =====
+    const bodyEl = document.body;
+    const themeToggle = document.getElementById("themeToggle");
+    const themeLabel = document.getElementById("themeLabel");
+    const themeIcon = document.getElementById("themeIcon");
+
+    function applyTheme(mode) {
+        if (mode === "light") {
+            bodyEl.classList.add("light");
+            bodyEl.classList.remove("dark");
+            themeLabel.textContent = "Light";
+            themeIcon.textContent = "☀";
+        } else {
+            bodyEl.classList.add("dark");
+            bodyEl.classList.remove("light");
+            themeLabel.textContent = "Dark";
+            themeIcon.textContent = "☾";
+        }
+        localStorage.setItem("ghasiq_theme", mode);
+    }
+
+    function initTheme() {
+        const saved = localStorage.getItem("ghasiq_theme");
+        applyTheme(saved === "light" ? "light" : "dark");
+    }
+
+    themeToggle.addEventListener("click", () => {
+        const isLight = bodyEl.classList.contains("light");
+        applyTheme(isLight ? "dark" : "light");
+    });
+
+    initTheme();
+
+    // ===== Auth Guard + User Chip =====
+    function getCurrentUser() {
+        try {
+            const raw = localStorage.getItem("ghasiq_user");
+            return raw ? JSON.parse(raw) : null;
+        } catch {
+            return null;
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem("ghasiq_user");
+        window.location.href = "login.html";
+    }
+
+    (function initUser() {
+        const user = getCurrentUser();
+        const chip = document.getElementById("userChip");
+
+        if (!user) {
+            // لو مفيش حد مسجل دخول رجّعه على صفحة اللوجين
+            window.location.href = "login.html";
+            return;
+        }
+
+        // في حالة وجود يوزر
+        chip.textContent = user.username + " — " + user.role;
+    })();
+
+    // ===== Employees Data =====
+    const employees = [
+        { id: 1, name: "Ahmed Gamal", role: "Head of IT Department", dept: "IT" },
+        { id: 2, name: "Mohamed Hamdy", role: "Head of HR Department", dept: "HR" },
+        { id: 3, name: "Emad Elden", role: "Head of Finance Department", dept: "Finance" },
+        { id: 4, name: "Hamed ALAnazi", role: "General Manager", dept: "Management" },
+        { id: 5, name: "Randa Elbarbory", role: "Project Manager", dept: "Operations" }
+    ];
+
+    const employeeListEl = document.getElementById("employeeList");
+    const historyListEl  = document.getElementById("historyList");
+    const emptyHistoryEl = document.getElementById("emptyHistory");
+    const toastEl        = document.getElementById("toast");
+
+    let selectedEmployeeId = null;
+
+    // عناصر خاصة باختيار إرفاق الملف
+    let attachOptionsRadios = null;
+    let fileUploadWrapper   = null;
+    let selectedFileNameEl  = null;
+
+    function openNotifyDialog(empId) {
+        const emp = employees.find(e => e.id === empId);
+        if (!emp) return;
+
+        selectedEmployeeId = empId;
+
+        const overlay   = document.getElementById("notifyOverlay");
+        const nameEl    = document.getElementById("notifyEmployeeName");
+        const msgEl     = document.getElementById("notifyMessage");
+        const fileInput = document.getElementById("notifyFile");
+
+        fileUploadWrapper  = document.getElementById("fileUploadWrapper");
+        selectedFileNameEl = document.getElementById("selectedFileName");
+        attachOptionsRadios = document.querySelectorAll("input[name='attachOption']");
+
+        if (nameEl) nameEl.textContent = emp.name;
+        if (msgEl) {
+            msgEl.value = "";
+            setTimeout(() => msgEl.focus(), 0);
+        }
+        if (fileInput) {
+            fileInput.value = "";
+        }
+        if (selectedFileNameEl) {
+            selectedFileNameEl.textContent = "لم يتم اختيار ملف";
+        }
+
+        // رجّع الاختيار إلى "لا"
+        if (attachOptionsRadios) {
+            attachOptionsRadios.forEach(r => {
+                r.checked = r.value === "no";
+                r.parentElement.classList.toggle("active", r.value === "no");
+            });
+        }
+        if (fileUploadWrapper) {
+            fileUploadWrapper.style.display = "none";
+        }
+
+        overlay.style.display = "flex";
+    }
+
+    function closeNotifyDialog() {
+        const overlay = document.getElementById("notifyOverlay");
+        overlay.style.display = "none";
+    }
+
+    function confirmNotification() {
+        if (selectedEmployeeId == null) return;
+
+        const msgEl     = document.getElementById("notifyMessage");
+        const fileInput = document.getElementById("notifyFile");
+
+        const message = (msgEl?.value || "").trim();
+
+        if (!message) {
+            showToast("من فضلك اكتب نص الإشعار أولاً");
+            return;
+        }
+
+        let fileName = "";
+        if (fileInput && fileInput.files && fileInput.files.length > 0) {
+            fileName = fileInput.files[0].name;
+        }
+
+        sendNotification(selectedEmployeeId, message, fileName);
+        closeNotifyDialog();
+    }
+
+    function renderEmployees() {
+        employeeListEl.innerHTML = "";
+        employees.forEach(emp => {
+            const row = document.createElement("div");
+            row.className = "employee-row";
+
+            row.innerHTML = `
+                <div class="employee-info">
+                    <div class="employee-name">${emp.name}</div>
+                    <div class="employee-role">${emp.role}</div>
+                    <div class="employee-dept">${emp.dept}</div>
+                </div>
+                <button class="btn-notify" type="button" onclick="openNotifyDialog(${emp.id})">
+                    إرسال إشعار
+                </button>
+            `;
+
+            employeeListEl.appendChild(row);
+        });
+    }
+
+    function showToast(message) {
+        toastEl.textContent = message;
+        toastEl.classList.add("show");
+        setTimeout(() => toastEl.classList.remove("show"), 2000);
+    }
+
+    function addHistoryItem(emp, senderName, message, fileName) {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit" });
+
+        const item = document.createElement("div");
+        item.className = "history-item";
+
+        const safeMessage = message && message.trim()
+            ? message.trim()
+            : "أحتاجك في مكتبي الآن للمتابعة.";
+
+        item.innerHTML = `
+            <strong>إشعار إلى ${emp.name}</strong>
+            <div>المحتوى: ${safeMessage}</div>
+            ${fileName ? `<div>مرفق: ${fileName}</div>` : ""}
+            <div class="history-meta">مرسل بواسطة: ${senderName || "System"} — ${timeStr}</div>
+        `;
+
+        historyListEl.prepend(item);
+        emptyHistoryEl.style.display = "none";
+    }
+
+    function sendNotification(empId, message, fileName) {
+        const emp = employees.find(e => e.id === empId);
+        if (!emp) return;
+
+        const user = getCurrentUser();
+        const senderName = user?.username || "Ghasiq System";
+
+        // ما زالت محاكاة داخلية – تقدر تربطها بـ API أو WebSocket لاحقًا
+        addHistoryItem(emp, senderName, message, fileName);
+        showToast(`تم إرسال إشعار إلى ${emp.name}`);
+    }
+
+    function clearNotifications() {
+        historyListEl.innerHTML = "";
+        emptyHistoryEl.style.display = "block";
+        showToast("تم مسح الإشعارات");
+    }
+
+    // ===== Attachment UI Events =====
+    document.addEventListener("DOMContentLoaded", () => {
+        attachOptionsRadios = document.querySelectorAll("input[name='attachOption']");
+        fileUploadWrapper   = document.getElementById("fileUploadWrapper");
+        selectedFileNameEl  = document.getElementById("selectedFileName");
+        const fileInput     = document.getElementById("notifyFile");
+
+        if (attachOptionsRadios) {
+            attachOptionsRadios.forEach(radio => {
+                radio.addEventListener("change", (e) => {
+                    const value = e.target.value;
+
+                    attachOptionsRadios.forEach(r => {
+                        r.parentElement.classList.toggle("active", r === e.target);
+                    });
+
+                    if (value === "yes") {
+                        if (fileUploadWrapper) fileUploadWrapper.style.display = "block";
+                    } else {
+                        if (fileUploadWrapper) fileUploadWrapper.style.display = "none";
+                        if (fileInput) fileInput.value = "";
+                        if (selectedFileNameEl) selectedFileNameEl.textContent = "لم يتم اختيار ملف";
+                    }
+                });
+            });
+        }
+
+        if (fileInput) {
+            fileInput.addEventListener("change", () => {
+                if (fileInput.files && fileInput.files.length > 0) {
+                    const name = fileInput.files[0].name;
+                    if (selectedFileNameEl) selectedFileNameEl.textContent = name;
+                } else {
+                    if (selectedFileNameEl) selectedFileNameEl.textContent = "لم يتم اختيار ملف";
+                }
+            });
+        }
+    });
+
+    // init
+    renderEmployees();
+</script>
+</body>
+</html>

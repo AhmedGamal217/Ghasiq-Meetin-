@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <title>Ghasiq – تسجيل الدخول</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-soft: rgba(37, 99, 235, 0.12);
+            --accent: #22c55e;
+
+            --bg-main: #020617;
+            --bg-elevated: rgba(15, 23, 42, 0.94);
+            --bg-card: rgba(15, 23, 42, 0.98);
+            --border-subtle: rgba(148, 163, 184, 0.35);
+
+            --text-main: #e5e7eb;
+            --text-muted: #9ca3af;
+            --shadow-strong: 0 20px 45px rgba(0, 0, 0, 0.8);
+        }
+
+        body.light {
+            --bg-main: #f5f7fb;
+            --bg-elevated: #ffffff;
+            --bg-card: #ffffff;
+            --border-subtle: rgba(148, 163, 184, 0.5);
+            --text-main: #0f172a;
+            --text-muted: #6b7280;
+            --shadow-strong: 0 20px 45px rgba(15, 23, 42, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Cairo", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(37, 99, 235, 0.35), transparent 55%),
+                radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.28), transparent 55%),
+                linear-gradient(135deg, #00020b, var(--bg-main) 45%, #00010a);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        body.light {
+            background:
+                radial-gradient(circle at top left, rgba(191, 219, 254, 0.7), transparent 55%),
+                radial-gradient(circle at bottom right, rgba(219, 234, 254, 0.7), transparent 55%),
+                linear-gradient(135deg, #e5edff, #f9fafb 50%, #eff6ff);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .page {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 20px 18px 40px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            border-radius: 16px;
+            background: var(--bg-elevated);
+            box-shadow:
+                0 16px 35px rgba(0, 0, 0, 0.75),
+                0 0 0 1px rgba(148, 163, 184, 0.3);
+            margin-bottom: 26px;
+            backdrop-filter: blur(14px);
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo {
+            height: 46px;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 16px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .nav-links a {
+            position: relative;
+            padding-bottom: 4px;
+        }
+
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary));
+            transition: width 0.18s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-toggle-theme {
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            background: transparent;
+            color: var(--text-main);
+            padding: 6px 12px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .user-chip {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.7);
+            color: var(--text-muted);
+        }
+
+        /* ===== LOGIN LAYOUT ===== */
+        .login-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr);
+            gap: 24px;
+            align-items: stretch;
+            flex: 1;
+            align-content: center; /* يخلي الجريد في نص الصفحة رأسيًا */
+        }
+
+        @media(max-width: 900px) {
+            .login-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* HERO LEFT */
+        .login-hero {
+            border-radius: 22px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-strong);
+            padding: 24px 22px 22px;
+        }
+
+        .hero-kicker {
+            font-size: 12px;
+            color: var(--primary-light);
+            letter-spacing: 0.16em;
+            margin-bottom: 6px;
+        }
+
+        .hero-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .hero-sub {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.9;
+        }
+
+        .hero-list {
+            list-style: none;
+            margin-top: 14px;
+            font-size: 13px;
+            color: var(--text-muted);
+            display: grid;
+            gap: 6px;
+        }
+
+        .hero-list li::before {
+            content: "• ";
+            color: var(--primary-light);
+        }
+
+        /* LOGIN CARD */
+        .login-card {
+            border-radius: 22px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-strong);
+            padding: 22px 20px 20px;
+        }
+
+        .login-title {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .login-sub {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 13px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 9px 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+            background: rgba(15, 23, 42, 0.9);
+            color: var(--text-main);
+            font-size: 14px;
+            outline: none;
+        }
+
+        body.light .input-group input {
+            background: #ffffff;
+            color: #0f172a;
+        }
+
+        .login-hint {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            border-radius: 999px;
+            padding: 10px 18px;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .error-box {
+            display: none;
+            margin-bottom: 10px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.7);
+            color: #fecaca;
+        }
+
+        body.light .error-box {
+            background: #fee2e2;
+            color: #b91c1c;
+            border-color: #fecaca;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .footer span {
+            color: var(--primary-light);
+        }
+    </style>
+</head>
+<body class="dark">
+<div class="page">
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <div class="navbar-left">
+            <a href="index.html">
+                <img src="logo.png" alt="GHASIQ Logo" class="logo" />
+            </a>
+           <nav class="nav-links">
+    <a href="index.html#about">عن Ghasiq</a>
+    <a href="services.html">الخدمات</a>
+    <a href="call-system.html">نظام الاتصال</a>
+    <a href="notifications.html">الإشعارات</a>
+</nav>
+
+        </div>
+
+        <div class="nav-actions">
+            <span class="user-chip">غير مسجّل</span>
+            <button class="btn-toggle-theme" id="themeToggle" type="button">
+                <span id="themeLabel">Dark</span>
+                <span id="themeIcon">☾</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- LOGIN CONTENT -->
+    <section class="login-layout">
+        <!-- نص تعريفي -->
+        <article class="login-hero">
+            <div class="hero-kicker">INTERNAL ACCESS</div>
+            <h1 class="hero-title">دخول موظفي Ghasiq للنظام الداخلي</h1>
+            <p class="hero-sub">
+                هذه البوابة مخصصة لرؤساء الأقسام في Ghasiq (التشغيل، الموارد البشرية، المالية، تقنية المعلومات)
+                للوصول إلى لوحة المتابعة ونظام الاتصال الداخلي والتطبيقات المرتبطة بالعمليات اليومية.
+            </p>
+            <ul class="hero-list">
+                <li>النظام حاليًا تجريبي، يعتمد على اسم المستخدم لتحديد القسم.</li>
+                <li>يمكن لاحقًا ربطه بـ Active Directory أو نظام الموارد البشرية.</li>
+                <li>إعدادات الثيم (Dark / Light) محفوظة في المتصفح وتطبّق على باقي الصفحات.</li>
+            </ul>
+        </article>
+
+        <!-- كارت تسجيل الدخول -->
+        <aside class="login-card">
+            <h2 class="login-title">تسجيل الدخول</h2>
+            <p class="login-sub">أدخل بياناتك للمتابعة.</p>
+
+            <div id="errorBox" class="error-box"></div>
+
+            <div class="input-group">
+                <label for="username">اسم المستخدم</label>
+                <input id="username" type="text" placeholder="" autocomplete="off" />
+            </div>
+
+            <div class="input-group">
+                <label for="password">كلمة المرور</label>
+                <input id="password" type="password" placeholder="" autocomplete="off" />
+            </div>
+
+   
+
+            <button class="btn-primary" type="button" onclick="login()">تسجيل الدخول</button>
+        </aside>
+    </section>
+
+    <footer class="footer">
+        © <span>Ghasiq</span> Logistical Support & Operations — جميع الحقوق محفوظة.
+    </footer>
+</div>
+
+<script>
+    // ===== Theme =====
+    const bodyEl = document.body;
+    const themeToggle = document.getElementById("themeToggle");
+    const themeLabel = document.getElementById("themeLabel");
+    const themeIcon = document.getElementById("themeIcon");
+
+    function applyTheme(mode) {
+        if (mode === "light") {
+            bodyEl.classList.add("light");
+            bodyEl.classList.remove("dark");
+            themeLabel.textContent = "Light";
+            themeIcon.textContent = "☀";
+        } else {
+            bodyEl.classList.add("dark");
+            bodyEl.classList.remove("light");
+            themeLabel.textContent = "Dark";
+            themeIcon.textContent = "☾";
+        }
+        localStorage.setItem("ghasiq_theme", mode);
+    }
+
+    function initTheme() {
+        const saved = localStorage.getItem("ghasiq_theme");
+        applyTheme(saved === "light" ? "light" : "dark");
+    }
+
+    themeToggle.addEventListener("click", () => {
+        const isLight = bodyEl.classList.contains("light");
+        applyTheme(isLight ? "dark" : "light");
+    });
+
+    initTheme();
+
+    // ===== Role Mapping =====
+    function mapRole(username) {
+        const u = username.toLowerCase();
+
+        if (u.includes("ahmed")) return "IT Head";
+        if (u.includes("mohamed") || u.includes("mohammad")) return "HR Head";
+        if (u.includes("emad")) return "Finance Head";
+        if (u.includes("hamed") || u.includes("hamad")) return "General Manager";
+
+        return null; // غير مسموح
+    }
+
+    // ===== Login =====
+    function login() {
+        const usernameInput = document.getElementById("username");
+        const passwordInput = document.getElementById("password");
+        const errorBox = document.getElementById("errorBox");
+
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        errorBox.style.display = "none";
+        errorBox.textContent = "";
+
+        if (!username || !password) {
+            errorBox.style.display = "block";
+            errorBox.textContent = "من فضلك أدخل اسم المستخدم وكلمة المرور.";
+            return;
+        }
+
+        if (password !== "12345") {
+            errorBox.style.display = "block";
+            errorBox.textContent = "كلمة المرور غير صحيحة.";
+            return;
+        }
+
+        const role = mapRole(username);
+        if (!role) {
+            errorBox.style.display = "block";
+            errorBox.textContent = "اسم المستخدم غير مصرح له بالدخول.";
+            return;
+        }
+
+        const userObj = {
+            username: username,
+            role: role,
+            login: true
+        };
+
+        localStorage.setItem("ghasiq_user", JSON.stringify(userObj));
+
+        window.location.href = "index.html";
+    }
+
+    // Enter = Login
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+            login();
+        }
+    });
+</script>
+</body>
+</html>
