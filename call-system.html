@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet" />
-    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
 
     <style>
         :root {
@@ -208,12 +207,6 @@
             color:var(--text-muted);
         }
 
-        .video-grid {
-            display:grid;
-            grid-template-columns:1fr;
-            gap:12px;
-        }
-
         .video-box {
             border-radius:16px;
             background:var(--bg-card);
@@ -225,12 +218,6 @@
             font-size:12px;
             color:var(--text-muted);
             margin-bottom:6px;
-        }
-
-        video {
-            width:100%;
-            border-radius:10px;
-            background:#000;
         }
 
         .status-bar {
@@ -387,7 +374,7 @@
     </header>
 
     <section class="call-layout">
-        <!-- فيديو -->
+        <!-- فيديو / Jitsi -->
         <div class="call-card">
             <div class="call-header">
                 <div class="call-header-title" data-i18n="call_title_main">غرفة الاتصال الداخلي للموظفين</div>
@@ -397,15 +384,9 @@
                 </div>
             </div>
 
-            <div class="video-grid">
-                <div class="video-box">
-                    <div class="video-label" data-i18n="video_label_local">الفيديو الخاص بك</div>
-                    <video id="localVideo" autoplay muted playsinline></video>
-                </div>
-                <div class="video-box">
-                    <div class="video-label" data-i18n="video_label_remote">الطرف الآخر</div>
-                    <video id="remoteVideo" autoplay playsinline></video>
-                </div>
+            <div class="video-box">
+                <div class="video-label" data-i18n="video_label_local">غرفة الاجتماع</div>
+                <div id="jitsi-container" style="width:100%; height:420px; border-radius:14px; overflow:hidden; background:#000;"></div>
             </div>
 
             <div class="status-bar">
@@ -419,8 +400,8 @@
             <div class="call-header">
                 <div class="call-header-title" data-i18n="call_title_ctrl">إدارة الاتصال</div>
                 <div class="call-header-sub" data-i18n="call_sub_ctrl">
-                    يتم توليد معرف ثابت بناءً على دور المستخدم. شارِك المعرف مع الموظف الآخر،
-                    واطلب منه إدخاله في خانة "معرّف الطرف الآخر".
+                    يتم توليد معرف ثابت بناءً على دور المستخدم. يمكنك إدخال معرّف غرفة ثابت
+                    (مثل GHASIQ-IT-HEAD) أو استخدام معرفك أنت كغرفة الاجتماع.
                 </div>
             </div>
 
@@ -430,7 +411,7 @@
             </div>
 
             <div class="remote-input-row">
-                <label style="font-size:13px;" data-i18n="label_remote_id">معرّف الموظف الآخر:</label>
+                <label style="font-size:13px;" data-i18n="label_remote_id">معرّف غرفة الاجتماع (اختياري):</label>
                 <input id="remoteIdInput"
                        type="text"
                        data-i18n-placeholder="remote_id_placeholder"
@@ -444,7 +425,7 @@
 
             <div class="hint" data-i18n="hint_text">
                 • تأكد أن الطرفين متصلين بالإنترنت.<br>
-                • لكل رئيس قسم معرف ثابت، مثل:
+                • يمكن الاتفاق على اسم غرفة ثابت، مثل:
                 <span>GHASIQ-IT-HEAD</span>، <span>GHASIQ-HR-HEAD</span>، <span>GHASIQ-FINANCE-HEAD</span>، <span>GHASIQ-GM</span>.
             </div>
         </div>
@@ -454,6 +435,9 @@
         © <span>Ghasiq</span> Logistical Support & Operations — جميع الحقوق محفوظة.
     </footer>
 </div>
+
+<!-- Jitsi external API -->
+<script src="https://meet.jit.si/external_api.js"></script>
 
 <script>
     // ===== Theme =====
@@ -512,27 +496,15 @@
     const callTexts = {
         ar: {
             ready: "جاهز لبدء مكالمة",
-            peer_error: "خطأ في الاتصال بخادم PeerJS. تأكد من الاتصال بالإنترنت.",
-            incoming_call: "يتم استقبال مكالمة...",
-            media_error: "تعذر فتح الكاميرا/المايك.",
             call_active: "المكالمة نشطة",
-            call_closed: "تم إنهاء المكالمة",
-            call_error: "حدث خطأ أثناء المكالمة",
             call_ended_ready: "تم إنهاء المكالمة. جاهز لاتصال جديد.",
-            alert_remote_required: "الرجاء إدخال معرّف الموظف الآخر.",
-            media_error_onload: "تعذر فتح الكاميرا/المايك. تأكد من السماح في المتصفح."
+            call_error: "حدث خطأ أثناء فتح غرفة الاتصال."
         },
         en: {
             ready: "Ready to start a call",
-            peer_error: "Error connecting to PeerJS server. Please check your internet connection.",
-            incoming_call: "Incoming call...",
-            media_error: "Unable to access camera/microphone.",
             call_active: "Call is active",
-            call_closed: "Call ended",
-            call_error: "An error occurred during the call",
             call_ended_ready: "Call ended. Ready for a new call.",
-            alert_remote_required: "Please enter the other employee's ID.",
-            media_error_onload: "Unable to access camera/microphone. Please allow access in the browser."
+            call_error: "An error occurred while opening the meeting room."
         }
     };
 
@@ -542,7 +514,7 @@
         return dict[key] || key;
     }
 
-    // ===== Ghasiq Call System / PeerJS =====
+    // ===== Ghasiq Call System / Jitsi =====
     const user = window.__gh_user || { role: "User" };
 
     function normalizeRole(r) {
@@ -555,15 +527,12 @@
 
     const myIdBox = document.getElementById("myIdBox");
     const remoteIdInput = document.getElementById("remoteIdInput");
-    const localVideo = document.getElementById("localVideo");
-    const remoteVideo = document.getElementById("remoteVideo");
     const callStatus = document.getElementById("callStatus");
     const btnStartCall = document.getElementById("btnStartCall");
     const btnEndCall = document.getElementById("btnEndCall");
+    const jitsiContainer = document.getElementById("jitsi-container");
 
-    let peer = null;
-    let localStream = null;
-    let currentCall = null;
+    let jitsiApi = null;
 
     function setStatus(textKey, isError) {
         const text = trCall(textKey);
@@ -576,104 +545,56 @@
         }
     }
 
-    function initPeer() {
-        peer = new Peer(myPeerId, {
-            debug: 1
-        });
+    // عرض الـ ID
+    myIdBox.textContent = myPeerId;
+    setStatus("ready", false);
 
-        peer.on("open", (id) => {
-            myIdBox.textContent = id;
-            setStatus("ready", false);
-        });
+    function startJitsiCall() {
+        // لو المستخدم كتب معرف غرفة، استخدمه؛ غير كده استخدم معرفه هو
+        const roomName = (remoteIdInput.value.trim() || myPeerId);
 
-        peer.on("error", (err) => {
-            console.error(err);
-            setStatus("peer_error", true);
-        });
+        // لو في جلسة سابقة، اقفلها
+        if (jitsiApi) {
+            jitsiApi.dispose();
+            jitsiApi = null;
+            jitsiContainer.innerHTML = "";
+        }
 
-        peer.on("call", (call) => {
-            setStatus("incoming_call", false);
-            getMediaStream().then((stream) => {
-                call.answer(stream);
-                bindCallEvents(call);
-            }).catch((err) => {
-                console.error(err);
-                setStatus("media_error", true);
-            });
-        });
-    }
+        const domain = "meet.jit.si";
+        const options = {
+            roomName: roomName,
+            width: "100%",
+            height: 420,
+            parentNode: jitsiContainer,
+            interfaceConfigOverwrite: {
+                SHOW_JITSI_WATERMARK: false,
+                HIDE_INVITE_MORE_HEADER: true
+            },
+            configOverwrite: {
+                disableDeepLinking: true
+            }
+        };
 
-    function getMediaStream() {
-        if (localStream) return Promise.resolve(localStream);
-
-        return navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-            .then((stream) => {
-                localStream = stream;
-                localVideo.srcObject = stream;
-                return stream;
-            });
-    }
-
-    function bindCallEvents(call) {
-        currentCall = call;
-        setStatus("call_active", false);
-
-        call.on("stream", (remoteStream) => {
-            remoteVideo.srcObject = remoteStream;
-        });
-
-        call.on("close", () => {
-            setStatus("call_closed", true);
-            remoteVideo.srcObject = null;
-        });
-
-        call.on("error", () => {
+        try {
+            jitsiApi = new JitsiMeetExternalAPI(domain, options);
+            setStatus("call_active", false);
+        } catch (e) {
+            console.error(e);
             setStatus("call_error", true);
-        });
+        }
     }
 
-    btnStartCall.addEventListener("click", () => {
-        const remoteId = remoteIdInput.value.trim();
-        if (!remoteId) {
-            alert(trCall("alert_remote_required"));
-            return;
+    function endJitsiCall() {
+        if (jitsiApi) {
+            jitsiApi.dispose();
+            jitsiApi = null;
+            jitsiContainer.innerHTML = "";
         }
-
-        setStatus("incoming_call", false);
-
-        getMediaStream().then((stream) => {
-            const call = peer.call(remoteId, stream);
-            bindCallEvents(call);
-        }).catch((err) => {
-            console.error(err);
-            setStatus("media_error", true);
-        });
-    });
-
-    btnEndCall.addEventListener("click", () => {
-        if (currentCall) {
-            currentCall.close();
-            currentCall = null;
-        }
-        if (localStream) {
-            localStream.getTracks().forEach(t => t.stop());
-            localStream = null;
-            localVideo.srcObject = null;
-        }
-        remoteVideo.srcObject = null;
         setStatus("call_ended_ready", false);
-    });
+    }
 
-    // تشغيل Peer
-    initPeer();
-
-    // فتح الكاميرا أوتوماتيك عند تحميل الصفحة
-    window.addEventListener('load', () => {
-        getMediaStream().catch(err => {
-            console.error(err);
-            setStatus("media_error_onload", true);
-        });
-    });
+    btnStartCall.addEventListener("click", startJitsiCall);
+    btnEndCall.addEventListener("click", endJitsiCall);
 </script>
 
 <script>
@@ -691,23 +612,22 @@
             call_title_main: "Internal call room for employees",
             call_sub_main: "Use this room for quick operational meetings between Ghasiq departments (operations, maintenance, HR, finance, general management).",
 
-            video_label_local: "Your video",
-            video_label_remote: "Remote side",
+            video_label_local: "Meeting room",
 
             status_prefix: "Call status:",
             status_ready: "Ready to start a call",
 
             call_title_ctrl: "Call management",
-            call_sub_ctrl: "A fixed ID is generated based on the user's role. Share this ID with the other employee and ask them to enter it in the 'Remote ID' field.",
+            call_sub_ctrl: "A fixed ID is generated based on the user's role. You can enter a shared room ID (e.g. GHASIQ-IT-HEAD) or use your own ID as the meeting room.",
 
             label_my_id: "Your ID:",
-            label_remote_id: "Other employee ID:",
+            label_remote_id: "Meeting room ID (optional):",
             remote_id_placeholder: "Example: GHASIQ-IT-HEAD or GHASIQ-HR-HEAD",
 
             btn_start_call: "Start call",
             btn_end_call: "End call",
 
-            hint_text: "• Make sure both sides are connected to the internet.<br>• Each department head has a fixed ID such as: <span>GHASIQ-IT-HEAD</span>, <span>GHASIQ-HR-HEAD</span>, <span>GHASIQ-FINANCE-HEAD</span>, <span>GHASIQ-GM</span>.",
+            hint_text: "• Make sure both sides are connected to the internet.<br>• You can agree on a fixed room name such as: <span>GHASIQ-IT-HEAD</span>, <span>GHASIQ-HR-HEAD</span>, <span>GHASIQ-FINANCE-HEAD</span>, <span>GHASIQ-GM</span>.",
 
             footer_text: "© <span>Ghasiq</span> Logistical Support & Operations — All rights reserved."
         }
@@ -751,12 +671,6 @@
 
         if (translations[lang].page_title) {
             document.title = translations[lang].page_title;
-        }
-
-        // بعد تغيير اللغة، حدّث نص الحالة الحالية حسب اللغة
-        const callStatus = document.getElementById("callStatus");
-        if (callStatus && callStatus.dataset.i18n === "status_ready") {
-            callStatus.innerHTML = translations[lang].status_ready || callStatus.innerHTML;
         }
     }
 
