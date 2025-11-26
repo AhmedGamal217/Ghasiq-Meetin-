@@ -1,429 +1,488 @@
-    <!DOCTYPE html>
-    <html lang="ar" dir="rtl">
-    <head>
-        <meta charset="UTF-8" />
-        <title>Ghasiq - نظام الاتصال الداخلي</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <title>Ghasiq - نظام الاتصال الداخلي</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet" />
-        <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
 
-        <style>
-            :root {
-                --primary: #2563eb;
-                --primary-light: #3b82f6;
-                --accent: #22c55e;
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --accent: #22c55e;
 
-                --bg-main: #020617;
-                --bg-elevated: rgba(15, 23, 42, 0.94);
-                --bg-card: rgba(15, 23, 42, 0.98);
-                --border-subtle: rgba(148, 163, 184, 0.35);
+            --bg-main: #020617;
+            --bg-elevated: rgba(15, 23, 42, 0.94);
+            --bg-card: rgba(15, 23, 42, 0.98);
+            --border-subtle: rgba(148, 163, 184, 0.35);
 
-                --text-main: #e5e7eb;
-                --text-muted: #9ca3af;
-                --shadow-strong: 0 20px 45px rgba(0, 0, 0, 0.8);
-            }
+            --text-main: #e5e7eb;
+            --text-muted: #9ca3af;
+            --shadow-strong: 0 20px 45px rgba(0, 0, 0, 0.8);
+        }
 
-            body.light {
-                --bg-main: #f5f7fb;
-                --bg-elevated: #ffffff;
-                --bg-card: #ffffff;
-                --border-subtle: rgba(148, 163, 184, 0.5);
-                --text-main: #0f172a;
-                --text-muted: #6b7280;
-                --shadow-strong: 0 20px 45px rgba(15, 23, 42, 0.15);
-            }
+        body.light {
+            --bg-main: #f5f7fb;
+            --bg-elevated: #ffffff;
+            --bg-card: #ffffff;
+            --border-subtle: rgba(148, 163, 184, 0.5);
+            --text-main: #0f172a;
+            --text-muted: #6b7280;
+            --shadow-strong: 0 20px 45px rgba(15, 23, 42, 0.15);
+        }
 
-            * { margin:0; padding:0; box-sizing:border-box; }
+        * { margin:0; padding:0; box-sizing:border-box; }
 
-            body {
-                font-family:"Cairo",system-ui;
-                background:
-                    radial-gradient(circle at top left, rgba(37, 99, 235, 0.35), transparent 55%),
-                    radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.28), transparent 55%),
-                    linear-gradient(135deg, #00020b, var(--bg-main) 45%, #00010a);
-                color:var(--text-main);
-                min-height:100vh;
-            }
+        body {
+            font-family:"Cairo",system-ui;
+            background:
+                radial-gradient(circle at top left, rgba(37, 99, 235, 0.35), transparent 55%),
+                radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.28), transparent 55%),
+                linear-gradient(135deg, #00020b, var(--bg-main) 45%, #00010a);
+            color:var(--text-main);
+            min-height:100vh;
+        }
 
-            body.light {
-                background:
-                    radial-gradient(circle at top left, rgba(191, 219, 254, 0.7), transparent 55%),
-                    radial-gradient(circle at bottom right, rgba(219, 234, 254, 0.7), transparent 55%),
-                    linear-gradient(135deg, #e5edff, #f9fafb 50%, #eff6ff);
-            }
+        body.light {
+            background:
+                radial-gradient(circle at top left, rgba(191, 219, 254, 0.7), transparent 55%),
+                radial-gradient(circle at bottom right, rgba(219, 234, 254, 0.7), transparent 55%),
+                linear-gradient(135deg, #e5edff, #f9fafb 50%, #eff6ff);
+        }
 
-            a { text-decoration:none; color:inherit; }
+        a { text-decoration:none; color:inherit; }
 
-            .page {
-                max-width:1140px;
-                margin:0 auto;
-                padding:20px 18px 40px;
-            }
+        .page {
+            max-width:1140px;
+            margin:0 auto;
+            padding:20px 18px 40px;
+        }
 
-            /* NAVBAR */
-            .navbar {
-                display:flex;
-                align-items:center;
-                justify-content:space-between;
-                padding:14px 18px;
-                border-radius:16px;
-                background:var(--bg-elevated);
-                box-shadow:
-                    0 16px 35px rgba(0,0,0,0.75),
-                    0 0 0 1px rgba(148,163,184,0.3);
-                margin-bottom:26px;
-                backdrop-filter:blur(14px);
-            }
+        /* NAVBAR */
+        .navbar {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:14px 18px;
+            border-radius:16px;
+            background:var(--bg-elevated);
+            box-shadow:
+                0 16px 35px rgba(0,0,0,0.75),
+                0 0 0 1px rgba(148,163,184,0.3);
+            margin-bottom:26px;
+            backdrop-filter:blur(14px);
+        }
 
-            .navbar-left {
-                display:flex;
-                align-items:center;
-                gap:14px;
-            }
+        .navbar-left {
+            display:flex;
+            align-items:center;
+            gap:14px;
+        }
 
-            .logo {
-                height:46px;
-                cursor:pointer;
-            }
+        .logo {
+            height:46px;
+            cursor:pointer;
+        }
 
-            .nav-links {
-                display:flex;
-                gap:16px;
-                font-size:14px;
-                color:var(--text-muted);
-            }
+        .nav-links {
+            display:flex;
+            gap:16px;
+            font-size:14px;
+            color:var(--text-muted);
+        }
 
-            .nav-links a {
-                position:relative;
-                padding-bottom:4px;
-            }
+        .nav-links a {
+            position:relative;
+            padding-bottom:4px;
+        }
 
-            .nav-links a::after {
-                content:"";
-                position:absolute;
-                right:0;
-                bottom:0;
-                width:0;
-                height:2px;
-                border-radius:999px;
-                background:linear-gradient(90deg,var(--primary-light),var(--primary));
-                transition:width .18s ease;
-            }
+        .nav-links a::after {
+            content:"";
+            position:absolute;
+            right:0;
+            bottom:0;
+            width:0;
+            height:2px;
+            border-radius:999px;
+            background:linear-gradient(90deg,var(--primary-light),var(--primary));
+            transition:width .18s ease;
+        }
 
-            .nav-links a:hover::after {
-                width:100%;
-            }
+        .nav-links a:hover::after {
+            width:100%;
+        }
 
-            .nav-links a.active {
-                color:#e5e7eb;
-                font-weight:600;
-            }
+        .nav-links a.active {
+            color:#e5e7eb;
+            font-weight:600;
+        }
 
-            .nav-links a.active::after {
-                width:100%;
-            }
+        .nav-links a.active::after {
+            width:100%;
+        }
 
-            .nav-actions {
-                display:flex;
-                align-items:center;
-                gap:8px;
-            }
+        .nav-actions {
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
 
-            .btn-toggle-theme,
-            .btn-logout,
-            .btn-sm-outline {
-                border-radius:999px;
-                padding:6px 12px;
-                font-size:12px;
-                cursor:pointer;
-                border:1px solid var(--border-subtle);
-                background:rgba(15,23,42,0.85);
-                color:#e5e7eb;
-            }
+        .btn-toggle-theme,
+        .btn-logout,
+        .btn-sm-outline {
+            border-radius:999px;
+            padding:6px 12px;
+            font-size:12px;
+            cursor:pointer;
+            border:1px solid var(--border-subtle);
+            background:rgba(15,23,42,0.85);
+            color:#e5e7eb;
+        }
 
-            body.light .btn-toggle-theme,
-            body.light .btn-logout,
-            body.light .btn-sm-outline {
-                background:#ffffff;
-                color:#0f172a;
-            }
+        body.light .btn-toggle-theme,
+        body.light .btn-logout,
+        body.light .btn-sm-outline {
+            background:#ffffff;
+            color:#0f172a;
+        }
 
-            .btn-sm-outline {
-                border-color:var(--primary-light);
-                color:#dbeafe;
-            }
+        .btn-sm-outline {
+            border-color:var(--primary-light);
+            color:#dbeafe;
+        }
 
-            body.light .btn-sm-outline {
-                color:#1d4ed8;
-            }
+        body.light .btn-sm-outline {
+            color:#1d4ed8;
+        }
 
-            .btn-logout {
-                border-color:#f97373;
-                color:#fecaca;
-            }
+        .btn-logout {
+            border-color:#f97373;
+            color:#fecaca;
+        }
 
-            body.light .btn-logout {
-                color:#b91c1c;
-            }
+        body.light .btn-logout {
+            color:#b91c1c;
+        }
 
-            .user-chip {
-                font-size:11px;
-                padding:4px 10px;
-                border-radius:999px;
-                border:1px solid rgba(148,163,184,0.7);
-                color:var(--text-muted);
-            }
+        .user-chip {
+            font-size:11px;
+            padding:4px 10px;
+            border-radius:999px;
+            border:1px solid rgba(148,163,184,0.7);
+            color:var(--text-muted);
+        }
 
-            /* LAYOUT */
+        /* LAYOUT */
+        .call-layout {
+            display:grid;
+            grid-template-columns: 280px minmax(0, 1fr); /* Sidebar + Meeting */
+            gap:22px;
+            align-items:flex-start;
+        }
+
+        @media(max-width:900px){
             .call-layout {
-                display:grid;
-                grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);
-                gap:20px;
-            }
-
-            @media(max-width:900px){
-                .call-layout { grid-template-columns:1fr; }
-            }
-
-            .call-card {
-                border-radius:22px;
-                background:var(--bg-elevated);
-                border:1px solid var(--border-subtle);
-                box-shadow:var(--shadow-strong);
-                padding:18px 18px 20px;
-            }
-
-            .call-header {
-                margin-bottom:12px;
-            }
-
-            .call-header-title {
-                font-size:18px;
-                margin-bottom:4px;
-            }
-
-            .call-header-sub {
-                font-size:13px;
-                color:var(--text-muted);
-            }
-
-            .video-grid {
-                display:grid;
                 grid-template-columns:1fr;
-                gap:12px;
             }
+        }
 
-            .video-box {
-                border-radius:16px;
-                background:var(--bg-card);
-                border:1px solid var(--border-subtle);
-                padding:10px;
+        /* الكارد الرئيسي بتاع الميتينج */
+        .call-card {
+            border-radius:22px;
+            background:var(--bg-elevated);
+            border:1px solid var(--border-subtle);
+            box-shadow:var(--shadow-strong);
+            padding:18px 18px 20px;
+            max-width:820px;
+            margin-inline:auto;
+        }
+
+        /* SIDEBAR */
+        .controls-box {
+            border-radius:20px;
+            background:var(--bg-elevated);
+            border:1px solid var(--border-subtle);
+            box-shadow:var(--shadow-strong);
+            padding:16px 14px 18px;
+            display:flex;
+            flex-direction:column;
+            gap:14px;
+            position:sticky;
+            top:90px;
+            height:fit-content;
+        }
+
+        .sidebar-header {
+            border-bottom:1px solid rgba(148,163,184,0.25);
+            padding-bottom:10px;
+            margin-bottom:6px;
+        }
+
+        .sidebar-section {
+            padding:6px 2px;
+            border-bottom:1px dashed rgba(148,163,184,0.25);
+        }
+
+        .sidebar-section:last-of-type {
+            border-bottom:none;
+        }
+
+        .sidebar-hint {
+            font-size:11px;
+        }
+
+        .call-header {
+            margin-bottom:12px;
+        }
+
+        .call-header-title {
+            font-size:18px;
+            margin-bottom:4px;
+        }
+
+        .call-header-sub {
+            font-size:13px;
+            color:var(--text-muted);
+        }
+
+        .video-grid {
+            display:grid;
+            grid-template-columns:repeat(2, minmax(0, 1fr)); /* شاشتين جنب بعض */
+            gap:12px;
+            align-items:stretch;
+        }
+
+        @media(max-width:900px){
+            .video-grid {
+                grid-template-columns:1fr;
             }
+        }
 
-            .video-label {
-                font-size:12px;
-                color:var(--text-muted);
-                margin-bottom:6px;
-            }
+        .video-box {
+            border-radius:16px;
+            background:var(--bg-card);
+            border:1px solid var(--border-subtle);
+            padding:10px;
+            display:flex;
+            flex-direction:column;
+        }
 
-            video {
-                width:100%;
-                border-radius:10px;
-                background:#000;
-            }
+        .video-label {
+            font-size:12px;
+            color:var(--text-muted);
+            margin-bottom:6px;
+        }
 
-            .status-bar {
-                margin-top:8px;
-                font-size:12px;
-                color:var(--text-muted);
-            }
+        video {
+            width:100%;
+            border-radius:10px;
+            background:#000;
+            flex:1;
+        }
 
-            .status-green {
-                color:#22c55e;
-            }
+        .status-bar {
+            margin-top:8px;
+            font-size:12px;
+            color:var(--text-muted);
+            display:flex;
+            flex-wrap:wrap;
+            gap:6px;
+            align-items:center;
+        }
 
-            .controls-box {
-                border-radius:22px;
-                background:var(--bg-elevated);
-                border:1px solid var(--border-subtle);
-                box-shadow:var(--shadow-strong);
-                padding:18px 18px 18px;
-            }
+        .status-green {
+            color:#22c55e;
+        }
 
-            .id-row {
-                margin-bottom:12px;
-                font-size:13px;
-            }
+        .status-timer-label {
+            margin-inline-start:10px;
+        }
 
-            .my-id {
-                padding:8px 10px;
-                border-radius:10px;
-                background:var(--bg-card);
-                border:1px solid rgba(56,189,248,0.4);
-                font-size:12px;
-                word-break:break-all;
-            }
+        .status-timer {
+            font-family:monospace;
+        }
 
-            .remote-input-row {
-                margin-top:10px;
-                display:flex;
-                flex-direction:column;
-                gap:6px;
-            }
+        .id-row {
+            margin-bottom:12px;
+            font-size:13px;
+        }
 
-            .remote-input-row input {
-                width:100%;
-                padding:8px 10px;
-                border-radius:8px;
-                border:1px solid var(--border-subtle);
-                background:rgba(15,23,42,0.85);
-                color:var(--text-main);
-                font-size:13px;
-                outline:none;
-            }
+        .my-id {
+            padding:8px 10px;
+            border-radius:10px;
+            background:var(--bg-card);
+            border:1px solid rgba(56,189,248,0.4);
+            font-size:12px;
+            word-break:break-all;
+        }
 
-            body.light .remote-input-row input {
-                background:#ffffff;
-                color:#0f172a;
-            }
+        .remote-input-row {
+            margin-top:10px;
+            display:flex;
+            flex-direction:column;
+            gap:6px;
+        }
 
-            .buttons-row {
-                display:flex;
-                flex-wrap:wrap;
-                gap:8px;
-                margin-top:10px;
-            }
+        .remote-input-row input {
+            width:100%;
+            padding:8px 10px;
+            border-radius:8px;
+            border:1px solid var(--border-subtle);
+            background:rgba(15,23,42,0.85);
+            color:var(--text-main);
+            font-size:13px;
+            outline:none;
+        }
 
-            .btn-primary {
-                border-radius:999px;
-                padding:9px 16px;
-                border:none;
-                cursor:pointer;
-                background:linear-gradient(135deg,var(--primary),var(--primary-light));
-                color:white;
-                font-size:13px;
-            }
+        body.light .remote-input-row input {
+            background:#ffffff;
+            color:#0f172a;
+        }
 
-            .btn-danger {
-                border-radius:999px;
-                padding:9px 16px;
-                border:none;
-                cursor:pointer;
-                background:linear-gradient(135deg,#b91c1c,#ef4444);
-                color:white;
-                font-size:13px;
-            }
+        .buttons-row {
+            display:flex;
+            flex-wrap:wrap;
+            gap:8px;
+            margin-top:6px;
+            align-items:center;
+        }
 
-            .hint {
-                margin-top:12px;
-                font-size:12px;
-                color:var(--text-muted);
-            }
+        .buttons-row-main {
+            display:flex;
+            flex-wrap:wrap;
+            gap:8px;
+            margin-top:10px;
+        }
 
-            .hint span {
-                color:var(--primary-light);
-            }
+        .btn-primary {
+            border-radius:999px;
+            padding:9px 16px;
+            border:none;
+            cursor:pointer;
+            background:linear-gradient(135deg,var(--primary),var(--primary-light));
+            color:white;
+            font-size:13px;
+        }
 
-            .footer {
-                margin-top:26px;
-                text-align:center;
-                font-size:12px;
-                color:var(--text-muted);
-            }
+        .btn-danger {
+            border-radius:999px;
+            padding:9px 16px;
+            border:none;
+            cursor:pointer;
+            background:linear-gradient(135deg,#b91c1c,#ef4444);
+            color:white;
+            font-size:13px;
+        }
 
-            .footer span {
-                color:var(--primary-light);
-            }
-        </style>
-    </head>
-    <body class="dark">
+        /* أزرار الكاميرا والمايك */
+        .btn-icon {
+            width:38px;
+            height:38px;
+            border-radius:999px;
+            border:1px solid var(--border-subtle);
+            background:var(--bg-card);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            cursor:pointer;
+            font-size:18px;
+        }
 
-    <!-- حماية الصفحة -->
-    <script>
-        (function guard() {
-            const user = JSON.parse(localStorage.getItem("ghasiq_user") || "null");
-            if (!user || !user.login) {
-                window.location.href = "login.html";
-            }
-            window.__gh_user = user;
-        })();
-    </script>
+        body.light .btn-icon {
+            background:#ffffff;
+        }
 
-    <div class="page">
+        .btn-icon.off {
+            border-color:#f97373;
+            color:#fecaca;
+        }
 
-        <!-- NAVBAR -->
-        <header class="navbar">
-            <div class="navbar-left">
-                <a href="index.html">
-                    <img src="logo.png" alt="GHASIQ Logo" class="logo" />
-                </a>
+        .hint {
+            margin-top:6px;
+            font-size:12px;
+            color:var(--text-muted);
+        }
 
-                <nav class="nav-links">
-                    <a href="index.html#about" data-i18n="nav_about">عن Ghasiq</a>
-                    <a href="services.html" data-i18n="nav_services">الخدمات</a>
-                    <a href="call-system.html" class="active" data-i18n="nav_call_system">نظام الاتصال</a>
-                    <a href="notifications.html" data-i18n="nav_notifications">الإشعارات</a>
-                </nav>
+        .hint span {
+            color:var(--primary-light);
+        }
 
+        .footer {
+            margin-top:26px;
+            text-align:center;
+            font-size:12px;
+            color:var(--text-muted);
+        }
+
+        .footer span {
+            color:var(--primary-light);
+        }
+    </style>
+</head>
+<body class="dark">
+
+<!-- حماية الصفحة -->
+<script>
+    (function guard() {
+        const user = JSON.parse(localStorage.getItem("ghasiq_user") || "null");
+        if (!user || !user.login) {
+            window.location.href = "login.html";
+        }
+        window.__gh_user = user;
+    })();
+</script>
+
+<div class="page">
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <div class="navbar-left">
+            <a href="index.html">
+                <img src="logo.png" alt="GHASIQ Logo" class="logo" />
+            </a>
+
+            <nav class="nav-links">
+                <a href="index.html#about" data-i18n="nav_about">عن Ghasiq</a>
+                <a href="services.html" data-i18n="nav_services">الخدمات</a>
+                <a href="call-system.html" class="active" data-i18n="nav_call_system">نظام الاتصال</a>
+                <a href="notifications.html" data-i18n="nav_notifications">الإشعارات</a>
+            </nav>
+
+        </div>
+
+        <div class="nav-actions">
+            <span id="userChip" class="user-chip">User</span>
+
+            <!-- زر اللغة -->
+            <button class="btn-toggle-theme" id="langToggle" type="button">
+                <span id="langLabel">AR</span>
+            </button>
+
+            <!-- الثيم -->
+            <button class="btn-toggle-theme" id="themeToggle" type="button">
+                <span id="themeLabel">Dark</span>
+                <span id="themeIcon">☾</span>
+            </button>
+
+            <button class="btn-logout" type="button" onclick="logout()" data-i18n="btn_logout">تسجيل الخروج</button>
+        </div>
+    </header>
+
+    <section class="call-layout">
+        <!-- SIDEBAR: إدارة الاتصال -->
+        <aside class="controls-box">
+            <div class="call-header sidebar-header">
+                <div class="call-header-title" data-i18n="call_title_ctrl">إدارة الاتصال</div>
+                <div class="call-header-sub" data-i18n="call_sub_ctrl">
+                    يتم توليد معرف ثابت بناءً على دور المستخدم. شارِك المعرف مع الموظف الآخر،
+                    واطلب منه إدخاله في خانة "معرّف الطرف الآخر".
+                </div>
             </div>
 
-            <div class="nav-actions">
-                <span id="userChip" class="user-chip">User</span>
-
-                <!-- زر اللغة -->
-                <button class="btn-toggle-theme" id="langToggle" type="button">
-                    <span id="langLabel">AR</span>
-                </button>
-
-                <!-- الثيم -->
-                <button class="btn-toggle-theme" id="themeToggle" type="button">
-                    <span id="themeLabel">Dark</span>
-                    <span id="themeIcon">☾</span>
-                </button>
-
-                <button class="btn-logout" type="button" onclick="logout()" data-i18n="btn_logout">تسجيل الخروج</button>
-            </div>
-        </header>
-
-        <section class="call-layout">
-            <!-- فيديو -->
-            <div class="call-card">
-                <div class="call-header">
-                    <div class="call-header-title" data-i18n="call_title_main">غرفة الاتصال الداخلي للموظفين</div>
-                    <div class="call-header-sub" data-i18n="call_sub_main">
-                        استخدم هذه الغرفة لاجتماعات التشغيل السريعة بين أقسام Ghasiq
-                        (التشغيل، الصيانة، الموارد البشرية، المالية، الإدارة العامة).
-                    </div>
-                </div>
-
-                <div class="video-grid">
-                    <div class="video-box">
-                        <div class="video-label" data-i18n="video_label_local">الفيديو الخاص بك</div>
-                        <video id="localVideo" autoplay muted playsinline></video>
-                    </div>
-                    <div class="video-box">
-                        <div class="video-label" data-i18n="video_label_remote">الطرف الآخر</div>
-                        <video id="remoteVideo" autoplay playsinline></video>
-                    </div>
-                </div>
-
-                <div class="status-bar">
-                    <span data-i18n="status_prefix">حالة الاتصال:</span>
-                    <span id="callStatus" class="status-green" data-i18n="status_ready">جاهز لبدء مكالمة</span>
-                </div>
-            </div>
-
-            <!-- كنترول -->
-            <div class="controls-box">
-                <div class="call-header">
-                    <div class="call-header-title" data-i18n="call_title_ctrl">إدارة الاتصال</div>
-                    <div class="call-header-sub" data-i18n="call_sub_ctrl">
-                        يتم توليد معرف ثابت بناءً على دور المستخدم. شارِك المعرف مع الموظف الآخر،
-                        واطلب منه إدخاله في خانة "معرّف الطرف الآخر".
-                    </div>
-                </div>
-
+            <div class="sidebar-section">
                 <div class="id-row">
                     <div style="font-size:13px; margin-bottom:4px;" data-i18n="label_my_id">المعرّف الخاص بك:</div>
                     <div id="myIdBox" class="my-id">جاري التحميل...</div>
@@ -436,365 +495,497 @@
                         data-i18n-placeholder="remote_id_placeholder"
                         placeholder="مثال: GHASIQ-IT-HEAD أو GHASIQ-HR-HEAD">
                 </div>
+            </div>
 
+            <div class="sidebar-section">
                 <div class="buttons-row">
+                    <!-- أزرار الكاميرا والمايك -->
+                    <button type="button" id="btnToggleCamera" class="btn-icon" title="تشغيل/إيقاف الكاميرا">🎥</button>
+                    <button type="button" id="btnToggleMic" class="btn-icon" title="تشغيل/إيقاف المايك">🎙️</button>
+                </div>
+
+                <div class="buttons-row buttons-row-main">
                     <button class="btn-primary" id="btnStartCall" data-i18n="btn_start_call">بدء الاتصال</button>
                     <button class="btn-danger" id="btnEndCall" data-i18n="btn_end_call">إنهاء المكالمة</button>
                 </div>
+            </div>
 
+            <div class="sidebar-section sidebar-hint">
                 <div class="hint" data-i18n="hint_text">
                     • تأكد أن الطرفين متصلين بالإنترنت.<br>
                     • لكل رئيس قسم معرف ثابت، مثل:
                     <span>GHASIQ-IT-HEAD</span>، <span>GHASIQ-HR-HEAD</span>، <span>GHASIQ-FINANCE-HEAD</span>، <span>GHASIQ-GM</span>.
                 </div>
             </div>
-        </section>
+        </aside>
 
-        <footer class="footer" data-i18n="footer_text">
-            © <span>Ghasiq</span> Logistical Support & Operations — جميع الحقوق محفوظة.
-        </footer>
-    </div>
+        <!-- MAIN: غرفة الاتصال -->
+        <div class="call-card">
+            <div class="call-header">
+                <div class="call-header-title" data-i18n="call_title_main">غرفة الاتصال الداخلي للموظفين</div>
+                <div class="call-header-sub" data-i18n="call_sub_main">
+                    استخدم هذه الغرفة لاجتماعات التشغيل السريعة بين أقسام Ghasiq
+                    (التشغيل، الصيانة، الموارد البشرية، المالية، الإدارة العامة).
+                </div>
+            </div>
 
-    <script>
-        // ===== Theme =====
-        const bodyEl = document.body;
-        const themeToggle = document.getElementById("themeToggle");
-        const themeLabel = document.getElementById("themeLabel");
-        const themeIcon = document.getElementById("themeIcon");
+            <div class="video-grid">
+                <div class="video-box">
+                    <div class="video-label" data-i18n="video_label_local">الفيديو الخاص بك</div>
+                    <video id="localVideo" autoplay muted playsinline></video>
+                </div>
+                <div class="video-box">
+                    <div class="video-label" data-i18n="video_label_remote">الطرف الآخر</div>
+                    <video id="remoteVideo" autoplay playsinline></video>
+                </div>
+            </div>
 
-        function applyTheme(mode) {
-            if (mode === "light") {
-                bodyEl.classList.add("light");
-                bodyEl.classList.remove("dark");
-                themeLabel.textContent = "Light";
-                themeIcon.textContent = "☀";
-            } else {
-                bodyEl.classList.add("dark");
-                bodyEl.classList.remove("light");
-                themeLabel.textContent = "Dark";
-                themeIcon.textContent = "☾";
-            }
-            localStorage.setItem("ghasiq_theme", mode);
+            <div class="status-bar">
+                <span data-i18n="status_prefix">حالة الاتصال:</span>
+                <span id="callStatus" class="status-green" data-i18n="status_ready">جاهز لبدء مكالمة</span>
+
+                <span class="status-timer-label">| مدة المكالمة:</span>
+                <span id="callTimer" class="status-timer">00:00</span>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer" data-i18n="footer_text">
+        © <span>Ghasiq</span> Logistical Support & Operations — جميع الحقوق محفوظة.
+    </footer>
+</div>
+
+<script>
+    // ===== Theme =====
+    const bodyEl = document.body;
+    const themeToggle = document.getElementById("themeToggle");
+    const themeLabel = document.getElementById("themeLabel");
+    const themeIcon = document.getElementById("themeIcon");
+
+    function applyTheme(mode) {
+        if (mode === "light") {
+            bodyEl.classList.add("light");
+            bodyEl.classList.remove("dark");
+            themeLabel.textContent = "Light";
+            themeIcon.textContent = "☀";
+        } else {
+            bodyEl.classList.add("dark");
+            bodyEl.classList.remove("light");
+            themeLabel.textContent = "Dark";
+            themeIcon.textContent = "☾";
         }
+        localStorage.setItem("ghasiq_theme", mode);
+    }
 
-        function initTheme() {
-            const saved = localStorage.getItem("ghasiq_theme") || "dark";
-            applyTheme(saved);
+    function initTheme() {
+        const saved = localStorage.getItem("ghasiq_theme") || "dark";
+        applyTheme(saved);
+    }
+
+    themeToggle.addEventListener("click", () => {
+        const isLight = bodyEl.classList.contains("light");
+        applyTheme(isLight ? "dark" : "light");
+    });
+
+    initTheme();
+
+    // عرض اليوزر
+    (function showUser() {
+        const chip = document.getElementById("userChip");
+        const user = window.__gh_user;
+        if (!user) return;
+        chip.textContent = `${user.username} (${user.role})`;
+    })();
+
+    // Logout
+    function logout() {
+        localStorage.removeItem("ghasiq_user");
+        window.location.href = "login.html";
+    }
+
+    // ===== Helpers: اللغة الحالية =====
+    function getCurrentLang() {
+        return localStorage.getItem("ghasiq_lang") || "ar";
+    }
+
+    // ===== ترجمات الرسائل الديناميكية الخاصة بالمكالمة =====
+    const callTexts = {
+        ar: {
+            ready: "جاهز لبدء مكالمة",
+            peer_error: "خطأ في الاتصال بخادم PeerJS. تأكد من الاتصال بالإنترنت.",
+            incoming_call: "يتم استقبال مكالمة...",
+            media_error: "تعذر فتح الكاميرا/المايك.",
+            call_active: "المكالمة نشطة",
+            call_closed: "تم إنهاء المكالمة",
+            call_error: "حدث خطأ أثناء المكالمة",
+            call_ended_ready: "تم إنهاء المكالمة. جاهز لاتصال جديد.",
+            alert_remote_required: "الرجاء إدخال معرّف الموظف الآخر.",
+            media_error_onload: "تعذر فتح الكاميرا/المايك. تأكد من السماح في المتصفح."
+        },
+        en: {
+            ready: "Ready to start a call",
+            peer_error: "Error connecting to PeerJS server. Please check your internet connection.",
+            incoming_call: "Incoming call...",
+            media_error: "Unable to access camera/microphone.",
+            call_active: "Call is active",
+            call_closed: "Call ended",
+            call_error: "An error occurred during the call",
+            call_ended_ready: "Call ended. Ready for a new call.",
+            alert_remote_required: "Please enter the other employee's ID.",
+            media_error_onload: "Unable to access camera/microphone. Please allow access in the browser."
         }
+    };
 
-        themeToggle.addEventListener("click", () => {
-            const isLight = bodyEl.classList.contains("light");
-            applyTheme(isLight ? "dark" : "light");
+    function trCall(key) {
+        const lang = getCurrentLang();
+        const dict = callTexts[lang] || {};
+        return dict[key] || key;
+    }
+
+    // ===== Ghasiq Call System / PeerJS =====
+    const user = window.__gh_user || { role: "User" };
+
+    function normalizeRole(r) {
+        if (!r) return "USER";
+        return r.replace(/\s+/g, "-").toUpperCase();
+    }
+
+    const baseRole = normalizeRole(user.role); // IT-HEAD, HR-HEAD, ...
+    const myPeerId = "GHASIQ-" + baseRole;
+
+    const myIdBox = document.getElementById("myIdBox");
+    const remoteIdInput = document.getElementById("remoteIdInput");
+    const localVideo = document.getElementById("localVideo");
+    const remoteVideo = document.getElementById("remoteVideo");
+    const callStatus = document.getElementById("callStatus");
+    const btnStartCall = document.getElementById("btnStartCall");
+    const btnEndCall = document.getElementById("btnEndCall");
+    const btnToggleCamera = document.getElementById("btnToggleCamera");
+    const btnToggleMic = document.getElementById("btnToggleMic");
+    const callTimerEl = document.getElementById("callTimer");
+
+    let peer = null;
+    let localStream = null;
+    let currentCall = null;
+
+    let isCameraOn = true;
+    let isMicOn = true;
+
+    let callTimerInterval = null;
+    let callSecondsElapsed = 0;
+
+    function setStatus(textKey, isError) {
+        const text = trCall(textKey);
+        callStatus.textContent = text;
+        callStatus.classList.toggle("status-green", !isError);
+        if (isError) {
+            callStatus.style.color = "#f97373";
+        } else {
+            callStatus.style.color = "#22c55e";
+        }
+    }
+
+    function updateCameraButtonUI() {
+        if (!btnToggleCamera) return;
+        btnToggleCamera.classList.toggle("off", !isCameraOn);
+        btnToggleCamera.textContent = isCameraOn ? "🎥" : "🚫";
+    }
+
+    function updateMicButtonUI() {
+        if (!btnToggleMic) return;
+        btnToggleMic.classList.toggle("off", !isMicOn);
+        btnToggleMic.textContent = isMicOn ? "🎙️" : "🔇";
+    }
+
+    function formatTime(totalSeconds) {
+        const m = Math.floor(totalSeconds / 60);
+        const s = totalSeconds % 60;
+        const mm = m < 10 ? "0" + m : "" + m;
+        const ss = s < 10 ? "0" + s : "" + s;
+        return mm + ":" + ss;
+    }
+
+    function startCallTimer() {
+        callSecondsElapsed = 0;
+        if (callTimerInterval) clearInterval(callTimerInterval);
+        callTimerEl.textContent = "00:00";
+        callTimerInterval = setInterval(() => {
+            callSecondsElapsed++;
+            callTimerEl.textContent = formatTime(callSecondsElapsed);
+        }, 1000);
+    }
+
+    function stopCallTimer(resetToZero = true) {
+        if (callTimerInterval) {
+            clearInterval(callTimerInterval);
+            callTimerInterval = null;
+        }
+        if (resetToZero) {
+            callSecondsElapsed = 0;
+            callTimerEl.textContent = "00:00";
+        }
+    }
+
+    function initPeer() {
+        peer = new Peer(myPeerId, {
+            debug: 1
         });
 
-        initTheme();
+        peer.on("open", (id) => {
+            myIdBox.textContent = id;
+            setStatus("ready", false);
+        });
 
-        // عرض اليوزر
-        (function showUser() {
-            const chip = document.getElementById("userChip");
-            const user = window.__gh_user;
-            if (!user) return;
-            chip.textContent = `${user.username} (${user.role})`;
-        })();
+        peer.on("error", (err) => {
+            console.error(err);
+            setStatus("peer_error", true);
+        });
 
-        // Logout
-        function logout() {
-            localStorage.removeItem("ghasiq_user");
-            window.location.href = "login.html";
-        }
-
-        // ===== Helpers: اللغة الحالية =====
-        function getCurrentLang() {
-            return localStorage.getItem("ghasiq_lang") || "ar";
-        }
-
-        // ===== ترجمات الرسائل الديناميكية الخاصة بالمكالمة =====
-        const callTexts = {
-            ar: {
-                ready: "جاهز لبدء مكالمة",
-                peer_error: "خطأ في الاتصال بخادم PeerJS. تأكد من الاتصال بالإنترنت.",
-                incoming_call: "يتم استقبال مكالمة...",
-                media_error: "تعذر فتح الكاميرا/المايك.",
-                call_active: "المكالمة نشطة",
-                call_closed: "تم إنهاء المكالمة",
-                call_error: "حدث خطأ أثناء المكالمة",
-                call_ended_ready: "تم إنهاء المكالمة. جاهز لاتصال جديد.",
-                alert_remote_required: "الرجاء إدخال معرّف الموظف الآخر.",
-                media_error_onload: "تعذر فتح الكاميرا/المايك. تأكد من السماح في المتصفح."
-            },
-            en: {
-                ready: "Ready to start a call",
-                peer_error: "Error connecting to PeerJS server. Please check your internet connection.",
-                incoming_call: "Incoming call...",
-                media_error: "Unable to access camera/microphone.",
-                call_active: "Call is active",
-                call_closed: "Call ended",
-                call_error: "An error occurred during the call",
-                call_ended_ready: "Call ended. Ready for a new call.",
-                alert_remote_required: "Please enter the other employee's ID.",
-                media_error_onload: "Unable to access camera/microphone. Please allow access in the browser."
-            }
-        };
-
-        function trCall(key) {
-            const lang = getCurrentLang();
-            const dict = callTexts[lang] || {};
-            return dict[key] || key;
-        }
-
-        // ===== Ghasiq Call System / PeerJS =====
-        const user = window.__gh_user || { role: "User" };
-
-        function normalizeRole(r) {
-            if (!r) return "USER";
-            return r.replace(/\s+/g, "-").toUpperCase();
-        }
-
-        const baseRole = normalizeRole(user.role); // IT-HEAD, HR-HEAD, ...
-        const myPeerId = "GHASIQ-" + baseRole;
-
-        const myIdBox = document.getElementById("myIdBox");
-        const remoteIdInput = document.getElementById("remoteIdInput");
-        const localVideo = document.getElementById("localVideo");
-        const remoteVideo = document.getElementById("remoteVideo");
-        const callStatus = document.getElementById("callStatus");
-        const btnStartCall = document.getElementById("btnStartCall");
-        const btnEndCall = document.getElementById("btnEndCall");
-
-        let peer = null;
-        let localStream = null;
-        let currentCall = null;
-
-        function setStatus(textKey, isError) {
-            const text = trCall(textKey);
-            callStatus.textContent = text;
-            callStatus.classList.toggle("status-green", !isError);
-            if (isError) {
-                callStatus.style.color = "#f97373";
-            } else {
-                callStatus.style.color = "#22c55e";
-            }
-        }
-
-        function initPeer() {
-            peer = new Peer(myPeerId, {
-                debug: 1
-            });
-
-            peer.on("open", (id) => {
-                myIdBox.textContent = id;
-                setStatus("ready", false);
-            });
-
-            peer.on("error", (err) => {
-                console.error(err);
-                setStatus("peer_error", true);
-            });
-
-            peer.on("call", (call) => {
-                setStatus("incoming_call", false);
-                getMediaStream().then((stream) => {
-                    call.answer(stream);
-                    bindCallEvents(call);
-                }).catch((err) => {
-                    console.error(err);
-                    setStatus("media_error", true);
-                });
-            });
-        }
-
-        function getMediaStream() {
-            if (localStream) return Promise.resolve(localStream);
-
-            return navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-                .then((stream) => {
-                    localStream = stream;
-                    localVideo.srcObject = stream;
-                    return stream;
-                });
-        }
-
-        function bindCallEvents(call) {
-            currentCall = call;
-            setStatus("call_active", false);
-
-            call.on("stream", (remoteStream) => {
-                remoteVideo.srcObject = remoteStream;
-            });
-
-            call.on("close", () => {
-                setStatus("call_closed", true);
-                remoteVideo.srcObject = null;
-            });
-
-            call.on("error", () => {
-                setStatus("call_error", true);
-            });
-        }
-
-        btnStartCall.addEventListener("click", () => {
-            const remoteId = remoteIdInput.value.trim();
-            if (!remoteId) {
-                alert(trCall("alert_remote_required"));
-                return;
-            }
-
+        peer.on("call", (call) => {
             setStatus("incoming_call", false);
-
             getMediaStream().then((stream) => {
-                const call = peer.call(remoteId, stream);
+                call.answer(stream);
                 bindCallEvents(call);
             }).catch((err) => {
                 console.error(err);
                 setStatus("media_error", true);
             });
         });
+    }
 
-        btnEndCall.addEventListener("click", () => {
-            if (currentCall) {
-                currentCall.close();
-                currentCall = null;
-            }
-            if (localStream) {
-                localStream.getTracks().forEach(t => t.stop());
-                localStream = null;
-                localVideo.srcObject = null;
-            }
+    function getMediaStream() {
+        if (localStream) return Promise.resolve(localStream);
+
+        return navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then((stream) => {
+                localStream = stream;
+
+                // تأكد أن الكاميرا والمايك شغالين في البداية
+                isCameraOn = true;
+                isMicOn = true;
+                stream.getVideoTracks().forEach(t => t.enabled = true);
+                stream.getAudioTracks().forEach(t => t.enabled = true);
+                updateCameraButtonUI();
+                updateMicButtonUI();
+
+                localVideo.srcObject = stream;
+                return stream;
+            });
+    }
+
+    function bindCallEvents(call) {
+        currentCall = call;
+        setStatus("call_active", false);
+        startCallTimer();
+
+        call.on("stream", (remoteStream) => {
+            remoteVideo.srcObject = remoteStream;
+        });
+
+        call.on("close", () => {
+            setStatus("call_closed", true);
             remoteVideo.srcObject = null;
-            setStatus("call_ended_ready", false);
+            stopCallTimer();
         });
 
-        // تشغيل Peer
-        initPeer();
-
-        // فتح الكاميرا أوتوماتيك عند تحميل الصفحة
-        window.addEventListener('load', () => {
-            getMediaStream().catch(err => {
-                console.error(err);
-                setStatus("media_error_onload", true);
-            });
+        call.on("error", () => {
+            setStatus("call_error", true);
+            stopCallTimer();
         });
-    </script>
+    }
 
-    <script>
-        // ========== ترجمات الواجهة الثابتة ==========
-        const translations = {
-            ar: {}, // هتملا أوتوماتيك من الـ DOM
-            en: {
-                page_title: "Ghasiq - Internal Call System",
-                nav_about: "About Ghasiq",
-                nav_services: "Services",
-                nav_call_system: "Call System",
-                nav_notifications: "Notifications",
-                btn_logout: "Log out",
+    // أزرار الكاميرا والمايك
+    btnToggleCamera.addEventListener("click", () => {
+        if (!localStream) return;
+        const tracks = localStream.getVideoTracks();
+        if (!tracks || tracks.length === 0) return;
 
-                call_title_main: "Internal call room for employees",
-                call_sub_main: "Use this room for quick operational meetings between Ghasiq departments (operations, maintenance, HR, finance, general management).",
+        isCameraOn = !isCameraOn;
+        tracks.forEach(t => t.enabled = isCameraOn);
+        updateCameraButtonUI();
+    });
 
-                video_label_local: "Your video",
-                video_label_remote: "Remote side",
+    btnToggleMic.addEventListener("click", () => {
+        if (!localStream) return;
+        const tracks = localStream.getAudioTracks();
+        if (!tracks || tracks.length === 0) return;
 
-                status_prefix: "Call status:",
-                status_ready: "Ready to start a call",
+        isMicOn = !isMicOn;
+        tracks.forEach(t => t.enabled = isMicOn);
+        updateMicButtonUI();
+    });
 
-                call_title_ctrl: "Call management",
-                call_sub_ctrl: "A fixed ID is generated based on the user's role. Share this ID with the other employee and ask them to enter it in the 'Remote ID' field.",
-
-                label_my_id: "Your ID:",
-                label_remote_id: "Other employee ID:",
-                remote_id_placeholder: "Example: GHASIQ-IT-HEAD or GHASIQ-HR-HEAD",
-
-                btn_start_call: "Start call",
-                btn_end_call: "End call",
-
-                hint_text: "• Make sure both sides are connected to the internet.<br>• Each department head has a fixed ID such as: <span>GHASIQ-IT-HEAD</span>, <span>GHASIQ-HR-HEAD</span>, <span>GHASIQ-FINANCE-HEAD</span>, <span>GHASIQ-GM</span>.",
-
-                footer_text: "© <span>Ghasiq</span> Logistical Support & Operations — All rights reserved."
-            }
-        };
-
-        function initArabicFromDom() {
-            // عناصر innerHTML
-            document.querySelectorAll("[data-i18n]").forEach(el => {
-                const key = el.getAttribute("data-i18n");
-                if (!translations.ar[key]) {
-                    translations.ar[key] = el.innerHTML;
-                }
-            });
-
-            // placeholders
-            document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
-                const key = el.getAttribute("data-i18n-placeholder");
-                if (!translations.ar[key]) {
-                    translations.ar[key] = el.placeholder || "";
-                }
-            });
-
-            // عنوان الصفحة
-            translations.ar.page_title = document.title;
+    btnStartCall.addEventListener("click", () => {
+        const remoteId = remoteIdInput.value.trim();
+        if (!remoteId) {
+            alert(trCall("alert_remote_required"));
+            return;
         }
 
-        function applyTranslations(lang) {
-            document.querySelectorAll("[data-i18n]").forEach(el => {
-                const key = el.getAttribute("data-i18n");
-                const value = translations[lang] && translations[lang][key];
-                if (!value) return;
-                el.innerHTML = value;
-            });
+        setStatus("incoming_call", false);
 
-            document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
-                const key = el.getAttribute("data-i18n-placeholder");
-                const value = translations[lang] && translations[lang][key];
-                if (!value) return;
-                el.placeholder = value;
-            });
+        getMediaStream().then((stream) => {
+            const call = peer.call(remoteId, stream);
+            bindCallEvents(call);
+        }).catch((err) => {
+            console.error(err);
+            setStatus("media_error", true);
+        });
+    });
 
-            if (translations[lang].page_title) {
-                document.title = translations[lang].page_title;
+    btnEndCall.addEventListener("click", () => {
+        if (currentCall) {
+            currentCall.close();
+            currentCall = null;
+        }
+        if (localStream) {
+            localStream.getTracks().forEach(t => t.stop());
+            localStream = null;
+            localVideo.srcObject = null;
+        }
+        remoteVideo.srcObject = null;
+
+        // رجّع حالة الكاميرا والمايك للأصل
+        isCameraOn = true;
+        isMicOn = true;
+        updateCameraButtonUI();
+        updateMicButtonUI();
+
+        stopCallTimer();
+        setStatus("call_ended_ready", false);
+    });
+
+    // تشغيل Peer
+    initPeer();
+
+    // فتح الكاميرا أوتوماتيك عند تحميل الصفحة
+    window.addEventListener('load', () => {
+        getMediaStream().catch(err => {
+            console.error(err);
+            setStatus("media_error_onload", true);
+        });
+    });
+</script>
+
+<script>
+    // ========== ترجمات الواجهة الثابتة ==========
+    const translations = {
+        ar: {}, // هتملا أوتوماتيك من الـ DOM
+        en: {
+            page_title: "Ghasiq - Internal Call System",
+            nav_about: "About Ghasiq",
+            nav_services: "Services",
+            nav_call_system: "Call System",
+            nav_notifications: "Notifications",
+            btn_logout: "Log out",
+
+            call_title_main: "Internal call room for employees",
+            call_sub_main: "Use this room for quick operational meetings between Ghasiq departments (operations, maintenance, HR, finance, general management).",
+
+            video_label_local: "Your video",
+            video_label_remote: "Remote side",
+
+            status_prefix: "Call status:",
+            status_ready: "Ready to start a call",
+
+            call_title_ctrl: "Call management",
+            call_sub_ctrl: "A fixed ID is generated based on the user's role. Share this ID with the other employee and ask them to enter it in the 'Remote ID' field.",
+
+            label_my_id: "Your ID:",
+            label_remote_id: "Other employee ID:",
+            remote_id_placeholder: "Example: GHASIQ-IT-HEAD or GHASIQ-HR-HEAD",
+
+            btn_start_call: "Start call",
+            btn_end_call: "End call",
+
+            hint_text: "• Make sure both sides are connected to the internet.<br>• Each department head has a fixed ID such as: <span>GHASIQ-IT-HEAD</span>, <span>GHASIQ-HR-HEAD</span>, <span>GHASIQ-FINANCE-HEAD</span>, <span>GHASIQ-GM</span>.",
+
+            footer_text: "© <span>Ghasiq</span> Logistical Support & Operations — All rights reserved."
+        }
+    };
+
+    function initArabicFromDom() {
+        // عناصر innerHTML
+        document.querySelectorAll("[data-i18n]").forEach(el => {
+            const key = el.getAttribute("data-i18n");
+            if (!translations.ar[key]) {
+                translations.ar[key] = el.innerHTML;
             }
+        });
 
-            // بعد تغيير اللغة، حدّث نص الحالة الحالية حسب اللغة
-            const callStatus = document.getElementById("callStatus");
-            if (callStatus && callStatus.dataset.i18n === "status_ready") {
-                callStatus.innerHTML = translations[lang].status_ready || callStatus.innerHTML;
+        // placeholders
+        document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+            const key = el.getAttribute("data-i18n-placeholder");
+            if (!translations.ar[key]) {
+                translations.ar[key] = el.placeholder || "";
             }
+        });
+
+        // عنوان الصفحة
+        translations.ar.page_title = document.title;
+    }
+
+    function applyTranslations(lang) {
+        document.querySelectorAll("[data-i18n]").forEach(el => {
+            const key = el.getAttribute("data-i18n");
+            const value = translations[lang] && translations[lang][key];
+            if (!value) return;
+            el.innerHTML = value;
+        });
+
+        document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+            const key = el.getAttribute("data-i18n-placeholder");
+            const value = translations[lang] && translations[lang][key];
+            if (!value) return;
+            el.placeholder = value;
+        });
+
+        if (translations[lang].page_title) {
+            document.title = translations[lang].page_title;
         }
 
-        // ==================== Language Toggle ====================
-        function applyLanguage(lang) {
-            localStorage.setItem("ghasiq_lang", lang);
+        // بعد تغيير اللغة، حدّث نص الحالة الحالية حسب اللغة لو هي حالة "جاهز"
+        const callStatus = document.getElementById("callStatus");
+        if (callStatus && callStatus.dataset.i18n === "status_ready") {
+            callStatus.innerHTML = translations[lang].status_ready || callStatus.innerHTML;
+        }
+    }
 
-            if (lang === "en") {
-                document.documentElement.setAttribute("dir", "ltr");
-                document.documentElement.lang = "en";
-                document.getElementById("langLabel").textContent = "EN";
-            } else {
-                document.documentElement.setAttribute("dir", "rtl");
-                document.documentElement.lang = "ar";
-                document.getElementById("langLabel").textContent = "AR";
-            }
+    // ==================== Language Toggle ====================
+    function applyLanguage(lang) {
+        localStorage.setItem("ghasiq_lang", lang);
 
-            applyTranslations(lang);
+        if (lang === "en") {
+            document.documentElement.setAttribute("dir", "ltr");
+            document.documentElement.lang = "en";
+            document.getElementById("langLabel").textContent = "EN";
+        } else {
+            document.documentElement.setAttribute("dir", "rtl");
+            document.documentElement.lang = "ar";
+            document.getElementById("langLabel").textContent = "AR";
         }
 
-        function initLanguageToggle() {
-            initArabicFromDom();
+        applyTranslations(lang);
+    }
 
-            const saved = localStorage.getItem("ghasiq_lang") || "ar";
-            applyLanguage(saved);
+    function initLanguageToggle() {
+        initArabicFromDom();
 
-            const langToggle = document.getElementById("langToggle");
-            if (!langToggle) return;
+        const saved = localStorage.getItem("ghasiq_lang") || "ar";
+        applyLanguage(saved);
 
-            langToggle.addEventListener("click", () => {
-                const current = localStorage.getItem("ghasiq_lang") || "ar";
-                const nextLang = current === "ar" ? "en" : "ar";
-                applyLanguage(nextLang);
-            });
-        }
+        const langToggle = document.getElementById("langToggle");
+        if (!langToggle) return;
 
-        initLanguageToggle();
-    </script>
+        langToggle.addEventListener("click", () => {
+            const current = localStorage.getItem("ghasiq_lang") || "ar";
+            const nextLang = current === "ar" ? "en" : "ar";
+            applyLanguage(nextLang);
+        });
+    }
 
-    </body>
-    </html>
+    initLanguageToggle();
+</script>
+
+</body>
+</html>
