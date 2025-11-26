@@ -305,7 +305,6 @@
             flex:1;
         }
 
-        /* Grid لمشاركين كتير */
         .remote-grid {
             display:grid;
             grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));
@@ -335,7 +334,6 @@
             font-size:10px;
         }
 
-        /* زر تكبير الشاشة */
         .fullscreen-btn {
             position:absolute;
             top:8px;
@@ -574,8 +572,8 @@
                 </div>
 
                 <div class="buttons-row buttons-row-main">
-                    <button class="btn-primary" id="btnStartCall" data-i18n="btn_start_call">بدء الاتصال</button>
-                    <button class="btn-danger" id="btnEndCall" data-i18n="btn_end_call">إنهاء المكالمة</button>
+                    <button class="btn-primary" id="btnStartCall" data-i18n="btn_start_call">بدء الاتصال / إضافة مشارك</button>
+                    <button class="btn-danger" id="btnEndCall" data-i18n="btn_end_call">إنهاء الاتصال</button>
                 </div>
             </div>
 
@@ -584,7 +582,7 @@
                     • تأكد أن جميع المشاركين فتحوا نفس صفحة الاتصال.<br>
                     • لكل رئيس قسم معرف ثابت، مثل:
                     <span>GHASIQ-IT-HEAD</span>، <span>GHASIQ-HR-HEAD</span>، <span>GHASIQ-FINANCE-HEAD</span>، <span>GHASIQ-GM</span>.<br>
-                    • عند إضافة مشارك جديد من أي جهاز، النظام يحاول توصيله بباقي الموجودين تلقائيًا.
+                    • عند إضافة مشارك جديد من أي جهاز، النظام يحاول توصيله بجميع الموجودين تلقائيًا.
                 </div>
             </div>
         </aside>
@@ -682,24 +680,26 @@
         ar: {
             ready: "جاهز لبدء مكالمة",
             peer_error: "خطأ في الاتصال بخادم PeerJS. تأكد من الاتصال بالإنترنت.",
+            peer_unavailable: "هذا الموظف مسجّل دخول بالفعل من جهاز آخر.",
             incoming_call: "يتم استقبال مكالمة...",
             media_error: "تعذر فتح الكاميرا/المايك.",
             call_active: "المكالمة نشطة",
-            call_closed: "تم إنهاء المكالمة",
+            call_closed: "تم إنهاء الاتصال لديك فقط.",
             call_error: "حدث خطأ أثناء المكالمة",
-            call_ended_ready: "تم إنهاء المكالمة. جاهز لاتصال جديد.",
+            call_ended_ready: "تم إنهاء الاتصال لديك. جاهز لاتصال جديد.",
             alert_remote_required: "الرجاء إدخال معرّف الموظف المراد إضافته.",
             media_error_onload: "تعذر فتح الكاميرا/المايك. تأكد من السماح في المتصفح."
         },
         en: {
             ready: "Ready to start a call",
             peer_error: "Error connecting to PeerJS server. Please check your internet connection.",
+            peer_unavailable: "This employee is already logged in from another device.",
             incoming_call: "Incoming call...",
             media_error: "Unable to access camera/microphone.",
             call_active: "Call is active",
-            call_closed: "Call ended",
+            call_closed: "Call ended for you only.",
             call_error: "An error occurred during the call",
-            call_ended_ready: "Call ended. Ready for a new call.",
+            call_ended_ready: "Call ended for you. Ready for a new call.",
             alert_remote_required: "Please enter the participant ID.",
             media_error_onload: "Unable to access camera/microphone. Please allow access in the browser."
         }
@@ -746,7 +746,6 @@
     const btnShareScreen = document.getElementById("btnShareScreen");
     const callTimerEl = document.getElementById("callTimer");
 
-    // local fullscreen button
     const localFsBtn = document.querySelector('[data-fullscreen-target="local"]');
     if (localFsBtn) {
         localFsBtn.addEventListener('click', (e) => {
@@ -759,8 +758,8 @@
     let cameraStream = null;
     let localStream = null;
 
-    const activeCalls = {};
-    const dataConnections = {};
+    const activeCalls = {};       // peerId -> MediaConnection
+    const dataConnections = {};   // peerId -> DataConnection
 
     let isCameraOn = true;
     let isMicOn = true;
@@ -769,6 +768,13 @@
     let callTimerInterval = null;
     let callSecondsElapsed = 0;
     let callInProgress = false;
+
+    function setControlsEnabled(enabled) {
+        [btnStartCall, btnEndCall, btnToggleCamera, btnToggleMic, btnShareScreen, remoteIdInput]
+            .forEach(el => { if (el) el.disabled = !enabled; });
+    }
+
+    setControlsEnabled(false); // لحد ما Peer يفتح
 
     function setStatus(textKey, isError) {
         const text = trCall(textKey);
@@ -959,6 +965,7 @@
             removeRemoteVideo(peerId);
             delete activeCalls[peerId];
             if (Object.keys(activeCalls).length === 0) {
+                // انت بس اللي خرجت، الباقي مكملين ببعض
                 stopCallTimer();
                 setStatus("call_closed", true);
             }
@@ -1070,11 +1077,20 @@
         peer.on("open", (id) => {
             myIdBox.textContent = id;
             setStatus("ready", false);
+            setControlsEnabled(true);
         });
 
         peer.on("error", (err) => {
             console.error(err);
-            setStatus("peer_error", true);
+            if (err.type === "unavailable-id") {
+                // نفس اليوزر / نفس الدور مفتوح من جهاز تاني
+                setStatus("peer_unavailable", true);
+                alert("هذا الموظف مسجّل دخول بالفعل من جهاز آخر. يرجى إغلاق الجلسة الأخرى ثم إعادة المحاولة.");
+                setControlsEnabled(false);
+            } else {
+                setStatus("peer_error", true);
+                setControlsEnabled(false);
+            }
         });
 
         peer.on("call", (call) => {
@@ -1148,7 +1164,7 @@
         addParticipantById(remoteId);
     });
 
-    // إنهاء المكالمة بالكامل
+    // إنهاء الاتصال (أنت بس اللي بتطلع)
     btnEndCall.addEventListener("click", () => {
         stopScreenShare();
 
@@ -1218,13 +1234,13 @@
             status_ready: "Ready to start a call",
 
             call_title_ctrl: "Call management",
-            call_sub_ctrl: "A fixed ID is generated based on the user's role. Type any employee ID and press 'Start call' to add them to the room, and the connection will be distributed to other participants.",
+            call_sub_ctrl: "A fixed ID is generated based on the user's role. Type any employee ID and press 'Start call' to add them to the room; the connection will be distributed to other participants.",
 
             label_my_id: "Your ID:",
             label_remote_id: "Participant ID to add:",
             remote_id_placeholder: "Example: GHASIQ-IT-HEAD or GHASIQ-HR-HEAD",
 
-            btn_start_call: "Start / Add participant",
+            btn_start_call: "Start call / Add participant",
             btn_end_call: "End call",
 
             hint_text: "• Make sure all participants open the same call page.<br>• Each department head has a fixed ID such as: <span>GHASIQ-IT-HEAD</span>, <span>GHASIQ-HR-HEAD</span>, <span>GHASIQ-FINANCE-HEAD</span>, <span>GHASIQ-GM</span>.<br>• When a new participant is added from any device, the system will try to connect them to all existing participants automatically.",
