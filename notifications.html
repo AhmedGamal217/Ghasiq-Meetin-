@@ -403,6 +403,19 @@
     </style>
 </head>
 <body class="dark">
+
+<!-- Auth Guard جديد يعتمد على ghasiq_current_user -->
+<script>
+    (function guard() {
+        const user = JSON.parse(localStorage.getItem("ghasiq_current_user") || "null");
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+        window.__gh_user = user;
+    })();
+</script>
+
 <div class="page">
 
     <!-- NAVBAR -->
@@ -562,6 +575,9 @@
 
 <div id="toast" class="toast"></div>
 
+<!-- auth.js المشترك -->
+<script src="auth.js"></script>
+
 <script>
     // ===== Theme =====
     const bodyEl = document.body;
@@ -596,23 +612,19 @@
 
     initTheme();
 
-    // ===== Auth Guard + User Chip =====
-    function getCurrentUser() {
-        try {
-            const raw = localStorage.getItem("ghasiq_user");
-            return raw ? JSON.parse(raw) : null;
-        } catch {
-            return null;
-        }
-    }
-
+    // ===== Auth + User Chip =====
     function logout() {
-        localStorage.removeItem("ghasiq_user");
+        if (window.Auth && typeof Auth.logout === "function") {
+            Auth.logout();
+        } else {
+            // fallback لو auth.js لسه ما اتظبطش
+            localStorage.removeItem("ghasiq_current_user");
+        }
         window.location.href = "login.html";
     }
 
     (function initUser() {
-        const user = getCurrentUser();
+        const user = window.__gh_user || null;
         const chip = document.getElementById("userChip");
 
         if (!user) {
@@ -631,7 +643,6 @@
         { id: 4, name: "Eng/ Hamed ALAnazi", role: "General Manager", dept: "Management" },
         { id: 5, name: "MRS/ Randa Elbarbory", role: "Project Manager", dept: "Operations" }
     ];
-
 
     const employeeListEl = document.getElementById("employeeList");
     const historyListEl  = document.getElementById("historyList");
@@ -805,7 +816,7 @@
         const emp = employees.find(e => e.id === empId);
         if (!emp) return;
 
-        const user = getCurrentUser();
+        const user = window.__gh_user || null;
         const senderName = user?.username || "Ghasiq System";
 
         addHistoryItem(emp, senderName, message, fileName);
@@ -860,6 +871,7 @@
     // init
     renderEmployees();
 </script>
+
 <script>
     // ========== ترجمات الواجهة الثابتة ==========
     const translations = {
@@ -979,4 +991,3 @@
 
 </body>
 </html>
-

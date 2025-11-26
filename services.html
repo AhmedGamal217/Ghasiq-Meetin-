@@ -312,12 +312,13 @@
 </head>
 <body class="dark">
 
-<!-- حماية الصفحة -->
+<!-- حماية الصفحة - النظام الجديد ghasiq_current_user -->
 <script>
     (function guard() {
-        const user = JSON.parse(localStorage.getItem("ghasiq_user") || "null");
-        if (!user || !user.login) {
+        const user = JSON.parse(localStorage.getItem("ghasiq_current_user") || "null");
+        if (!user) {
             window.location.href = "login.html";
+            return;
         }
         window.__gh_user = user;
     })();
@@ -482,6 +483,9 @@
     </footer>
 </div>
 
+<!-- auth.js المشترك -->
+<script src="auth.js"></script>
+
 <script>
     // ===== Theme shared logic =====
     const bodyEl = document.body;
@@ -524,9 +528,14 @@
         chip.textContent = `${user.username} (${user.role})`;
     })();
 
-    // ===== Logout =====
+    // ===== Logout - موحّد مع auth.js =====
     function logout() {
-        localStorage.removeItem("ghasiq_user");
+        if (window.Auth && typeof Auth.logout === "function") {
+            Auth.logout();
+        } else {
+            // fallback لو auth.js لسه ما ظبطتوش بالكامل
+            localStorage.removeItem("ghasiq_current_user");
+        }
         window.location.href = "login.html";
     }
 

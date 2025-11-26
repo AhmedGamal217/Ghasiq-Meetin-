@@ -597,12 +597,13 @@
 </head>
 <body class="dark">
 
+<!-- حماية الصفحة بالـ ghasiq_current_user -->
 <script>
-    // حماية الصفحة
     (function guard() {
-        const user = JSON.parse(localStorage.getItem("ghasiq_user") || "null");
-        if (!user || !user.login) {
+        const user = JSON.parse(localStorage.getItem("ghasiq_current_user") || "null");
+        if (!user) {
             window.location.href = "login.html";
+            return;
         }
         window.__gh_user = user;
     })();
@@ -748,6 +749,9 @@
     </footer>
 </div>
 
+<!-- auth.js المشترك -->
+<script src="auth.js"></script>
+
 <script>
     // ===== Theme =====
     const bodyEl = document.body;
@@ -786,12 +790,12 @@
     (function showUser() {
         const chip = document.getElementById("userChip");
         const user = window.__gh_user;
-        if (!user) return;
+        if (!user || !chip) return;
         chip.textContent = `${user.username} (${user.role})`;
     })();
 
     function logout() {
-        localStorage.removeItem("ghasiq_user");
+        Auth.logout();
         window.location.href = "login.html";
     }
 
@@ -1098,7 +1102,7 @@
             removeRemoteVideo(peerId);
             delete activeCalls[peerId];
             if (Object.keys(activeCalls).length === 0) {
-                stopCallTimer(false); // تسيب التايمر آخر قيمة لو انت لسه فاتح
+                stopCallTimer(false); // يسيب التايمر آخر قيمة لو انت لسه فاتح
                 setStatus("call_closed", true);
             }
         });
@@ -1427,6 +1431,9 @@
 
 <script>
     // ========== ترجمات الواجهة الثابتة ==========
+
+
+
     const translations = {
         ar: {},
         en: {

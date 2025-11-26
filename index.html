@@ -567,9 +567,10 @@
 <!-- ===== حماية الصفحة ===== -->
 <script>
     (function guard() {
-        const user = JSON.parse(localStorage.getItem("ghasiq_user") || "null");
-        if (!user || !user.login) {
+        const user = JSON.parse(localStorage.getItem("ghasiq_current_user") || "null");
+        if (!user) {
             window.location.href = "login.html";
+            return;
         }
         window.__gh_user = user;
     })();
@@ -799,6 +800,8 @@
     </footer>
 </div>
 
+<script src="auth.js"></script>
+
 <script>
     // ===== Theme shared logic =====
     const bodyEl = document.body;
@@ -836,14 +839,15 @@
     // ===== عرض اليوزر في النافبار =====
     (function showUser() {
         const chip = document.getElementById("userChip");
-        const user = window.__gh_user;
+        if (!chip) return;
+        const user = Auth.getCurrentUser();
         if (!user) return;
         chip.textContent = `${user.username} (${user.role})`;
     })();
 
     // ===== Logout =====
     function logout() {
-        localStorage.removeItem("ghasiq_user");
+        Auth.logout();
         window.location.href = "login.html";
     }
 
@@ -968,7 +972,6 @@
             const value = translations[lang] && translations[lang][key];
             if (!value) return;
 
-            // لو العنصر input وعايز placeholder
             if (el.tagName === "INPUT" && el.hasAttribute("placeholder")) {
                 el.placeholder = value;
             } else {
@@ -976,7 +979,6 @@
             }
         });
 
-        // العنوان
         if (translations[lang].page_title) {
             document.title = translations[lang].page_title;
         }
