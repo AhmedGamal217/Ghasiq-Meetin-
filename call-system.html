@@ -178,12 +178,11 @@
         /* LAYOUT */
         .call-layout {
             display:grid;
-            grid-template-columns: minmax(0, 300px) minmax(0, 1fr); /* Sidebar + Meeting */
+            grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
             gap:22px;
             align-items:flex-start;
         }
 
-        /* موبايل / تابلت: نخلي الميتينج فوق والسيدبار تحت عشان مفيش تداخل */
         @media(max-width:900px){
             .call-layout {
                 grid-template-columns:1fr;
@@ -199,7 +198,6 @@
             }
         }
 
-        /* الكارد الرئيسي بتاع الميتينج */
         .call-card {
             border-radius:22px;
             background:var(--bg-elevated);
@@ -210,7 +208,6 @@
             margin-inline:auto;
         }
 
-        /* SIDEBAR */
         .controls-box {
             border-radius:20px;
             background:var(--bg-elevated);
@@ -220,10 +217,9 @@
             display:flex;
             flex-direction:column;
             gap:14px;
-            position:relative; /* default: مش sticky */
+            position:relative;
         }
 
-        /* خليها sticky بس على الشاشات الكبيرة */
         @media(min-width:901px){
             .controls-box {
                 position:sticky;
@@ -272,7 +268,7 @@
 
         .video-grid {
             display:grid;
-            grid-template-columns:repeat(2, minmax(0, 1fr)); /* شاشتين جنب بعض */
+            grid-template-columns:repeat(2, minmax(0, 1fr));
             gap:12px;
             align-items:stretch;
         }
@@ -399,7 +395,6 @@
             font-size:13px;
         }
 
-        /* أزرار الكاميرا والمايك */
         .btn-icon {
             width:38px;
             height:38px;
@@ -446,7 +441,6 @@
 </head>
 <body class="dark">
 
-<!-- حماية الصفحة -->
 <script>
     (function guard() {
         const user = JSON.parse(localStorage.getItem("ghasiq_user") || "null");
@@ -478,12 +472,10 @@
         <div class="nav-actions">
             <span id="userChip" class="user-chip">User</span>
 
-            <!-- زر اللغة -->
             <button class="btn-toggle-theme" id="langToggle" type="button">
                 <span id="langLabel">AR</span>
             </button>
 
-            <!-- الثيم -->
             <button class="btn-toggle-theme" id="themeToggle" type="button">
                 <span id="themeLabel">Dark</span>
                 <span id="themeIcon">☾</span>
@@ -494,7 +486,7 @@
     </header>
 
     <section class="call-layout">
-        <!-- SIDEBAR: إدارة الاتصال -->
+        <!-- SIDEBAR -->
         <aside class="controls-box">
             <div class="call-header sidebar-header">
                 <div class="call-header-title" data-i18n="call_title_ctrl">إدارة الاتصال</div>
@@ -521,9 +513,10 @@
 
             <div class="sidebar-section">
                 <div class="buttons-row">
-                    <!-- أزرار الكاميرا والمايك -->
                     <button type="button" id="btnToggleCamera" class="btn-icon" title="تشغيل/إيقاف الكاميرا">🎥</button>
                     <button type="button" id="btnToggleMic" class="btn-icon" title="تشغيل/إيقاف المايك">🎙️</button>
+                    <!-- مشاركة الشاشة -->
+                    <button type="button" id="btnShareScreen" class="btn-icon" title="مشاركة الشاشة">🖥️</button>
                 </div>
 
                 <div class="buttons-row buttons-row-main">
@@ -541,7 +534,7 @@
             </div>
         </aside>
 
-        <!-- MAIN: غرفة الاتصال -->
+        <!-- MAIN -->
         <div class="call-card">
             <div class="call-header">
                 <div class="call-header-title" data-i18n="call_title_main">غرفة الاتصال الداخلي للموظفين</div>
@@ -611,7 +604,6 @@
 
     initTheme();
 
-    // عرض اليوزر
     (function showUser() {
         const chip = document.getElementById("userChip");
         const user = window.__gh_user;
@@ -619,18 +611,15 @@
         chip.textContent = `${user.username} (${user.role})`;
     })();
 
-    // Logout
     function logout() {
         localStorage.removeItem("ghasiq_user");
         window.location.href = "login.html";
     }
 
-    // ===== Helpers: اللغة الحالية =====
     function getCurrentLang() {
         return localStorage.getItem("ghasiq_lang") || "ar";
     }
 
-    // ===== ترجمات الرسائل الديناميكية الخاصة بالمكالمة =====
     const callTexts = {
         ar: {
             ready: "جاهز لبدء مكالمة",
@@ -664,7 +653,7 @@
         return dict[key] || key;
     }
 
-    // ===== Ghasiq Call System / PeerJS =====
+    // ===== PeerJS / Call Logic =====
     const user = window.__gh_user || { role: "User" };
 
     function normalizeRole(r) {
@@ -672,7 +661,7 @@
         return r.replace(/\s+/g, "-").toUpperCase();
     }
 
-    const baseRole = normalizeRole(user.role); // IT-HEAD, HR-HEAD, ...
+    const baseRole = normalizeRole(user.role);
     const myPeerId = "GHASIQ-" + baseRole;
 
     const myIdBox = document.getElementById("myIdBox");
@@ -684,14 +673,17 @@
     const btnEndCall = document.getElementById("btnEndCall");
     const btnToggleCamera = document.getElementById("btnToggleCamera");
     const btnToggleMic = document.getElementById("btnToggleMic");
+    const btnShareScreen = document.getElementById("btnShareScreen");
     const callTimerEl = document.getElementById("callTimer");
 
     let peer = null;
-    let localStream = null;
+    let localStream = null;     // stream المستخدم حاليًا في الفيديو
+    let cameraStream = null;    // stream الأصلي بتاع الكاميرا (مع الصوت)
     let currentCall = null;
 
     let isCameraOn = true;
     let isMicOn = true;
+    let isScreenSharing = false;
 
     let callTimerInterval = null;
     let callSecondsElapsed = 0;
@@ -700,21 +692,15 @@
         const text = trCall(textKey);
         callStatus.textContent = text;
         callStatus.classList.toggle("status-green", !isError);
-        if (isError) {
-            callStatus.style.color = "#f97373";
-        } else {
-            callStatus.style.color = "#22c55e";
-        }
+        callStatus.style.color = isError ? "#f97373" : "#22c55e";
     }
 
     function updateCameraButtonUI() {
-        if (!btnToggleCamera) return;
         btnToggleCamera.classList.toggle("off", !isCameraOn);
         btnToggleCamera.textContent = isCameraOn ? "🎥" : "🚫";
     }
 
     function updateMicButtonUI() {
-        if (!btnToggleMic) return;
         btnToggleMic.classList.toggle("off", !isMicOn);
         btnToggleMic.textContent = isMicOn ? "🎙️" : "🔇";
     }
@@ -748,10 +734,61 @@
         }
     }
 
+    function switchVideoTrack(newStream) {
+        if (!newStream) return;
+
+        localStream = newStream;
+        localVideo.srcObject = newStream;
+
+        if (currentCall && currentCall.peerConnection) {
+            const sender = currentCall.peerConnection.getSenders()
+                .find(s => s.track && s.track.kind === 'video');
+            const newVideoTrack = newStream.getVideoTracks()[0];
+            if (sender && newVideoTrack) {
+                sender.replaceTrack(newVideoTrack).catch(err => console.error('replaceTrack error', err));
+            }
+        }
+    }
+
+    function startScreenShare() {
+        if (isScreenSharing) return;
+
+        navigator.mediaDevices.getDisplayMedia({ video: true, audio: false })
+            .then(screenStream => {
+                isScreenSharing = true;
+                btnShareScreen.classList.add('off');
+                btnShareScreen.textContent = '🛑';
+
+                const screenTrack = screenStream.getVideoTracks()[0];
+                screenTrack.addEventListener('ended', () => {
+                    stopScreenShare();
+                });
+
+                switchVideoTrack(screenStream);
+            })
+            .catch(err => {
+                console.error('getDisplayMedia error', err);
+            });
+    }
+
+    function stopScreenShare() {
+        if (!isScreenSharing) return;
+
+        isScreenSharing = false;
+        btnShareScreen.classList.remove('off');
+        btnShareScreen.textContent = '🖥️';
+
+        if (localStream && localStream !== cameraStream) {
+            localStream.getTracks().forEach(t => t.stop());
+        }
+
+        if (cameraStream) {
+            switchVideoTrack(cameraStream);
+        }
+    }
+
     function initPeer() {
-        peer = new Peer(myPeerId, {
-            debug: 1
-        });
+        peer = new Peer(myPeerId, { debug: 1 });
 
         peer.on("open", (id) => {
             myIdBox.textContent = id;
@@ -776,13 +813,18 @@
     }
 
     function getMediaStream() {
-        if (localStream) return Promise.resolve(localStream);
+        // لو الكاميرا already موجودة
+        if (cameraStream) {
+            localStream = cameraStream;
+            localVideo.srcObject = localStream;
+            return Promise.resolve(localStream);
+        }
 
         return navigator.mediaDevices.getUserMedia({ video: true, audio: true })
             .then((stream) => {
+                cameraStream = stream;
                 localStream = stream;
 
-                // تأكد أن الكاميرا والمايك شغالين في البداية
                 isCameraOn = true;
                 isMicOn = true;
                 stream.getVideoTracks().forEach(t => t.enabled = true);
@@ -816,10 +858,17 @@
         });
     }
 
-    // أزرار الكاميرا والمايك
+    // كاميرا
     btnToggleCamera.addEventListener("click", () => {
-        if (!localStream) return;
-        const tracks = localStream.getVideoTracks();
+        if (isScreenSharing) {
+            alert("أوقف مشاركة الشاشة أولاً لإيقاف الكاميرا.");
+            return;
+        }
+
+        const stream = cameraStream || localStream;
+        if (!stream) return;
+
+        const tracks = stream.getVideoTracks();
         if (!tracks || tracks.length === 0) return;
 
         isCameraOn = !isCameraOn;
@@ -827,9 +876,12 @@
         updateCameraButtonUI();
     });
 
+    // مايك
     btnToggleMic.addEventListener("click", () => {
-        if (!localStream) return;
-        const tracks = localStream.getAudioTracks();
+        const stream = cameraStream || localStream;
+        if (!stream) return;
+
+        const tracks = stream.getAudioTracks();
         if (!tracks || tracks.length === 0) return;
 
         isMicOn = !isMicOn;
@@ -837,6 +889,16 @@
         updateMicButtonUI();
     });
 
+    // مشاركة الشاشة
+    btnShareScreen.addEventListener("click", () => {
+        if (isScreenSharing) {
+            stopScreenShare();
+        } else {
+            startScreenShare();
+        }
+    });
+
+    // بدء الاتصال
     btnStartCall.addEventListener("click", () => {
         const remoteId = remoteIdInput.value.trim();
         if (!remoteId) {
@@ -855,19 +917,24 @@
         });
     });
 
+    // إنهاء الاتصال
     btnEndCall.addEventListener("click", () => {
         if (currentCall) {
             currentCall.close();
             currentCall = null;
         }
-        if (localStream) {
-            localStream.getTracks().forEach(t => t.stop());
-            localStream = null;
-            localVideo.srcObject = null;
+
+        stopScreenShare();
+
+        if (cameraStream) {
+            cameraStream.getTracks().forEach(t => t.stop());
+            cameraStream = null;
         }
+
+        localStream = null;
+        localVideo.srcObject = null;
         remoteVideo.srcObject = null;
 
-        // رجّع حالة الكاميرا والمايك للأصل
         isCameraOn = true;
         isMicOn = true;
         updateCameraButtonUI();
@@ -877,10 +944,8 @@
         setStatus("call_ended_ready", false);
     });
 
-    // تشغيل Peer
     initPeer();
 
-    // فتح الكاميرا أوتوماتيك عند تحميل الصفحة
     window.addEventListener('load', () => {
         getMediaStream().catch(err => {
             console.error(err);
@@ -892,7 +957,7 @@
 <script>
     // ========== ترجمات الواجهة الثابتة ==========
     const translations = {
-        ar: {}, // هتملا أوتوماتيك من الـ DOM
+        ar: {},
         en: {
             page_title: "Ghasiq - Internal Call System",
             nav_about: "About Ghasiq",
@@ -927,7 +992,6 @@
     };
 
     function initArabicFromDom() {
-        // عناصر innerHTML
         document.querySelectorAll("[data-i18n]").forEach(el => {
             const key = el.getAttribute("data-i18n");
             if (!translations.ar[key]) {
@@ -935,7 +999,6 @@
             }
         });
 
-        // placeholders
         document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
             const key = el.getAttribute("data-i18n-placeholder");
             if (!translations.ar[key]) {
@@ -943,7 +1006,6 @@
             }
         });
 
-        // عنوان الصفحة
         translations.ar.page_title = document.title;
     }
 
@@ -966,14 +1028,12 @@
             document.title = translations[lang].page_title;
         }
 
-        // بعد تغيير اللغة، حدّث نص الحالة الحالية حسب اللغة لو هي حالة "جاهز"
         const callStatus = document.getElementById("callStatus");
         if (callStatus && callStatus.dataset.i18n === "status_ready") {
             callStatus.innerHTML = translations[lang].status_ready || callStatus.innerHTML;
         }
     }
 
-    // ==================== Language Toggle ====================
     function applyLanguage(lang) {
         localStorage.setItem("ghasiq_lang", lang);
 
