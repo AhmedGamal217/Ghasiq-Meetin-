@@ -178,7 +178,7 @@
         /* LAYOUT */
         .call-layout {
             display:grid;
-            grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+            grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
             gap:22px;
             align-items:flex-start;
         }
@@ -305,6 +305,12 @@
             flex:1;
         }
 
+        /* Mirror للكاميرا المحلية */
+        #localVideo {
+            transform: scaleX(-1);
+        }
+
+        /* Grid لمشاركين كتير */
         .remote-grid {
             display:grid;
             grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));
@@ -334,6 +340,7 @@
             font-size:10px;
         }
 
+        /* زر تكبير الشاشة */
         .fullscreen-btn {
             position:absolute;
             top:8px;
@@ -366,11 +373,13 @@
             color:#22c55e;
         }
 
-        .status-timer-label {
+        .status-timer-label,
+        .status-participants-label {
             margin-inline-start:10px;
         }
 
-        .status-timer {
+        .status-timer,
+        .status-participants {
             font-family:monospace;
         }
 
@@ -478,6 +487,102 @@
             color:var(--primary-light);
         }
 
+        /* ===== CHAT ===== */
+        .chat-header {
+            font-size:13px;
+            margin-bottom:4px;
+        }
+
+        .chat-messages {
+            max-height:190px;
+            border-radius:10px;
+            border:1px solid var(--border-subtle);
+            background:rgba(15,23,42,0.7);
+            padding:8px;
+            overflow-y:auto;
+            font-size:12px;
+        }
+
+        body.light .chat-messages {
+            background:#f9fafb;
+        }
+
+        .chat-msg {
+            margin-bottom:4px;
+            display:flex;
+            flex-direction:column;
+        }
+
+        .chat-meta {
+            font-size:10px;
+            color:var(--text-muted);
+        }
+
+        .chat-text {
+            padding:4px 8px;
+            border-radius:8px;
+            margin-top:1px;
+            max-width:100%;
+            word-wrap:break-word;
+        }
+
+        .chat-msg.self .chat-text {
+            align-self:flex-end;
+            background:linear-gradient(135deg,var(--primary),var(--primary-light));
+            color:white;
+        }
+
+        .chat-msg.other .chat-text {
+            align-self:flex-start;
+            background:rgba(15,23,42,0.9);
+        }
+
+        body.light .chat-msg.other .chat-text {
+            background:#e5e7eb;
+            color:#0f172a;
+        }
+
+        .chat-msg.system .chat-text {
+            align-self:center;
+            background:transparent;
+            color:var(--text-muted);
+            font-size:11px;
+            padding:0;
+        }
+
+        .chat-input-row {
+            margin-top:6px;
+            display:flex;
+            gap:6px;
+        }
+
+        .chat-input-row input {
+            flex:1;
+            padding:7px 9px;
+            border-radius:8px;
+            border:1px solid var(--border-subtle);
+            background:rgba(15,23,42,0.85);
+            color:var(--text-main);
+            font-size:12px;
+            outline:none;
+        }
+
+        body.light .chat-input-row input {
+            background:#ffffff;
+            color:#0f172a;
+        }
+
+        .chat-input-row button {
+            border-radius:999px;
+            padding:7px 14px;
+            border:none;
+            cursor:pointer;
+            background:linear-gradient(135deg,var(--primary),var(--primary-light));
+            color:white;
+            font-size:12px;
+            white-space:nowrap;
+        }
+
         .footer {
             margin-top:26px;
             text-align:center;
@@ -493,6 +598,7 @@
 <body class="dark">
 
 <script>
+    // حماية الصفحة
     (function guard() {
         const user = JSON.parse(localStorage.getItem("ghasiq_user") || "null");
         if (!user || !user.login) {
@@ -542,7 +648,8 @@
             <div class="call-header sidebar-header">
                 <div class="call-header-title" data-i18n="call_title_ctrl">إدارة الاتصال</div>
                 <div class="call-header-sub" data-i18n="call_sub_ctrl">
-                    يتم توليد معرف ثابت بناءً على دور المستخدم. اكتب معرّف أي موظف واضغط "بدء الاتصال" ليتم إضافته للغرفة، وسيتم توزيع الاتصال على باقي المشاركين.
+                    يتم توليد معرف ثابت بناءً على دور المستخدم. اكتب معرّف أي موظف واضغط "بدء الاتصال" ليتم إضافته للغرفة،
+                    والنظام يحاول توصيله بباقي المشاركين تلقائيًا.
                 </div>
             </div>
 
@@ -559,7 +666,7 @@
                            data-i18n-placeholder="remote_id_placeholder"
                            placeholder="مثال: GHASIQ-IT-HEAD أو GHASIQ-HR-HEAD">
                     <small class="hint">
-                        كل ما تضيف ID جديد وتضغط "بدء الاتصال" هينضم للغرفة وهيوصل لكل المشاركين.
+                        كل ما تضيف ID جديد وتضغط "بدء الاتصال" هينضم للغرفة (لو فاتح الصفحة) والباقي يسمعه ويشوفه.
                     </small>
                 </div>
             </div>
@@ -569,11 +676,23 @@
                     <button type="button" id="btnToggleCamera" class="btn-icon" title="تشغيل/إيقاف الكاميرا">🎥</button>
                     <button type="button" id="btnToggleMic" class="btn-icon" title="تشغيل/إيقاف المايك">🎙️</button>
                     <button type="button" id="btnShareScreen" class="btn-icon" title="مشاركة الشاشة">🖥️</button>
+                    <!-- ميوت للجميع -->
+                    <button type="button" id="btnMuteAll" class="btn-icon" title="كتم الجميع">🔇</button>
                 </div>
 
                 <div class="buttons-row buttons-row-main">
-                    <button class="btn-primary" id="btnStartCall" data-i18n="btn_start_call">بدء الاتصال / إضافة مشارك</button>
-                    <button class="btn-danger" id="btnEndCall" data-i18n="btn_end_call">إنهاء الاتصال</button>
+                    <button class="btn-primary" id="btnStartCall" data-i18n="btn_start_call">بدء / إضافة مشارك</button>
+                    <button class="btn-danger" id="btnEndCall" data-i18n="btn_end_call">إنهاء المكالمة</button>
+                </div>
+            </div>
+
+            <!-- CHAT -->
+            <div class="sidebar-section">
+                <div class="chat-header">المحادثة أثناء الاجتماع</div>
+                <div id="chatMessages" class="chat-messages"></div>
+                <div class="chat-input-row">
+                    <input id="chatInput" type="text" placeholder="اكتب رسالة واضغط إرسال أو Enter">
+                    <button type="button" id="btnSendChat">إرسال</button>
                 </div>
             </div>
 
@@ -582,7 +701,7 @@
                     • تأكد أن جميع المشاركين فتحوا نفس صفحة الاتصال.<br>
                     • لكل رئيس قسم معرف ثابت، مثل:
                     <span>GHASIQ-IT-HEAD</span>، <span>GHASIQ-HR-HEAD</span>، <span>GHASIQ-FINANCE-HEAD</span>، <span>GHASIQ-GM</span>.<br>
-                    • عند إضافة مشارك جديد من أي جهاز، النظام يحاول توصيله بجميع الموجودين تلقائيًا.
+                    • عند إضافة مشارك جديد من أي جهاز، النظام يحاول توصيله بكل الموجودين تلقائيًا.
                 </div>
             </div>
         </aside>
@@ -617,6 +736,9 @@
 
                 <span class="status-timer-label">| مدة المكالمة:</span>
                 <span id="callTimer" class="status-timer">00:00</span>
+
+                <span class="status-participants-label">| عدد المشاركين:</span>
+                <span id="participantsCount" class="status-participants">1</span>
             </div>
         </div>
     </section>
@@ -660,6 +782,7 @@
 
     initTheme();
 
+    // عرض اليوزر
     (function showUser() {
         const chip = document.getElementById("userChip");
         const user = window.__gh_user;
@@ -676,32 +799,33 @@
         return localStorage.getItem("ghasiq_lang") || "ar";
     }
 
+    // ===== نصوص ديناميكية =====
     const callTexts = {
         ar: {
             ready: "جاهز لبدء مكالمة",
             peer_error: "خطأ في الاتصال بخادم PeerJS. تأكد من الاتصال بالإنترنت.",
-            peer_unavailable: "هذا الموظف مسجّل دخول بالفعل من جهاز آخر.",
             incoming_call: "يتم استقبال مكالمة...",
             media_error: "تعذر فتح الكاميرا/المايك.",
             call_active: "المكالمة نشطة",
-            call_closed: "تم إنهاء الاتصال لديك فقط.",
+            call_closed: "تم إنهاء المكالمة",
             call_error: "حدث خطأ أثناء المكالمة",
-            call_ended_ready: "تم إنهاء الاتصال لديك. جاهز لاتصال جديد.",
+            call_ended_ready: "تم إنهاء المكالمة. جاهز لاتصال جديد.",
             alert_remote_required: "الرجاء إدخال معرّف الموظف المراد إضافته.",
-            media_error_onload: "تعذر فتح الكاميرا/المايك. تأكد من السماح في المتصفح."
+            media_error_onload: "تعذر فتح الكاميرا/المايك. تأكد من السماح في المتصفح.",
+            muted_by_all: "تم كتم الميكروفون عندك بواسطة مسؤول الغرفة."
         },
         en: {
             ready: "Ready to start a call",
             peer_error: "Error connecting to PeerJS server. Please check your internet connection.",
-            peer_unavailable: "This employee is already logged in from another device.",
             incoming_call: "Incoming call...",
             media_error: "Unable to access camera/microphone.",
             call_active: "Call is active",
-            call_closed: "Call ended for you only.",
+            call_closed: "Call ended",
             call_error: "An error occurred during the call",
-            call_ended_ready: "Call ended for you. Ready for a new call.",
+            call_ended_ready: "Call ended. Ready for a new call.",
             alert_remote_required: "Please enter the participant ID.",
-            media_error_onload: "Unable to access camera/microphone. Please allow access in the browser."
+            media_error_onload: "Unable to access camera/microphone. Please allow access in the browser.",
+            muted_by_all: "Your microphone was muted by the room controller."
         }
     };
 
@@ -744,8 +868,16 @@
     const btnToggleCamera = document.getElementById("btnToggleCamera");
     const btnToggleMic = document.getElementById("btnToggleMic");
     const btnShareScreen = document.getElementById("btnShareScreen");
+    const btnMuteAll = document.getElementById("btnMuteAll");
     const callTimerEl = document.getElementById("callTimer");
+    const participantsCountEl = document.getElementById("participantsCount");
 
+    // Chat elements
+    const chatMessagesEl = document.getElementById("chatMessages");
+    const chatInputEl = document.getElementById("chatInput");
+    const btnSendChat = document.getElementById("btnSendChat");
+
+    // local fullscreen button
     const localFsBtn = document.querySelector('[data-fullscreen-target="local"]');
     if (localFsBtn) {
         localFsBtn.addEventListener('click', (e) => {
@@ -758,8 +890,8 @@
     let cameraStream = null;
     let localStream = null;
 
-    const activeCalls = {};       // peerId -> MediaConnection
-    const dataConnections = {};   // peerId -> DataConnection
+    const activeCalls = {};
+    const dataConnections = {};
 
     let isCameraOn = true;
     let isMicOn = true;
@@ -769,18 +901,16 @@
     let callSecondsElapsed = 0;
     let callInProgress = false;
 
-    function setControlsEnabled(enabled) {
-        [btnStartCall, btnEndCall, btnToggleCamera, btnToggleMic, btnShareScreen, remoteIdInput]
-            .forEach(el => { if (el) el.disabled = !enabled; });
-    }
-
-    setControlsEnabled(false); // لحد ما Peer يفتح
-
     function setStatus(textKey, isError) {
         const text = trCall(textKey);
         callStatus.textContent = text;
         callStatus.classList.toggle("status-green", !isError);
         callStatus.style.color = isError ? "#f97373" : "#22c55e";
+    }
+
+    function updateParticipantsCount() {
+        const count = 1 + Object.keys(activeCalls).length;
+        participantsCountEl.textContent = count;
     }
 
     function updateCameraButtonUI() {
@@ -938,6 +1068,7 @@
             const v = wrapper.querySelector('video');
             if (v) v.srcObject = remoteStream;
         }
+        updateParticipantsCount();
     }
 
     function removeRemoteVideo(peerId) {
@@ -949,6 +1080,7 @@
             }
             wrapper.parentNode.removeChild(wrapper);
         }
+        updateParticipantsCount();
     }
 
     function bindCallEvents(call) {
@@ -956,6 +1088,7 @@
         activeCalls[peerId] = call;
         setStatus("call_active", false);
         startCallTimer();
+        updateParticipantsCount();
 
         call.on("stream", (remoteStream) => {
             addRemoteVideo(peerId, remoteStream);
@@ -965,8 +1098,7 @@
             removeRemoteVideo(peerId);
             delete activeCalls[peerId];
             if (Object.keys(activeCalls).length === 0) {
-                // انت بس اللي خرجت، الباقي مكملين ببعض
-                stopCallTimer();
+                stopCallTimer(false); // تسيب التايمر آخر قيمة لو انت لسه فاتح
                 setStatus("call_closed", true);
             }
         });
@@ -976,6 +1108,72 @@
         });
     }
 
+    // ===== CHAT =====
+    function appendChatMessage(from, text, type) {
+        if (!text) return;
+
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('chat-msg');
+        if (type === 'system') {
+            msgDiv.classList.add('system');
+        } else if (type === 'self') {
+            msgDiv.classList.add('self');
+        } else {
+            msgDiv.classList.add('other');
+        }
+
+        if (type !== 'system') {
+            const meta = document.createElement('div');
+            meta.className = 'chat-meta';
+            meta.textContent = type === 'self' ? 'أنت' : from;
+            msgDiv.appendChild(meta);
+        }
+
+        const textDiv = document.createElement('div');
+        textDiv.className = 'chat-text';
+        textDiv.textContent = text;
+
+        msgDiv.appendChild(textDiv);
+        chatMessagesEl.appendChild(msgDiv);
+        chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+    }
+
+    function sendChatMessage() {
+        const text = chatInputEl.value.trim();
+        if (!text) return;
+        chatInputEl.value = "";
+
+        appendChatMessage(myPeerId, text, "self");
+
+        Object.values(dataConnections).forEach(conn => {
+            if (conn && conn.open) {
+                try {
+                    conn.send({ type: "chat", from: myPeerId, text });
+                } catch (e) {}
+            }
+        });
+    }
+
+    btnSendChat.addEventListener("click", sendChatMessage);
+    chatInputEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            sendChatMessage();
+        }
+    });
+
+    // ===== Mic helper for local & force mute =====
+    function setMicState(on) {
+        const stream = cameraStream || localStream;
+        if (!stream) return;
+        const tracks = stream.getAudioTracks();
+        if (!tracks || tracks.length === 0) return;
+        isMicOn = on;
+        tracks.forEach(t => t.enabled = isMicOn);
+        updateMicButtonUI();
+    }
+
+    // ===== Data Messages =====
     function handleDataMessage(fromPeerId, msg) {
         if (!msg || typeof msg !== "object") return;
 
@@ -993,6 +1191,15 @@
             if (pid && pid !== myPeerId) {
                 startCallToPeer(pid);
             }
+        }
+
+        if (msg.type === "chat") {
+            appendChatMessage(msg.from || fromPeerId, msg.text, "other");
+        }
+
+        if (msg.type === "forceMute") {
+            setMicState(false);
+            appendChatMessage("النظام", trCall("muted_by_all"), "system");
         }
     }
 
@@ -1077,20 +1284,11 @@
         peer.on("open", (id) => {
             myIdBox.textContent = id;
             setStatus("ready", false);
-            setControlsEnabled(true);
         });
 
         peer.on("error", (err) => {
             console.error(err);
-            if (err.type === "unavailable-id") {
-                // نفس اليوزر / نفس الدور مفتوح من جهاز تاني
-                setStatus("peer_unavailable", true);
-                alert("هذا الموظف مسجّل دخول بالفعل من جهاز آخر. يرجى إغلاق الجلسة الأخرى ثم إعادة المحاولة.");
-                setControlsEnabled(false);
-            } else {
-                setStatus("peer_error", true);
-                setControlsEnabled(false);
-            }
+            setStatus("peer_error", true);
         });
 
         peer.on("call", (call) => {
@@ -1131,17 +1329,26 @@
         updateCameraButtonUI();
     });
 
-    // مايك
+    // مايك (لوحدك)
     btnToggleMic.addEventListener("click", () => {
-        const stream = cameraStream || localStream;
-        if (!stream) return;
+        setMicState(!isMicOn);
+    });
 
-        const tracks = stream.getAudioTracks();
-        if (!tracks || tracks.length === 0) return;
+    // ميوت للجميع (يبعت للناس يكتموا نفسهم)
+    btnMuteAll.addEventListener("click", () => {
+        // كتم نفسك
+        setMicState(false);
 
-        isMicOn = !isMicOn;
-        tracks.forEach(t => t.enabled = isMicOn);
-        updateMicButtonUI();
+        // بعت أمر لباقي المشاركين يكتموا نفسهم
+        Object.values(dataConnections).forEach(conn => {
+            if (conn && conn.open) {
+                try {
+                    conn.send({ type: "forceMute" });
+                } catch (e) {}
+            }
+        });
+
+        appendChatMessage("النظام", "تم إرسال أمر كتم للجميع.", "system");
     });
 
     // مشاركة الشاشة
@@ -1164,20 +1371,21 @@
         addParticipantById(remoteId);
     });
 
-    // إنهاء الاتصال (أنت بس اللي بتطلع)
+    // إنهاء المكالمة (انت بس)
     btnEndCall.addEventListener("click", () => {
-        stopScreenShare();
-
+        // انت بتقفل كل الاتصالات من طرفك
         Object.values(activeCalls).forEach(call => {
             try { call.close(); } catch (e) {}
         });
         for (const k in activeCalls) delete activeCalls[k];
 
+        // تقفل الـ data connections من طرفك برضه
         Object.values(dataConnections).forEach(conn => {
             try { conn.close(); } catch (e) {}
         });
         for (const k in dataConnections) delete dataConnections[k];
 
+        // فيديوهات الريموت عندك بس
         remoteVideosGrid.querySelectorAll('.remote-video-wrapper').forEach(w => {
             const vid = w.querySelector('video');
             if (vid && vid.srcObject) {
@@ -1185,6 +1393,9 @@
             }
             w.remove();
         });
+
+        // الكاميرا بتاعتك
+        stopScreenShare();
 
         if (cameraStream) {
             cameraStream.getTracks().forEach(t => t.stop());
@@ -1199,7 +1410,9 @@
         updateMicButtonUI();
 
         stopCallTimer();
+        updateParticipantsCount();
         setStatus("call_ended_ready", false);
+        appendChatMessage("النظام", "لقد غادرت المكالمة. باقي المشاركين مستمرين لوحدهم.", "system");
     });
 
     initPeer();
@@ -1234,16 +1447,16 @@
             status_ready: "Ready to start a call",
 
             call_title_ctrl: "Call management",
-            call_sub_ctrl: "A fixed ID is generated based on the user's role. Type any employee ID and press 'Start call' to add them to the room; the connection will be distributed to other participants.",
+            call_sub_ctrl: "A fixed ID is generated based on the user's role. Type any employee ID and press 'Start' to add them to the room. The system will try to connect them with all other participants.",
 
             label_my_id: "Your ID:",
             label_remote_id: "Participant ID to add:",
             remote_id_placeholder: "Example: GHASIQ-IT-HEAD or GHASIQ-HR-HEAD",
 
-            btn_start_call: "Start call / Add participant",
+            btn_start_call: "Start / Add participant",
             btn_end_call: "End call",
 
-            hint_text: "• Make sure all participants open the same call page.<br>• Each department head has a fixed ID such as: <span>GHASIQ-IT-HEAD</span>, <span>GHASIQ-HR-HEAD</span>, <span>GHASIQ-FINANCE-HEAD</span>, <span>GHASIQ-GM</span>.<br>• When a new participant is added from any device, the system will try to connect them to all existing participants automatically.",
+            hint_text: "• Make sure all participants open the same call page.<br>• Each department head has a fixed ID such as: <span>GHASIQ-IT-HEAD</span>, <span>GHASIQ-HR-HEAD</span>, <span>GHASIQ-FINANCE-HEAD</span>, <span>GHASIQ-GM</span>.<br>• When a new participant is added from any device, the system will try to connect them automatically to all existing participants.",
 
             footer_text: "© <span>Ghasiq</span> Logistical Support & Operations — All rights reserved."
         }
