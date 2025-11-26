@@ -377,8 +377,6 @@
     </footer>
 </div>
 
-<script src="auth.js"></script>
-
 <script>
     // ===== Theme =====
     const bodyEl = document.body;
@@ -444,8 +442,7 @@
 
             error_required: "من فضلك أدخل اسم المستخدم وكلمة المرور.",
             error_password: "كلمة المرور غير صحيحة.",
-            error_unauthorized: "اسم المستخدم غير مسجل في النظام.",
-            error_already_active: "هذا الحساب مستخدم حاليًا على جهاز آخر. من فضلك سجّل الخروج من الجهاز الأول أولاً."
+            error_unauthorized: "اسم المستخدم غير مصرح له بالدخول."
         },
         en: {
             page_title: "Ghasiq – Login",
@@ -476,8 +473,7 @@
 
             error_required: "Please enter username and password.",
             error_password: "Incorrect password.",
-            error_unauthorized: "This username is not registered in the system.",
-            error_already_active: "This account is already active on another device. Please log out there first."
+            error_unauthorized: "This username is not authorized to access."
         }
     };
 
@@ -531,7 +527,19 @@
 
     initLanguageToggle();
 
-    // ===== Login باستخدام auth.js =====
+    // ===== Role Mapping =====
+    function mapRole(username) {
+        const u = username.toLowerCase();
+
+        if (u.includes("ahmed")) return "IT Head";
+        if (u.includes("mohamed") || u.includes("mohammad")) return "HR Head";
+        if (u.includes("emad")) return "Finance Head";
+        if (u.includes("hamed") || u.includes("hamad")) return "General Manager";
+
+        return null; // غير مسموح
+    }
+
+    // ===== Login =====
     function login() {
         const usernameInput = document.getElementById("username");
         const passwordInput = document.getElementById("password");
@@ -552,40 +560,29 @@
             return;
         }
 
-        const allUsers = Auth.getUsers();
-        const existingUser = allUsers.find(
-            u => u.username.toLowerCase() === username.toLowerCase()
-        );
-
-        const result = Auth.login(username, password);
-
-        // لو auth.js بيرجع كائن فيه error للحالة دي
-        if (result && result.error === "already_active") {
+        if (password !== "12345") {
             errorBox.style.display = "block";
-            errorBox.textContent = t.error_already_active;
+            errorBox.textContent = t.error_password;
             return;
         }
 
-        if (!result) {
+        const role = mapRole(username);
+        if (!role) {
             errorBox.style.display = "block";
-            if (!existingUser) {
-                errorBox.textContent = t.error_unauthorized;
-            } else {
-                errorBox.textContent = t.error_password;
-            }
+            errorBox.textContent = t.error_unauthorized;
             return;
         }
+
+        const userObj = {
+            username: username,
+            role: role,
+            login: true
+        };
+
+        localStorage.setItem("ghasiq_user", JSON.stringify(userObj));
 
         window.location.href = "index.html";
     }
-
-    // لو اليوزر أصلاً عامل لوجين، رجّعه على طول للصفحة الرئيسية
-    (function autoRedirectIfLoggedIn() {
-        const current = Auth.getCurrentUser && Auth.getCurrentUser();
-        if (current) {
-            window.location.href = "index.html";
-        }
-    })();
 
     // Enter = Login
     document.addEventListener("keydown", function (e) {
