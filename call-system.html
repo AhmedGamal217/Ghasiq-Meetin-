@@ -574,8 +574,8 @@
                 </div>
 
                 <div class="buttons-row buttons-row-main">
-                    <button class="btn-primary" id="btnStartCall" data-i18n="btn_start_call">بدء الاتصال / إضافة مشارك</button>
-                    <button class="btn-danger" id="btnEndCall" data-i18n="btn_end_call">إنهاء المكالمة (لك فقط)</button>
+                    <button class="btn-primary" id="btnStartCall" data-i18n="btn_start_call">بدء الاتصال</button>
+                    <button class="btn-danger" id="btnEndCall" data-i18n="btn_end_call">إنهاء المكالمة</button>
                 </div>
             </div>
 
@@ -584,7 +584,7 @@
                     • تأكد أن جميع المشاركين فتحوا نفس صفحة الاتصال.<br>
                     • لكل رئيس قسم معرف ثابت، مثل:
                     <span>GHASIQ-IT-HEAD</span>، <span>GHASIQ-HR-HEAD</span>، <span>GHASIQ-FINANCE-HEAD</span>، <span>GHASIQ-GM</span>.<br>
-                    • عند إضافة مشارك جديد من أي جهاز، النظام يحاول توصيله بكل الموجودين تلقائيًا.
+                    • عند إضافة مشارك جديد من أي جهاز، النظام يحاول توصيله بباقي الموجودين تلقائيًا.
                 </div>
             </div>
         </aside>
@@ -682,7 +682,6 @@
         ar: {
             ready: "جاهز لبدء مكالمة",
             peer_error: "خطأ في الاتصال بخادم PeerJS. تأكد من الاتصال بالإنترنت.",
-            peer_taken: "هذا الحساب مستخدم حاليًا على جهاز آخر. يُرجى إنهاء الاتصال من الجهاز الآخر أولاً.",
             incoming_call: "يتم استقبال مكالمة...",
             media_error: "تعذر فتح الكاميرا/المايك.",
             call_active: "المكالمة نشطة",
@@ -695,7 +694,6 @@
         en: {
             ready: "Ready to start a call",
             peer_error: "Error connecting to PeerJS server. Please check your internet connection.",
-            peer_taken: "This account is already in use on another device. Please end the call there first.",
             incoming_call: "Incoming call...",
             media_error: "Unable to access camera/microphone.",
             call_active: "Call is active",
@@ -748,6 +746,7 @@
     const btnShareScreen = document.getElementById("btnShareScreen");
     const callTimerEl = document.getElementById("callTimer");
 
+    // local fullscreen button
     const localFsBtn = document.querySelector('[data-fullscreen-target="local"]');
     if (localFsBtn) {
         localFsBtn.addEventListener('click', (e) => {
@@ -1075,20 +1074,6 @@
 
         peer.on("error", (err) => {
             console.error(err);
-
-            // حالة نفس المستخدم فاتح على جهازين بنفس الـ ID
-            if (err.type === 'unavailable-id' || (err.message && err.message.includes('is taken'))) {
-                alert(trCall("peer_taken"));
-                setStatus("peer_taken", true);
-                // ممكن تعطل الأزرار كمان لو حابب
-                btnStartCall.disabled = true;
-                btnEndCall.disabled = true;
-                btnToggleCamera.disabled = true;
-                btnToggleMic.disabled = true;
-                btnShareScreen.disabled = true;
-                return;
-            }
-
             setStatus("peer_error", true);
         });
 
@@ -1163,21 +1148,20 @@
         addParticipantById(remoteId);
     });
 
-    // إنهاء المكالمة (للمستخدم الحالي فقط)
+    // إنهاء المكالمة بالكامل
     btnEndCall.addEventListener("click", () => {
-        // اقفل كل الـ calls الخاصة بهذا المستخدم فقط
+        stopScreenShare();
+
         Object.values(activeCalls).forEach(call => {
             try { call.close(); } catch (e) {}
         });
         for (const k in activeCalls) delete activeCalls[k];
 
-        // اقفل الـ data connections من ناحيتك
         Object.values(dataConnections).forEach(conn => {
             try { conn.close(); } catch (e) {}
         });
         for (const k in dataConnections) delete dataConnections[k];
 
-        // شيل كل الفيديوهات البعيدة من عندك
         remoteVideosGrid.querySelectorAll('.remote-video-wrapper').forEach(w => {
             const vid = w.querySelector('video');
             if (vid && vid.srcObject) {
@@ -1186,10 +1170,6 @@
             w.remove();
         });
 
-        // أوقف مشاركة الشاشة لو شغالة
-        stopScreenShare();
-
-        // أوقف الكاميرا والمايك من ناحيتك
         if (cameraStream) {
             cameraStream.getTracks().forEach(t => t.stop());
             cameraStream = null;
@@ -1245,7 +1225,7 @@
             remote_id_placeholder: "Example: GHASIQ-IT-HEAD or GHASIQ-HR-HEAD",
 
             btn_start_call: "Start / Add participant",
-            btn_end_call: "End call (only you)",
+            btn_end_call: "End call",
 
             hint_text: "• Make sure all participants open the same call page.<br>• Each department head has a fixed ID such as: <span>GHASIQ-IT-HEAD</span>, <span>GHASIQ-HR-HEAD</span>, <span>GHASIQ-FINANCE-HEAD</span>, <span>GHASIQ-GM</span>.<br>• When a new participant is added from any device, the system will try to connect them to all existing participants automatically.",
 
