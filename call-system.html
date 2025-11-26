@@ -301,6 +301,36 @@
             flex:1;
         }
 
+        /* Grid لمشاركين كتير */
+        .remote-grid {
+            display:grid;
+            grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));
+            gap:8px;
+        }
+
+        .remote-video-wrapper {
+            position:relative;
+        }
+
+        .remote-video-wrapper video {
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            border-radius:10px;
+            background:#000;
+        }
+
+        .remote-peer-label {
+            position:absolute;
+            bottom:6px;
+            right:8px;
+            padding:2px 8px;
+            border-radius:999px;
+            background:rgba(15,23,42,0.8);
+            border:1px solid rgba(148,163,184,0.5);
+            font-size:10px;
+        }
+
         .status-bar {
             margin-top:8px;
             font-size:12px;
@@ -491,8 +521,7 @@
             <div class="call-header sidebar-header">
                 <div class="call-header-title" data-i18n="call_title_ctrl">إدارة الاتصال</div>
                 <div class="call-header-sub" data-i18n="call_sub_ctrl">
-                    يتم توليد معرف ثابت بناءً على دور المستخدم. شارِك المعرف مع الموظف الآخر،
-                    واطلب منه إدخاله في خانة "معرّف الطرف الآخر".
+                    يتم توليد معرف ثابت بناءً على دور المستخدم. اكتب معرّف أي موظف واضغط "بدء الاتصال" ليتم إضافته للغرفة، وسيتم توزيع الاتصال على باقي المشاركين.
                 </div>
             </div>
 
@@ -503,11 +532,14 @@
                 </div>
 
                 <div class="remote-input-row">
-                    <label style="font-size:13px;" data-i18n="label_remote_id">معرّف الموظف الآخر:</label>
+                    <label style="font-size:13px;" data-i18n="label_remote_id">معرّف الموظف المراد إضافته:</label>
                     <input id="remoteIdInput"
-                        type="text"
-                        data-i18n-placeholder="remote_id_placeholder"
-                        placeholder="مثال: GHASIQ-IT-HEAD أو GHASIQ-HR-HEAD">
+                           type="text"
+                           data-i18n-placeholder="remote_id_placeholder"
+                           placeholder="مثال: GHASIQ-IT-HEAD أو GHASIQ-HR-HEAD">
+                    <small class="hint">
+                        كل ما تضيف ID جديد وتضغط "بدء الاتصال" هينضم للغرفة وهيوصل لكل المشاركين.
+                    </small>
                 </div>
             </div>
 
@@ -515,7 +547,6 @@
                 <div class="buttons-row">
                     <button type="button" id="btnToggleCamera" class="btn-icon" title="تشغيل/إيقاف الكاميرا">🎥</button>
                     <button type="button" id="btnToggleMic" class="btn-icon" title="تشغيل/إيقاف المايك">🎙️</button>
-                    <!-- مشاركة الشاشة -->
                     <button type="button" id="btnShareScreen" class="btn-icon" title="مشاركة الشاشة">🖥️</button>
                 </div>
 
@@ -527,9 +558,10 @@
 
             <div class="sidebar-section sidebar-hint">
                 <div class="hint" data-i18n="hint_text">
-                    • تأكد أن الطرفين متصلين بالإنترنت.<br>
+                    • تأكد أن جميع المشاركين فتحوا نفس صفحة الاتصال.<br>
                     • لكل رئيس قسم معرف ثابت، مثل:
-                    <span>GHASIQ-IT-HEAD</span>، <span>GHASIQ-HR-HEAD</span>، <span>GHASIQ-FINANCE-HEAD</span>، <span>GHASIQ-GM</span>.
+                    <span>GHASIQ-IT-HEAD</span>، <span>GHASIQ-HR-HEAD</span>، <span>GHASIQ-FINANCE-HEAD</span>، <span>GHASIQ-GM</span>.<br>
+                    • عند إضافة مشارك جديد من أي جهاز، النظام يحاول توصيله بباقي الموجودين تلقائيًا.
                 </div>
             </div>
         </aside>
@@ -550,8 +582,8 @@
                     <video id="localVideo" autoplay muted playsinline></video>
                 </div>
                 <div class="video-box">
-                    <div class="video-label" data-i18n="video_label_remote">الطرف الآخر</div>
-                    <video id="remoteVideo" autoplay playsinline></video>
+                    <div class="video-label" data-i18n="video_label_remote">المشاركون الآخرون</div>
+                    <div id="remoteVideosGrid" class="remote-grid"></div>
                 </div>
             </div>
 
@@ -620,6 +652,7 @@
         return localStorage.getItem("ghasiq_lang") || "ar";
     }
 
+    // ===== نصوص الحالات =====
     const callTexts = {
         ar: {
             ready: "جاهز لبدء مكالمة",
@@ -630,7 +663,7 @@
             call_closed: "تم إنهاء المكالمة",
             call_error: "حدث خطأ أثناء المكالمة",
             call_ended_ready: "تم إنهاء المكالمة. جاهز لاتصال جديد.",
-            alert_remote_required: "الرجاء إدخال معرّف الموظف الآخر.",
+            alert_remote_required: "الرجاء إدخال معرّف الموظف المراد إضافته.",
             media_error_onload: "تعذر فتح الكاميرا/المايك. تأكد من السماح في المتصفح."
         },
         en: {
@@ -642,7 +675,7 @@
             call_closed: "Call ended",
             call_error: "An error occurred during the call",
             call_ended_ready: "Call ended. Ready for a new call.",
-            alert_remote_required: "Please enter the other employee's ID.",
+            alert_remote_required: "Please enter the participant ID.",
             media_error_onload: "Unable to access camera/microphone. Please allow access in the browser."
         }
     };
@@ -653,7 +686,7 @@
         return dict[key] || key;
     }
 
-    // ===== PeerJS / Call Logic =====
+    // ===== PeerJS / Mesh Room Logic =====
     const user = window.__gh_user || { role: "User" };
 
     function normalizeRole(r) {
@@ -667,7 +700,7 @@
     const myIdBox = document.getElementById("myIdBox");
     const remoteIdInput = document.getElementById("remoteIdInput");
     const localVideo = document.getElementById("localVideo");
-    const remoteVideo = document.getElementById("remoteVideo");
+    const remoteVideosGrid = document.getElementById("remoteVideosGrid");
     const callStatus = document.getElementById("callStatus");
     const btnStartCall = document.getElementById("btnStartCall");
     const btnEndCall = document.getElementById("btnEndCall");
@@ -677,9 +710,11 @@
     const callTimerEl = document.getElementById("callTimer");
 
     let peer = null;
-    let localStream = null;     // stream المستخدم حاليًا في الفيديو
-    let cameraStream = null;    // stream الأصلي بتاع الكاميرا (مع الصوت)
-    let currentCall = null;
+    let cameraStream = null;   // stream الأصلي (كاميرا + صوت)
+    let localStream = null;    // stream المستخدم حاليًا للإرسال (كاميرا أو شاشة)
+
+    const activeCalls = {};     // peerId => call
+    const dataConnections = {}; // peerId => dataConnection
 
     let isCameraOn = true;
     let isMicOn = true;
@@ -687,6 +722,7 @@
 
     let callTimerInterval = null;
     let callSecondsElapsed = 0;
+    let callInProgress = false;
 
     function setStatus(textKey, isError) {
         const text = trCall(textKey);
@@ -714,6 +750,8 @@
     }
 
     function startCallTimer() {
+        if (callInProgress) return;
+        callInProgress = true;
         callSecondsElapsed = 0;
         if (callTimerInterval) clearInterval(callTimerInterval);
         callTimerEl.textContent = "00:00";
@@ -724,6 +762,7 @@
     }
 
     function stopCallTimer(resetToZero = true) {
+        callInProgress = false;
         if (callTimerInterval) {
             clearInterval(callTimerInterval);
             callTimerInterval = null;
@@ -736,18 +775,21 @@
 
     function switchVideoTrack(newStream) {
         if (!newStream) return;
-
         localStream = newStream;
         localVideo.srcObject = newStream;
 
-        if (currentCall && currentCall.peerConnection) {
-            const sender = currentCall.peerConnection.getSenders()
+        const newTrack = newStream.getVideoTracks()[0];
+        if (!newTrack) return;
+
+        // عدل التراك في كل الاتصالات الحالية
+        Object.values(activeCalls).forEach(call => {
+            if (!call.peerConnection) return;
+            const sender = call.peerConnection.getSenders()
                 .find(s => s.track && s.track.kind === 'video');
-            const newVideoTrack = newStream.getVideoTracks()[0];
-            if (sender && newVideoTrack) {
-                sender.replaceTrack(newVideoTrack).catch(err => console.error('replaceTrack error', err));
+            if (sender) {
+                sender.replaceTrack(newTrack).catch(err => console.error('replaceTrack error', err));
             }
-        }
+        });
     }
 
     function startScreenShare() {
@@ -787,33 +829,7 @@
         }
     }
 
-    function initPeer() {
-        peer = new Peer(myPeerId, { debug: 1 });
-
-        peer.on("open", (id) => {
-            myIdBox.textContent = id;
-            setStatus("ready", false);
-        });
-
-        peer.on("error", (err) => {
-            console.error(err);
-            setStatus("peer_error", true);
-        });
-
-        peer.on("call", (call) => {
-            setStatus("incoming_call", false);
-            getMediaStream().then((stream) => {
-                call.answer(stream);
-                bindCallEvents(call);
-            }).catch((err) => {
-                console.error(err);
-                setStatus("media_error", true);
-            });
-        });
-    }
-
     function getMediaStream() {
-        // لو الكاميرا already موجودة
         if (cameraStream) {
             localStream = cameraStream;
             localVideo.srcObject = localStream;
@@ -837,24 +853,195 @@
             });
     }
 
+    function addRemoteVideo(peerId, remoteStream) {
+        let wrapper = document.querySelector(`.remote-video-wrapper[data-peer-id="${peerId}"]`);
+        if (!wrapper) {
+            wrapper = document.createElement('div');
+            wrapper.className = 'remote-video-wrapper';
+            wrapper.dataset.peerId = peerId;
+
+            const v = document.createElement('video');
+            v.autoplay = true;
+            v.playsInline = true;
+            v.id = `vid-${peerId}`;
+            v.srcObject = remoteStream;
+
+            const label = document.createElement('div');
+            label.className = 'remote-peer-label';
+            label.textContent = peerId;
+
+            wrapper.appendChild(v);
+            wrapper.appendChild(label);
+            remoteVideosGrid.appendChild(wrapper);
+        } else {
+            const v = wrapper.querySelector('video');
+            if (v) v.srcObject = remoteStream;
+        }
+    }
+
+    function removeRemoteVideo(peerId) {
+        const wrapper = document.querySelector(`.remote-video-wrapper[data-peer-id="${peerId}"]`);
+        if (wrapper && wrapper.parentNode) {
+            const vid = wrapper.querySelector('video');
+            if (vid && vid.srcObject) {
+                vid.srcObject.getTracks().forEach(t => t.stop());
+            }
+            wrapper.parentNode.removeChild(wrapper);
+        }
+    }
+
     function bindCallEvents(call) {
-        currentCall = call;
+        const peerId = call.peer;
+        activeCalls[peerId] = call;
         setStatus("call_active", false);
         startCallTimer();
 
         call.on("stream", (remoteStream) => {
-            remoteVideo.srcObject = remoteStream;
+            addRemoteVideo(peerId, remoteStream);
         });
 
         call.on("close", () => {
-            setStatus("call_closed", true);
-            remoteVideo.srcObject = null;
-            stopCallTimer();
+            removeRemoteVideo(peerId);
+            delete activeCalls[peerId];
+            if (Object.keys(activeCalls).length === 0) {
+                stopCallTimer();
+                setStatus("call_closed", true);
+            }
         });
 
         call.on("error", () => {
             setStatus("call_error", true);
-            stopCallTimer();
+        });
+    }
+
+    function handleDataMessage(fromPeerId, msg) {
+        if (!msg || typeof msg !== "object") return;
+
+        if (msg.type === "initPeers") {
+            const peers = msg.peers || [];
+            peers.forEach(pid => {
+                if (pid && pid !== myPeerId) {
+                    startCallToPeer(pid);
+                }
+            });
+        }
+
+        if (msg.type === "newPeer") {
+            const pid = msg.peerId;
+            if (pid && pid !== myPeerId) {
+                startCallToPeer(pid);
+            }
+        }
+    }
+
+    function ensureDataConnection(peerId) {
+        if (peerId === myPeerId) return null;
+        let conn = dataConnections[peerId];
+        if (conn) return conn;
+
+        conn = peer.connect(peerId);
+        conn.on('data', (msg) => handleDataMessage(peerId, msg));
+        conn.on('close', () => { delete dataConnections[peerId]; });
+        conn.on('error', () => {});
+        // هنخلي إضافة conn في open عشان نضمن جاهزيته
+        conn.on('open', () => {
+            dataConnections[peerId] = conn;
+        });
+
+        return conn;
+    }
+
+    function broadcastNewPeer(newPeerId) {
+        Object.entries(dataConnections).forEach(([pid, conn]) => {
+            if (!conn || !conn.open) return;
+            if (pid === newPeerId) return;
+            try {
+                conn.send({ type: "newPeer", peerId: newPeerId });
+            } catch (e) {}
+        });
+    }
+
+    function startCallToPeer(peerId) {
+        if (!peerId || peerId === myPeerId) return;
+        if (activeCalls[peerId]) return;
+
+        getMediaStream().then((stream) => {
+            const call = peer.call(peerId, stream);
+            bindCallEvents(call);
+            ensureDataConnection(peerId);
+        }).catch(err => {
+            console.error(err);
+            setStatus("media_error", true);
+        });
+    }
+
+    function addParticipantById(remoteId) {
+        if (!remoteId || remoteId === myPeerId) return;
+
+        getMediaStream().then((stream) => {
+            // اتصال ميديا لو مش موجود
+            if (!activeCalls[remoteId]) {
+                const call = peer.call(remoteId, stream);
+                bindCallEvents(call);
+            }
+
+            const existingPeers = [myPeerId, ...Object.keys(activeCalls).filter(id => id !== remoteId)];
+
+            let conn = ensureDataConnection(remoteId);
+            if (!conn) return;
+
+            const sendInitAndBroadcast = () => {
+                try {
+                    conn.send({ type: "initPeers", peers: existingPeers });
+                } catch (e) {}
+                broadcastNewPeer(remoteId);
+            };
+
+            if (conn.open) {
+                sendInitAndBroadcast();
+            } else {
+                conn.on('open', () => {
+                    dataConnections[remoteId] = conn;
+                    sendInitAndBroadcast();
+                });
+            }
+        }).catch(err => {
+            console.error(err);
+            setStatus("media_error", true);
+        });
+    }
+
+    function initPeer() {
+        peer = new Peer(myPeerId, { debug: 1 });
+
+        peer.on("open", (id) => {
+            myIdBox.textContent = id;
+            setStatus("ready", false);
+        });
+
+        peer.on("error", (err) => {
+            console.error(err);
+            setStatus("peer_error", true);
+        });
+
+        peer.on("call", (call) => {
+            setStatus("incoming_call", false);
+            getMediaStream().then((stream) => {
+                call.answer(stream);
+                bindCallEvents(call);
+                ensureDataConnection(call.peer);
+            }).catch((err) => {
+                console.error(err);
+                setStatus("media_error", true);
+            });
+        });
+
+        peer.on("connection", (conn) => {
+            const pid = conn.peer;
+            dataConnections[pid] = conn;
+            conn.on('data', (msg) => handleDataMessage(pid, msg));
+            conn.on('close', () => { delete dataConnections[pid]; });
+            conn.on('error', () => {});
         });
     }
 
@@ -864,7 +1051,6 @@
             alert("أوقف مشاركة الشاشة أولاً لإيقاف الكاميرا.");
             return;
         }
-
         const stream = cameraStream || localStream;
         if (!stream) return;
 
@@ -898,42 +1084,45 @@
         }
     });
 
-    // بدء الاتصال
+    // بدء / إضافة مشارك جديد
     btnStartCall.addEventListener("click", () => {
         const remoteId = remoteIdInput.value.trim();
         if (!remoteId) {
             alert(trCall("alert_remote_required"));
             return;
         }
-
         setStatus("incoming_call", false);
-
-        getMediaStream().then((stream) => {
-            const call = peer.call(remoteId, stream);
-            bindCallEvents(call);
-        }).catch((err) => {
-            console.error(err);
-            setStatus("media_error", true);
-        });
+        addParticipantById(remoteId);
     });
 
-    // إنهاء الاتصال
+    // إنهاء المكالمة بالكامل
     btnEndCall.addEventListener("click", () => {
-        if (currentCall) {
-            currentCall.close();
-            currentCall = null;
-        }
-
         stopScreenShare();
+
+        Object.values(activeCalls).forEach(call => {
+            try { call.close(); } catch (e) {}
+        });
+        for (const k in activeCalls) delete activeCalls[k];
+
+        Object.values(dataConnections).forEach(conn => {
+            try { conn.close(); } catch (e) {}
+        });
+        for (const k in dataConnections) delete dataConnections[k];
+
+        remoteVideosGrid.querySelectorAll('.remote-video-wrapper').forEach(w => {
+            const vid = w.querySelector('video');
+            if (vid && vid.srcObject) {
+                vid.srcObject.getTracks().forEach(t => t.stop());
+            }
+            w.remove();
+        });
 
         if (cameraStream) {
             cameraStream.getTracks().forEach(t => t.stop());
             cameraStream = null;
         }
-
         localStream = null;
         localVideo.srcObject = null;
-        remoteVideo.srcObject = null;
 
         isCameraOn = true;
         isMicOn = true;
@@ -944,6 +1133,7 @@
         setStatus("call_ended_ready", false);
     });
 
+    // تشغيل Peer + الكاميرا
     initPeer();
 
     window.addEventListener('load', () => {
@@ -970,22 +1160,22 @@
             call_sub_main: "Use this room for quick operational meetings between Ghasiq departments (operations, maintenance, HR, finance, general management).",
 
             video_label_local: "Your video",
-            video_label_remote: "Remote side",
+            video_label_remote: "Other participants",
 
             status_prefix: "Call status:",
             status_ready: "Ready to start a call",
 
             call_title_ctrl: "Call management",
-            call_sub_ctrl: "A fixed ID is generated based on the user's role. Share this ID with the other employee and ask them to enter it in the 'Remote ID' field.",
+            call_sub_ctrl: "A fixed ID is generated based on the user's role. Type any employee ID and press 'Start call' to add them to the room, and the connection will be distributed to other participants.",
 
             label_my_id: "Your ID:",
-            label_remote_id: "Other employee ID:",
+            label_remote_id: "Participant ID to add:",
             remote_id_placeholder: "Example: GHASIQ-IT-HEAD or GHASIQ-HR-HEAD",
 
-            btn_start_call: "Start call",
+            btn_start_call: "Start / Add participant",
             btn_end_call: "End call",
 
-            hint_text: "• Make sure both sides are connected to the internet.<br>• Each department head has a fixed ID such as: <span>GHASIQ-IT-HEAD</span>, <span>GHASIQ-HR-HEAD</span>, <span>GHASIQ-FINANCE-HEAD</span>, <span>GHASIQ-GM</span>.",
+            hint_text: "• Make sure all participants open the same call page.<br>• Each department head has a fixed ID such as: <span>GHASIQ-IT-HEAD</span>, <span>GHASIQ-HR-HEAD</span>, <span>GHASIQ-FINANCE-HEAD</span>, <span>GHASIQ-GM</span>.<br>• When a new participant is added from any device, the system will try to connect them to all existing participants automatically.",
 
             footer_text: "© <span>Ghasiq</span> Logistical Support & Operations — All rights reserved."
         }
@@ -1028,9 +1218,9 @@
             document.title = translations[lang].page_title;
         }
 
-        const callStatus = document.getElementById("callStatus");
-        if (callStatus && callStatus.dataset.i18n === "status_ready") {
-            callStatus.innerHTML = translations[lang].status_ready || callStatus.innerHTML;
+        const callStatusEl = document.getElementById("callStatus");
+        if (callStatusEl && callStatusEl.dataset.i18n === "status_ready") {
+            callStatusEl.innerHTML = translations[lang].status_ready || callStatusEl.innerHTML;
         }
     }
 
