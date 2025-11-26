@@ -178,7 +178,7 @@
         /* LAYOUT */
         .call-layout {
             display:grid;
-            grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+            grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
             gap:22px;
             align-items:flex-start;
         }
@@ -305,12 +305,12 @@
             flex:1;
         }
 
-        /* Mirror للكاميرا المحلية */
-        #localVideo {
+        /* عكس الكاميرا المحلية */
+        #localVideo.mirrored {
             transform: scaleX(-1);
         }
 
-        /* Grid لمشاركين كتير */
+        /* Grid للمشاركين */
         .remote-grid {
             display:grid;
             grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));
@@ -373,13 +373,11 @@
             color:#22c55e;
         }
 
-        .status-timer-label,
-        .status-participants-label {
+        .status-timer-label {
             margin-inline-start:10px;
         }
 
-        .status-timer,
-        .status-participants {
+        .status-timer {
             font-family:monospace;
         }
 
@@ -487,100 +485,117 @@
             color:var(--primary-light);
         }
 
-        /* ===== CHAT ===== */
+        /* CHAT */
+        .chat-panel {
+            margin-top:14px;
+            border-radius:16px;
+            background:var(--bg-card);
+            border:1px solid var(--border-subtle);
+            padding:10px 10px 8px;
+            display:flex;
+            flex-direction:column;
+            gap:6px;
+        }
+
         .chat-header {
-            font-size:13px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            font-size:12px;
+            color:var(--text-muted);
             margin-bottom:4px;
         }
 
         .chat-messages {
-            max-height:190px;
-            border-radius:10px;
-            border:1px solid var(--border-subtle);
-            background:rgba(15,23,42,0.7);
-            padding:8px;
+            max-height:220px;
             overflow-y:auto;
+            padding:4px 2px;
+            display:flex;
+            flex-direction:column;
+            gap:4px;
             font-size:12px;
         }
 
-        body.light .chat-messages {
-            background:#f9fafb;
+        .chat-message {
+            padding:4px 8px;
+            border-radius:10px;
+            background:rgba(15,23,42,0.85);
+            border:1px solid rgba(148,163,184,0.3);
+            max-width:90%;
         }
 
-        .chat-msg {
-            margin-bottom:4px;
-            display:flex;
-            flex-direction:column;
+        .chat-message.own {
+            margin-inline-start:auto;
+            background:rgba(37,99,235,0.2);
+            border-color:rgba(59,130,246,0.6);
+        }
+
+        .chat-message.system {
+            margin-inline:auto;
+            background:rgba(15,23,42,0.8);
+            border-style:dashed;
+            font-size:11px;
+            opacity:.85;
         }
 
         .chat-meta {
             font-size:10px;
             color:var(--text-muted);
+            margin-bottom:2px;
         }
 
         .chat-text {
-            padding:4px 8px;
-            border-radius:8px;
-            margin-top:1px;
-            max-width:100%;
             word-wrap:break-word;
         }
 
-        .chat-msg.self .chat-text {
-            align-self:flex-end;
-            background:linear-gradient(135deg,var(--primary),var(--primary-light));
-            color:white;
-        }
-
-        .chat-msg.other .chat-text {
-            align-self:flex-start;
-            background:rgba(15,23,42,0.9);
-        }
-
-        body.light .chat-msg.other .chat-text {
-            background:#e5e7eb;
-            color:#0f172a;
-        }
-
-        .chat-msg.system .chat-text {
-            align-self:center;
-            background:transparent;
-            color:var(--text-muted);
+        .chat-file {
+            margin-top:3px;
             font-size:11px;
-            padding:0;
         }
 
-        .chat-input-row {
-            margin-top:6px;
+        .chat-file a {
+            color:var(--primary-light);
+            text-decoration:underline;
+        }
+
+        .chat-form {
+            margin-top:4px;
             display:flex;
             gap:6px;
+            align-items:center;
         }
 
-        .chat-input-row input {
+        .chat-input {
             flex:1;
-            padding:7px 9px;
-            border-radius:8px;
+            padding:6px 8px;
+            border-radius:999px;
             border:1px solid var(--border-subtle);
-            background:rgba(15,23,42,0.85);
+            background:rgba(15,23,42,0.9);
             color:var(--text-main);
             font-size:12px;
             outline:none;
         }
 
-        body.light .chat-input-row input {
+        body.light .chat-input {
             background:#ffffff;
             color:#0f172a;
         }
 
-        .chat-input-row button {
-            border-radius:999px;
-            padding:7px 14px;
-            border:none;
-            cursor:pointer;
-            background:linear-gradient(135deg,var(--primary),var(--primary-light));
-            color:white;
+        .chat-send-btn {
+            padding:6px 12px;
             font-size:12px;
-            white-space:nowrap;
+        }
+
+        .chat-attach-btn {
+            width:32px;
+            height:32px;
+            font-size:16px;
+        }
+
+        .chat-file-hint {
+            font-size:10px;
+            color:var(--text-muted);
+            margin-top:2px;
         }
 
         .footer {
@@ -648,8 +663,8 @@
             <div class="call-header sidebar-header">
                 <div class="call-header-title" data-i18n="call_title_ctrl">إدارة الاتصال</div>
                 <div class="call-header-sub" data-i18n="call_sub_ctrl">
-                    يتم توليد معرف ثابت بناءً على دور المستخدم. اكتب معرّف أي موظف واضغط "بدء الاتصال" ليتم إضافته للغرفة،
-                    والنظام يحاول توصيله بباقي المشاركين تلقائيًا.
+                    يتم توليد معرف ثابت لكل مستخدم. اكتب معرّف أي موظف واضغط "بدء الاتصال" ليتم إضافته للغرفة،
+                    وسيتم نشر وجوده لباقي المشاركين.
                 </div>
             </div>
 
@@ -666,7 +681,7 @@
                            data-i18n-placeholder="remote_id_placeholder"
                            placeholder="مثال: GHASIQ-IT-HEAD أو GHASIQ-HR-HEAD">
                     <small class="hint">
-                        كل ما تضيف ID جديد وتضغط "بدء الاتصال" هينضم للغرفة (لو فاتح الصفحة) والباقي يسمعه ويشوفه.
+                        كل مرة تكتب ID وتضغط "بدء الاتصال" هينضم للغرفة (لو أونلاين) ويتوصل بباقي الموجودين.
                     </small>
                 </div>
             </div>
@@ -675,24 +690,13 @@
                 <div class="buttons-row">
                     <button type="button" id="btnToggleCamera" class="btn-icon" title="تشغيل/إيقاف الكاميرا">🎥</button>
                     <button type="button" id="btnToggleMic" class="btn-icon" title="تشغيل/إيقاف المايك">🎙️</button>
+                    <button type="button" id="btnMuteAll" class="btn-icon" title="كتم صوت الجميع">🔇</button>
                     <button type="button" id="btnShareScreen" class="btn-icon" title="مشاركة الشاشة">🖥️</button>
-                    <!-- ميوت للجميع -->
-                    <button type="button" id="btnMuteAll" class="btn-icon" title="كتم الجميع">🔇</button>
                 </div>
 
                 <div class="buttons-row buttons-row-main">
                     <button class="btn-primary" id="btnStartCall" data-i18n="btn_start_call">بدء / إضافة مشارك</button>
-                    <button class="btn-danger" id="btnEndCall" data-i18n="btn_end_call">إنهاء المكالمة</button>
-                </div>
-            </div>
-
-            <!-- CHAT -->
-            <div class="sidebar-section">
-                <div class="chat-header">المحادثة أثناء الاجتماع</div>
-                <div id="chatMessages" class="chat-messages"></div>
-                <div class="chat-input-row">
-                    <input id="chatInput" type="text" placeholder="اكتب رسالة واضغط إرسال أو Enter">
-                    <button type="button" id="btnSendChat">إرسال</button>
+                    <button class="btn-danger" id="btnEndCall" data-i18n="btn_end_call">مغادرة المكالمة</button>
                 </div>
             </div>
 
@@ -701,7 +705,7 @@
                     • تأكد أن جميع المشاركين فتحوا نفس صفحة الاتصال.<br>
                     • لكل رئيس قسم معرف ثابت، مثل:
                     <span>GHASIQ-IT-HEAD</span>، <span>GHASIQ-HR-HEAD</span>، <span>GHASIQ-FINANCE-HEAD</span>، <span>GHASIQ-GM</span>.<br>
-                    • عند إضافة مشارك جديد من أي جهاز، النظام يحاول توصيله بكل الموجودين تلقائيًا.
+                    • عند إضافة مشارك جديد من أي جهاز، النظام يحاول ربطه بباقي الموجودين تلقائيًا.
                 </div>
             </div>
         </aside>
@@ -720,7 +724,7 @@
                 <div class="video-box">
                     <div class="video-label" data-i18n="video_label_local">الفيديو الخاص بك</div>
                     <div class="video-inner">
-                        <video id="localVideo" autoplay muted playsinline></video>
+                        <video id="localVideo" class="mirrored" autoplay muted playsinline></video>
                         <button type="button" class="fullscreen-btn" data-fullscreen-target="local">⛶</button>
                     </div>
                 </div>
@@ -737,8 +741,26 @@
                 <span class="status-timer-label">| مدة المكالمة:</span>
                 <span id="callTimer" class="status-timer">00:00</span>
 
-                <span class="status-participants-label">| عدد المشاركين:</span>
-                <span id="participantsCount" class="status-participants">1</span>
+                <span class="status-timer-label">| عدد المشاركين:</span>
+                <span id="participantsCount" class="status-timer">1</span>
+            </div>
+
+            <!-- CHAT -->
+            <div class="chat-panel">
+                <div class="chat-header">
+                    <span>الشات الداخلي</span>
+                    <span style="font-size:11px;">يظهر للجميع في هذه الغرفة</span>
+                </div>
+
+                <div id="chatMessages" class="chat-messages"></div>
+
+                <form id="chatForm" class="chat-form">
+                    <button type="button" id="btnAttachFile" class="btn-icon chat-attach-btn" title="إرفاق ملف">📎</button>
+                    <input type="file" id="chatFileInput" style="display:none" />
+                    <input id="chatInput" type="text" class="chat-input" placeholder="اكتب رسالة للمشاركين..." />
+                    <button type="submit" class="btn-primary chat-send-btn">إرسال</button>
+                </form>
+                <div id="chatFileHint" class="chat-file-hint"></div>
             </div>
         </div>
     </section>
@@ -749,7 +771,7 @@
 </div>
 
 <script>
-    // ===== Theme =====
+    // ===== Theme & User =====
     const bodyEl = document.body;
     const themeToggle = document.getElementById("themeToggle");
     const themeLabel = document.getElementById("themeLabel");
@@ -782,7 +804,6 @@
 
     initTheme();
 
-    // عرض اليوزر
     (function showUser() {
         const chip = document.getElementById("userChip");
         const user = window.__gh_user;
@@ -799,7 +820,6 @@
         return localStorage.getItem("ghasiq_lang") || "ar";
     }
 
-    // ===== نصوص ديناميكية =====
     const callTexts = {
         ar: {
             ready: "جاهز لبدء مكالمة",
@@ -807,12 +827,11 @@
             incoming_call: "يتم استقبال مكالمة...",
             media_error: "تعذر فتح الكاميرا/المايك.",
             call_active: "المكالمة نشطة",
-            call_closed: "تم إنهاء المكالمة",
+            call_closed: "تم إنهاء الاتصال مع هذا الطرف",
             call_error: "حدث خطأ أثناء المكالمة",
-            call_ended_ready: "تم إنهاء المكالمة. جاهز لاتصال جديد.",
+            call_ended_ready: "تم مغادرة المكالمة من هذا الجهاز.",
             alert_remote_required: "الرجاء إدخال معرّف الموظف المراد إضافته.",
-            media_error_onload: "تعذر فتح الكاميرا/المايك. تأكد من السماح في المتصفح.",
-            muted_by_all: "تم كتم الميكروفون عندك بواسطة مسؤول الغرفة."
+            media_error_onload: "تعذر فتح الكاميرا/المايك. تأكد من السماح في المتصفح."
         },
         en: {
             ready: "Ready to start a call",
@@ -820,12 +839,11 @@
             incoming_call: "Incoming call...",
             media_error: "Unable to access camera/microphone.",
             call_active: "Call is active",
-            call_closed: "Call ended",
+            call_closed: "Call closed with this peer",
             call_error: "An error occurred during the call",
-            call_ended_ready: "Call ended. Ready for a new call.",
+            call_ended_ready: "You left the call from this device.",
             alert_remote_required: "Please enter the participant ID.",
-            media_error_onload: "Unable to access camera/microphone. Please allow access in the browser.",
-            muted_by_all: "Your microphone was muted by the room controller."
+            media_error_onload: "Unable to access camera/microphone. Please allow access in the browser."
         }
     };
 
@@ -840,14 +858,14 @@
         if (!element) return;
         if (!document.fullscreenElement) {
             if (element.requestFullscreen) {
-                element.requestFullscreen().catch(err => console.error('FS error', err));
+                element.requestFullscreen().catch(err => console.error('Fullscreen error', err));
             }
         } else {
             document.exitFullscreen().catch(() => {});
         }
     }
 
-    // ===== PeerJS / Mesh Room Logic =====
+    // ===== PeerJS / Mesh Room =====
     const user = window.__gh_user || { role: "User" };
 
     function normalizeRole(r) {
@@ -867,15 +885,10 @@
     const btnEndCall = document.getElementById("btnEndCall");
     const btnToggleCamera = document.getElementById("btnToggleCamera");
     const btnToggleMic = document.getElementById("btnToggleMic");
-    const btnShareScreen = document.getElementById("btnShareScreen");
     const btnMuteAll = document.getElementById("btnMuteAll");
+    const btnShareScreen = document.getElementById("btnShareScreen");
     const callTimerEl = document.getElementById("callTimer");
     const participantsCountEl = document.getElementById("participantsCount");
-
-    // Chat elements
-    const chatMessagesEl = document.getElementById("chatMessages");
-    const chatInputEl = document.getElementById("chatInput");
-    const btnSendChat = document.getElementById("btnSendChat");
 
     // local fullscreen button
     const localFsBtn = document.querySelector('[data-fullscreen-target="local"]');
@@ -890,8 +903,8 @@
     let cameraStream = null;
     let localStream = null;
 
-    const activeCalls = {};
-    const dataConnections = {};
+    const activeCalls = {};       // peerId -> call
+    const dataConnections = {};   // peerId -> data conn
 
     let isCameraOn = true;
     let isMicOn = true;
@@ -908,11 +921,6 @@
         callStatus.style.color = isError ? "#f97373" : "#22c55e";
     }
 
-    function updateParticipantsCount() {
-        const count = 1 + Object.keys(activeCalls).length;
-        participantsCountEl.textContent = count;
-    }
-
     function updateCameraButtonUI() {
         btnToggleCamera.classList.toggle("off", !isCameraOn);
         btnToggleCamera.textContent = isCameraOn ? "🎥" : "🚫";
@@ -921,6 +929,11 @@
     function updateMicButtonUI() {
         btnToggleMic.classList.toggle("off", !isMicOn);
         btnToggleMic.textContent = isMicOn ? "🎙️" : "🔇";
+    }
+
+    function updateParticipantsCount() {
+        const count = 1 + Object.keys(activeCalls).length; // أنا + باقي الاتصالات
+        participantsCountEl.textContent = count;
     }
 
     function formatTime(totalSeconds) {
@@ -982,6 +995,9 @@
                 btnShareScreen.classList.add('off');
                 btnShareScreen.textContent = '🛑';
 
+                // شيل الميرور في الشير
+                localVideo.classList.remove('mirrored');
+
                 const screenTrack = screenStream.getVideoTracks()[0];
                 screenTrack.addEventListener('ended', () => {
                     stopScreenShare();
@@ -1007,6 +1023,8 @@
 
         if (cameraStream) {
             switchVideoTrack(cameraStream);
+            // رجع الميرور مع الكاميرا
+            localVideo.classList.add('mirrored');
         }
     }
 
@@ -1014,6 +1032,7 @@
         if (cameraStream) {
             localStream = cameraStream;
             localVideo.srcObject = localStream;
+            localVideo.classList.add('mirrored');
             return Promise.resolve(localStream);
         }
 
@@ -1030,6 +1049,7 @@
                 updateMicButtonUI();
 
                 localVideo.srcObject = stream;
+                localVideo.classList.add('mirrored'); // عكس الكاميرا
                 return stream;
             });
     }
@@ -1068,7 +1088,6 @@
             const v = wrapper.querySelector('video');
             if (v) v.srcObject = remoteStream;
         }
-        updateParticipantsCount();
     }
 
     function removeRemoteVideo(peerId) {
@@ -1080,25 +1099,25 @@
             }
             wrapper.parentNode.removeChild(wrapper);
         }
-        updateParticipantsCount();
     }
 
     function bindCallEvents(call) {
-        const peerId = call.peer;
-        activeCalls[peerId] = call;
+        const pid = call.peer;
+        activeCalls[pid] = call;
         setStatus("call_active", false);
         startCallTimer();
         updateParticipantsCount();
 
         call.on("stream", (remoteStream) => {
-            addRemoteVideo(peerId, remoteStream);
+            addRemoteVideo(pid, remoteStream);
         });
 
         call.on("close", () => {
-            removeRemoteVideo(peerId);
-            delete activeCalls[peerId];
+            removeRemoteVideo(pid);
+            delete activeCalls[pid];
+            updateParticipantsCount();
             if (Object.keys(activeCalls).length === 0) {
-                stopCallTimer(false); // تسيب التايمر آخر قيمة لو انت لسه فاتح
+                stopCallTimer();
                 setStatus("call_closed", true);
             }
         });
@@ -1108,72 +1127,78 @@
         });
     }
 
-    // ===== CHAT =====
-    function appendChatMessage(from, text, type) {
-        if (!text) return;
+    // ===== Chat & Control Messages via DataChannel =====
+    const chatMessagesEl = document.getElementById("chatMessages");
+    const chatForm = document.getElementById("chatForm");
+    const chatInput = document.getElementById("chatInput");
+    const btnAttachFile = document.getElementById("btnAttachFile");
+    const chatFileInput = document.getElementById("chatFileInput");
+    const chatFileHint = document.getElementById("chatFileHint");
 
-        const msgDiv = document.createElement('div');
-        msgDiv.classList.add('chat-msg');
-        if (type === 'system') {
-            msgDiv.classList.add('system');
-        } else if (type === 'self') {
-            msgDiv.classList.add('self');
+    let pendingFile = null; // { name, size, type, dataUrl }
+
+    function appendChatMessage({ from, text, isOwn, isSystem, file }) {
+        const msgEl = document.createElement("div");
+        msgEl.className = "chat-message";
+        if (isOwn) msgEl.classList.add("own");
+        if (isSystem) msgEl.classList.add("system");
+
+        const meta = document.createElement("div");
+        meta.className = "chat-meta";
+
+        if (isSystem) {
+            meta.textContent = "النظام";
         } else {
-            msgDiv.classList.add('other');
+            meta.textContent = isOwn ? "أنت" : (from || "مشارك");
         }
 
-        if (type !== 'system') {
-            const meta = document.createElement('div');
-            meta.className = 'chat-meta';
-            meta.textContent = type === 'self' ? 'أنت' : from;
-            msgDiv.appendChild(meta);
+        const textEl = document.createElement("div");
+        textEl.className = "chat-text";
+        textEl.textContent = text || (isSystem ? "" : "");
+
+        msgEl.appendChild(meta);
+        if (text) msgEl.appendChild(textEl);
+
+        if (file && file.dataUrl && file.name) {
+            const fileEl = document.createElement("div");
+            fileEl.className = "chat-file";
+            const a = document.createElement("a");
+            a.href = file.dataUrl;
+            a.download = file.name;
+            a.textContent = `📎 ${file.name} (${Math.round((file.size || 0)/1024)} KB)`;
+            fileEl.appendChild(a);
+            msgEl.appendChild(fileEl);
         }
 
-        const textDiv = document.createElement('div');
-        textDiv.className = 'chat-text';
-        textDiv.textContent = text;
-
-        msgDiv.appendChild(textDiv);
-        chatMessagesEl.appendChild(msgDiv);
+        chatMessagesEl.appendChild(msgEl);
         chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
     }
 
-    function sendChatMessage() {
-        const text = chatInputEl.value.trim();
-        if (!text) return;
-        chatInputEl.value = "";
-
-        appendChatMessage(myPeerId, text, "self");
-
+    function broadcastData(msg) {
         Object.values(dataConnections).forEach(conn => {
             if (conn && conn.open) {
-                try {
-                    conn.send({ type: "chat", from: myPeerId, text });
-                } catch (e) {}
+                try { conn.send(msg); } catch (e) {}
             }
         });
     }
 
-    btnSendChat.addEventListener("click", sendChatMessage);
-    chatInputEl.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            sendChatMessage();
-        }
-    });
-
-    // ===== Mic helper for local & force mute =====
-    function setMicState(on) {
-        const stream = cameraStream || localStream;
-        if (!stream) return;
-        const tracks = stream.getAudioTracks();
-        if (!tracks || tracks.length === 0) return;
-        isMicOn = on;
-        tracks.forEach(t => t.enabled = isMicOn);
-        updateMicButtonUI();
+    function sendChatMessage(text, fileObj) {
+        const payload = {
+            type: "chat",
+            from: myPeerId,
+            text: text || "",
+            file: fileObj || null
+        };
+        broadcastData(payload);
+        appendChatMessage({
+            from: myPeerId,
+            text,
+            isOwn: true,
+            isSystem: false,
+            file: fileObj
+        });
     }
 
-    // ===== Data Messages =====
     function handleDataMessage(fromPeerId, msg) {
         if (!msg || typeof msg !== "object") return;
 
@@ -1194,12 +1219,29 @@
         }
 
         if (msg.type === "chat") {
-            appendChatMessage(msg.from || fromPeerId, msg.text, "other");
+            appendChatMessage({
+                from: msg.from,
+                text: msg.text,
+                isOwn: false,
+                isSystem: false,
+                file: msg.file
+            });
         }
 
-        if (msg.type === "forceMute") {
-            setMicState(false);
-            appendChatMessage("النظام", trCall("muted_by_all"), "system");
+        if (msg.type === "muteAll") {
+            const stream = cameraStream || localStream;
+            if (stream) {
+                const tracks = stream.getAudioTracks();
+                tracks.forEach(t => t.enabled = false);
+            }
+            isMicOn = false;
+            updateMicButtonUI();
+            appendChatMessage({
+                from: null,
+                text: "تم كتم صوتك بواسطة مسؤول الاجتماع.",
+                isOwn: false,
+                isSystem: true
+            });
         }
     }
 
@@ -1312,6 +1354,7 @@
         });
     }
 
+    // ===== Buttons Logic =====
     // كاميرا
     btnToggleCamera.addEventListener("click", () => {
         if (isScreenSharing) {
@@ -1329,26 +1372,37 @@
         updateCameraButtonUI();
     });
 
-    // مايك (لوحدك)
+    // مايك
     btnToggleMic.addEventListener("click", () => {
-        setMicState(!isMicOn);
+        const stream = cameraStream || localStream;
+        if (!stream) return;
+
+        const tracks = stream.getAudioTracks();
+        if (!tracks || tracks.length === 0) return;
+
+        isMicOn = !isMicOn;
+        tracks.forEach(t => t.enabled = isMicOn);
+        updateMicButtonUI();
     });
 
-    // ميوت للجميع (يبعت للناس يكتموا نفسهم)
+    // ميوت للجميع (يبعت أوامر mute للكل + يميت نفسه)
     btnMuteAll.addEventListener("click", () => {
-        // كتم نفسك
-        setMicState(false);
+        const stream = cameraStream || localStream;
+        if (stream) {
+            const tracks = stream.getAudioTracks();
+            tracks.forEach(t => t.enabled = false);
+        }
+        isMicOn = false;
+        updateMicButtonUI();
 
-        // بعت أمر لباقي المشاركين يكتموا نفسهم
-        Object.values(dataConnections).forEach(conn => {
-            if (conn && conn.open) {
-                try {
-                    conn.send({ type: "forceMute" });
-                } catch (e) {}
-            }
+        broadcastData({ type: "muteAll", from: myPeerId });
+
+        appendChatMessage({
+            from: null,
+            text: "تم كتم صوت جميع المشاركين من هذا الجهاز.",
+            isOwn: false,
+            isSystem: true
         });
-
-        appendChatMessage("النظام", "تم إرسال أمر كتم للجميع.", "system");
     });
 
     // مشاركة الشاشة
@@ -1371,21 +1425,24 @@
         addParticipantById(remoteId);
     });
 
-    // إنهاء المكالمة (انت بس)
+    // مغادرة المكالمة من هذا الجهاز فقط
     btnEndCall.addEventListener("click", () => {
-        // انت بتقفل كل الاتصالات من طرفك
+        // وقف الشير لو شغال
+        stopScreenShare();
+
+        // اقفل كل المكالمات من جانب هذا الجهاز فقط
         Object.values(activeCalls).forEach(call => {
             try { call.close(); } catch (e) {}
         });
         for (const k in activeCalls) delete activeCalls[k];
 
-        // تقفل الـ data connections من طرفك برضه
+        // قفل DataConnections من هذا الجهاز (الباقي شغال عندهم)
         Object.values(dataConnections).forEach(conn => {
             try { conn.close(); } catch (e) {}
         });
         for (const k in dataConnections) delete dataConnections[k];
 
-        // فيديوهات الريموت عندك بس
+        // مسح كل الفيديوهات الريموت من واجهة هذا الجهاز فقط
         remoteVideosGrid.querySelectorAll('.remote-video-wrapper').forEach(w => {
             const vid = w.querySelector('video');
             if (vid && vid.srcObject) {
@@ -1394,15 +1451,17 @@
             w.remove();
         });
 
-        // الكاميرا بتاعتك
-        stopScreenShare();
-
+        // وقف الكاميرا عند هذا الجهاز
         if (cameraStream) {
             cameraStream.getTracks().forEach(t => t.stop());
             cameraStream = null;
         }
+        if (localStream && localStream !== cameraStream) {
+            localStream.getTracks().forEach(t => t.stop());
+        }
         localStream = null;
         localVideo.srcObject = null;
+        localVideo.classList.remove('mirrored');
 
         isCameraOn = true;
         isMicOn = true;
@@ -1412,9 +1471,58 @@
         stopCallTimer();
         updateParticipantsCount();
         setStatus("call_ended_ready", false);
-        appendChatMessage("النظام", "لقد غادرت المكالمة. باقي المشاركين مستمرين لوحدهم.", "system");
     });
 
+    // CHAT: إرسال رسائل
+    chatForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const text = chatInput.value.trim();
+
+        if (!text && !pendingFile) return;
+
+        sendChatMessage(text, pendingFile);
+        chatInput.value = "";
+        pendingFile = null;
+        chatFileHint.textContent = "";
+        chatFileInput.value = "";
+    });
+
+    // إرفاق ملف (ملفات صغيرة فقط)
+    btnAttachFile.addEventListener("click", () => {
+        chatFileInput.click();
+    });
+
+    chatFileInput.addEventListener("change", () => {
+        const file = chatFileInput.files[0];
+        if (!file) {
+            pendingFile = null;
+            chatFileHint.textContent = "";
+            return;
+        }
+
+        const maxSize = 2 * 1024 * 1024; // 2MB
+        if (file.size > maxSize) {
+            alert("الملف كبير، حاول ملف أقل من 2MB.");
+            chatFileInput.value = "";
+            pendingFile = null;
+            chatFileHint.textContent = "";
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            pendingFile = {
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                dataUrl: reader.result
+            };
+            chatFileHint.textContent = `سيتم إرسال الملف: ${file.name} مع الرسالة القادمة.`;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // Init Peer
     initPeer();
 
     window.addEventListener('load', () => {
@@ -1422,6 +1530,7 @@
             console.error(err);
             setStatus("media_error_onload", true);
         });
+        updateParticipantsCount();
     });
 </script>
 
@@ -1447,16 +1556,16 @@
             status_ready: "Ready to start a call",
 
             call_title_ctrl: "Call management",
-            call_sub_ctrl: "A fixed ID is generated based on the user's role. Type any employee ID and press 'Start' to add them to the room. The system will try to connect them with all other participants.",
+            call_sub_ctrl: "A fixed ID is generated for each user. Type any employee ID and press 'Start / Add participant' to add them to the room, and their presence will be shared with others.",
 
             label_my_id: "Your ID:",
             label_remote_id: "Participant ID to add:",
             remote_id_placeholder: "Example: GHASIQ-IT-HEAD or GHASIQ-HR-HEAD",
 
             btn_start_call: "Start / Add participant",
-            btn_end_call: "End call",
+            btn_end_call: "Leave call",
 
-            hint_text: "• Make sure all participants open the same call page.<br>• Each department head has a fixed ID such as: <span>GHASIQ-IT-HEAD</span>, <span>GHASIQ-HR-HEAD</span>, <span>GHASIQ-FINANCE-HEAD</span>, <span>GHASIQ-GM</span>.<br>• When a new participant is added from any device, the system will try to connect them automatically to all existing participants.",
+            hint_text: "• Make sure all participants open the same call page.<br>• Each department head has a fixed ID such as: <span>GHASIQ-IT-HEAD</span>, <span>GHASIQ-HR-HEAD</span>, <span>GHASIQ-FINANCE-HEAD</span>, <span>GHASIQ-GM</span>.<br>• When a new participant is added from any device, the system will try to connect them to all existing participants automatically.",
 
             footer_text: "© <span>Ghasiq</span> Logistical Support & Operations — All rights reserved."
         }
