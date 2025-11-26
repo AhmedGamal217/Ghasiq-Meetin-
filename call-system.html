@@ -178,14 +178,24 @@
         /* LAYOUT */
         .call-layout {
             display:grid;
-            grid-template-columns: 280px minmax(0, 1fr); /* Sidebar + Meeting */
+            grid-template-columns: minmax(0, 300px) minmax(0, 1fr); /* Sidebar + Meeting */
             gap:22px;
             align-items:flex-start;
         }
 
+        /* موبايل / تابلت: نخلي الميتينج فوق والسيدبار تحت عشان مفيش تداخل */
         @media(max-width:900px){
             .call-layout {
                 grid-template-columns:1fr;
+            }
+
+            .call-card {
+                order:1;
+                max-width:100%;
+            }
+
+            .controls-box {
+                order:2;
             }
         }
 
@@ -210,9 +220,16 @@
             display:flex;
             flex-direction:column;
             gap:14px;
-            position:sticky;
-            top:90px;
-            height:fit-content;
+            position:relative; /* default: مش sticky */
+        }
+
+        /* خليها sticky بس على الشاشات الكبيرة */
+        @media(min-width:901px){
+            .controls-box {
+                position:sticky;
+                top:90px;
+                height:fit-content;
+            }
         }
 
         .sidebar-header {
@@ -246,6 +263,11 @@
         .call-header-sub {
             font-size:13px;
             color:var(--text-muted);
+        }
+
+        @media(max-width:600px){
+            .call-header-title { font-size:16px; }
+            .call-header-sub { font-size:12px; }
         }
 
         .video-grid {
