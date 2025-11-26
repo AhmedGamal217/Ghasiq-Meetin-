@@ -1,28 +1,7 @@
 // auth.js
 
 const STORAGE_KEY_USERS = "ghasiq_users";
-// نخليها زي باقي الصفحات
-const STORAGE_KEY_CURRENT = "ghasiq_user";
-
-const DEFAULT_USERS = [
-    // Admin
-    { username: "admin",       password: "admin123", role: "Admin" },
-
-    // IT Head
-    { username: "it.head",     password: "123456",   role: "IT Head" },
-
-    // HR Head
-    { username: "hr.head",     password: "123456",   role: "HR Head" },
-
-    // Finance Head
-    { username: "finance.head", password: "123456",  role: "Finance Head" },
-
-    // Operations
-    { username: "ops.pm",      password: "123456",   role: "Operations Manager" },
-
-    // General Manager
-    { username: "gm",          password: "123456",   role: "General Manager" }
-];
+const STORAGE_KEY_CURRENT = "ghasiq_current_user";
 
 const Auth = {
     _loadUsers() {
@@ -45,21 +24,30 @@ const Auth = {
         }
     },
 
-    // نضمن إن الديفولت يوزرز موجودين حتى لو كان فيه داتا قديمة
     ensureDefaultUsers() {
         let users = this._loadUsers();
-        if (!Array.isArray(users)) users = [];
+        if (!users || users.length === 0) {
+            users = [
+                // Admin
+                { username: "admin", password: "admin123", role: "Admin" },
 
-        DEFAULT_USERS.forEach(def => {
-            const exists = users.some(
-                u => u.username.toLowerCase() === def.username.toLowerCase()
-            );
-            if (!exists) {
-                users.push(def);
-            }
-        });
+                // IT Head
+                { username: "it.head", password: "123456", role: "IT Head" },
 
-        this._saveUsers(users);
+                // HR Head
+                { username: "hr.head", password: "123456", role: "HR Head" },
+
+                // Finance Head
+                { username: "finance.head", password: "123456", role: "Finance Head" },
+
+                // Operations
+                { username: "ops.pm", password: "123456", role: "Operations Manager" },
+
+                // General Manager
+                { username: "gm", password: "123456", role: "General Manager" }
+            ];
+            this._saveUsers(users);
+        }
     },
 
     getUsers() {
@@ -135,5 +123,5 @@ const Auth = {
 // تأكد إن الديفولت يوزرز موجودين
 Auth.ensureDefaultUsers();
 
-// نطلّع Auth على الـ window
+// نطلّع Auth على الـ window عشان نستخدمه من الصفحات
 window.Auth = Auth;
