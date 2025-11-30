@@ -2,10 +2,11 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
-    <title>Ghasiq - الإشعارات الداخلية</title>
+    <title>Ghasiq - نظام الإشعارات الداخلية</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
     <style>
         :root {
             --primary: #2563eb;
@@ -95,6 +96,9 @@
         .nav-links a {
             position:relative;
             padding-bottom:4px;
+            display:inline-flex;
+            align-items:center;
+            gap:4px;
         }
 
         .nav-links a::after {
@@ -129,7 +133,8 @@
         }
 
         .btn-toggle-theme,
-        .btn-logout {
+        .btn-logout,
+        .btn-sm-outline {
             border-radius:999px;
             padding:6px 12px;
             font-size:12px;
@@ -140,9 +145,19 @@
         }
 
         body.light .btn-toggle-theme,
-        body.light .btn-logout {
+        body.light .btn-logout,
+        body.light .btn-sm-outline {
             background:#ffffff;
             color:#0f172a;
+        }
+
+        .btn-sm-outline {
+            border-color:var(--primary-light);
+            color:#dbeafe;
+        }
+
+        body.light .btn-sm-outline {
+            color:#1d4ed8;
         }
 
         .btn-logout {
@@ -162,141 +177,254 @@
             color:var(--text-muted);
         }
 
+        .badge {
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            min-width:20px;
+            height:20px;
+            border-radius:999px;
+            font-size:11px;
+            padding:0 6px;
+            background:#ef4444;
+            color:#fef2f2;
+        }
+
         /* LAYOUT */
-        .notifications-layout {
+        .layout {
             display:grid;
-            grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);
-            gap:20px;
+            grid-template-columns:minmax(0, 1.2fr) minmax(0, 0.9fr);
+            gap:18px;
         }
 
         @media(max-width:900px){
-            .notifications-layout {
+            .layout {
                 grid-template-columns:1fr;
             }
         }
 
         .card {
-            border-radius:22px;
+            border-radius:20px;
             background:var(--bg-elevated);
             border:1px solid var(--border-subtle);
             box-shadow:var(--shadow-strong);
-            padding:18px 18px 20px;
+            padding:18px 16px 18px;
         }
 
-        .card-header-title {
-            font-size:18px;
-            margin-bottom:4px;
-        }
-
-        .card-header-sub {
-            font-size:13px;
-            color:var(--text-muted);
+        .card-header {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
             margin-bottom:10px;
         }
 
-        .notif-list {
-            margin-top:10px;
-            border-radius:16px;
-            background:var(--bg-card);
-            border:1px solid rgba(148,163,184,0.35);
-            padding:10px 12px;
-            max-height:420px;
+        .card-title {
+            font-size:17px;
+        }
+
+        .card-sub {
+            font-size:12px;
+            color:var(--text-muted);
+        }
+
+        .notifications-list {
+            margin-top:8px;
+            max-height:520px;
             overflow-y:auto;
+            padding-right:4px;
         }
 
         .notif-item {
-            padding:8px 8px;
-            border-radius:10px;
-            border:1px solid rgba(148,163,184,0.3);
-            margin-bottom:8px;
-            font-size:13px;
-        }
-
-        .notif-item:last-child { margin-bottom:0; }
-
-        .notif-meta {
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            font-size:11px;
-            color:var(--text-muted);
-            margin-top:4px;
-        }
-
-        .notif-empty {
-            font-size:13px;
-            color:var(--text-muted);
-            padding:10px 2px;
-            text-align:center;
-        }
-
-        /* employees list */
-        .employees-list {
-            margin-top:10px;
-            border-radius:16px;
-            background:var(--bg-card);
-            border:1px solid rgba(148,163,184,0.35);
-            padding:10px 12px;
-            max-height:420px;
-            overflow-y:auto;
-        }
-
-        .employee-item {
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            padding:8px 6px;
-            border-radius:10px;
-            border:1px solid rgba(148,163,184,0.3);
-            margin-bottom:8px;
-            font-size:13px;
-        }
-
-        .employee-main {
             display:flex;
             flex-direction:column;
-            gap:2px;
+            gap:3px;
+            padding:10px 10px;
+            border-radius:12px;
+            border:1px solid rgba(148,163,184,0.35);
+            background:rgba(15,23,42,0.9);
+            margin-bottom:8px;
         }
 
-        .employee-name {
-            font-size:13px;
+        body.light .notif-item {
+            background:#f9fafb;
         }
 
-        .employee-title {
+        .notif-item.unread {
+            border-color:var(--primary-light);
+            box-shadow:0 0 0 1px rgba(59,130,246,0.5);
+        }
+
+        .notif-top-row {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            font-size:12px;
+        }
+
+        .notif-from {
+            font-weight:600;
+        }
+
+        .notif-meta {
             font-size:11px;
             color:var(--text-muted);
         }
 
-        .employee-dept {
-            font-size:11px;
-            color:var(--primary-light);
+        .notif-message {
+            font-size:13px;
+            margin-top:2px;
         }
 
-        .btn-send {
-            border-radius:999px;
-            padding:6px 12px;
-            font-size:12px;
-            cursor:pointer;
-            border:none;
-            background:radial-gradient(circle at top left,rgba(59,130,246,0.6),rgba(37,99,235,1));
-            color:#e5e7eb;
-            box-shadow:0 0 20px rgba(59,130,246,0.6);
+        .notif-actions {
+            display:flex;
+            gap:6px;
+            margin-top:6px;
+            justify-content:flex-end;
         }
 
-        .btn-clear {
-            margin-top:8px;
+        .btn-xs {
             border-radius:999px;
-            padding:6px 12px;
-            font-size:12px;
-            cursor:pointer;
-            border:1px solid rgba(248,113,113,0.7);
+            border:1px solid var(--border-subtle);
             background:transparent;
-            color:#fecaca;
+            color:var(--text-muted);
+            font-size:11px;
+            padding:3px 8px;
+            cursor:pointer;
         }
 
-        body.light .btn-clear {
-            color:#b91c1c;
-            border-color:#fecaca;
+        .btn-xs-primary {
+            border-color:var(--primary-light);
+            color:#bfdbfe;
+        }
+
+        body.light .btn-xs-primary {
+            color:#1d4ed8;
+        }
+
+        /* إرسال إشعار */
+        .field-label {
+            font-size:13px;
+            margin-bottom:4px;
+        }
+
+        .field-muted {
+            font-size:11px;
+            color:var(--text-muted);
+            margin-bottom:4px;
+        }
+
+        .select-row {
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+            margin-bottom:8px;
+        }
+
+        .select-row select,
+        .select-row input {
+            flex:1;
+            min-width:120px;
+            padding:7px 9px;
+            border-radius:10px;
+            border:1px solid var(--border-subtle);
+            background:rgba(15,23,42,0.85);
+            color:var(--text-main);
+            font-size:13px;
+            outline:none;
+        }
+
+        body.light .select-row select,
+        body.light .select-row input {
+            background:#ffffff;
+            color:#0f172a;
+        }
+
+        textarea {
+            width:100%;
+            min-height:120px;
+            resize:vertical;
+            padding:8px 10px;
+            border-radius:12px;
+            border:1px solid var(--border-subtle);
+            background:rgba(15,23,42,0.9);
+            color:var(--text-main);
+            font-size:13px;
+            outline:none;
+        }
+
+        body.light textarea {
+            background:#ffffff;
+            color:#0f172a;
+        }
+
+        .send-row {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-top:10px;
+        }
+
+        .send-left {
+            font-size:11px;
+            color:var(--text-muted);
+        }
+
+        .btn-primary {
+            border-radius:999px;
+            padding:9px 16px;
+            border:none;
+            cursor:pointer;
+            background:linear-gradient(135deg,var(--primary),var(--primary-light));
+            color:white;
+            font-size:13px;
+        }
+
+        .btn-outline {
+            border-radius:999px;
+            padding:7px 11px;
+            border:1px solid var(--border-subtle);
+            background:transparent;
+            color:var(--text-muted);
+            font-size:11px;
+            cursor:pointer;
+        }
+
+        /* Toast */
+        .toast {
+            position:fixed;
+            bottom:18px;
+            left:18px;
+            padding:10px 14px;
+            border-radius:12px;
+            background:rgba(15,23,42,0.96);
+            border:1px solid rgba(148,163,184,0.6);
+            color:#e5e7eb;
+            font-size:12px;
+            max-width:260px;
+            box-shadow:0 18px 35px rgba(0,0,0,0.7);
+            z-index:1000;
+            display:none;
+        }
+
+        body.light .toast {
+            background:#ffffff;
+            color:#0f172a;
+        }
+
+        .toast-title {
+            font-weight:600;
+            margin-bottom:4px;
+        }
+
+        .toast-close {
+            position:absolute;
+            top:4px;
+            left:8px;
+            border:none;
+            background:transparent;
+            color:inherit;
+            cursor:pointer;
+            font-size:13px;
         }
 
         .footer {
@@ -313,8 +441,8 @@
 </head>
 <body class="dark">
 
-<!-- حماية الصفحة -->
 <script>
+    // ===== حماية الصفحة =====
     (function guard() {
         const user = JSON.parse(localStorage.getItem("ghasiq_user") || "null");
         if (!user || !user.login) {
@@ -334,71 +462,142 @@
             </a>
 
             <nav class="nav-links">
-                <a href="index.html#about">عن Ghasiq</a>
-                <a href="services.html">الخدمات</a>
-                <a href="call-system.html">نظام الاتصال</a>
-                <a href="notifications.html" class="active">الإشعارات</a>
+                <a href="index.html#about">
+                    <span data-i18n="nav_about">عن Ghasiq</span>
+                </a>
+                <a href="services.html">
+                    <span data-i18n="nav_services">الخدمات</span>
+                </a>
+                <a href="call-system.html">
+                    <span data-i18n="nav_call_system">نظام الاتصال</span>
+                </a>
+                <a href="notifications.html" class="active">
+                    <span data-i18n="nav_notifications">الإشعارات</span>
+                    <span id="navNotifBadge" class="badge" style="margin-right:4px; display:none;">0</span>
+                </a>
             </nav>
         </div>
 
         <div class="nav-actions">
             <span id="userChip" class="user-chip">User</span>
 
-            <button class="btn-toggle-theme" id="themeToggle" type="button">
-                <span id="themeLabel">Dark</span>
+            <button class="btn-toggle-theme" id="langToggle" type="button">
+                <span id="langLabel">AR</span>
             </button>
 
-            <button class="btn-logout" type="button" onclick="logout()">تسجيل الخروج</button>
+            <button class="btn-toggle-theme" id="themeToggle" type="button">
+                <span id="themeLabel">Dark</span>
+                <span id="themeIcon">☾</span>
+            </button>
+
+            <button class="btn-logout" type="button" onclick="logout()" data-i18n="btn_logout">تسجيل الخروج</button>
         </div>
     </header>
 
     <!-- MAIN LAYOUT -->
-    <section class="notifications-layout">
-        <!-- سجل الإشعارات -->
+    <section class="layout">
+
+        <!-- قائمة الإشعارات -->
         <div class="card">
-            <div class="card-header-title">سجل الإشعارات</div>
-            <div class="card-header-sub">
-                هذه هي الإشعارات التي تم إرسالها إليك من خلال النظام. تظهر هنا فقط الإشعارات الخاصة بالمستخدم الحالي.
+            <div class="card-header">
+                <div>
+                    <div class="card-title">الإشعارات الواردة</div>
+                    <div class="card-sub">تظهر هنا كل الإشعارات المرسلة إليك، سواء وأنت Online أو كنت خارج النظام.</div>
+                </div>
+                <div>
+                    <span style="font-size:11px; color:var(--text-muted);">عدد الإشعارات غير المقروءة:</span>
+                    <span id="unreadCountBadge" class="badge" style="margin-right:4px;">0</span>
+                </div>
             </div>
 
-            <div id="notifList" class="notif-list">
-                <div class="notif-empty">لا توجد إشعارات حتى الآن.</div>
+            <div id="notificationsList" class="notifications-list">
+                <!-- يتم ملؤها بالـ JS -->
             </div>
-
-            <button id="btnClearMyNotifs" class="btn-clear">مسح إشعاراتي</button>
         </div>
 
-        <!-- إرسال إشعار للموظفين -->
+        <!-- إرسال إشعار -->
         <div class="card">
-            <div class="card-header-title">إرسال إشعار للموظفين</div>
-            <div class="card-header-sub">
-                اختر الموظف الذي تريد تنبيهه، وسيتم تسجيل الإشعار له في النظام (محاكاة داخلية).
+            <div class="card-header">
+                <div>
+                    <div class="card-title">إرسال إشعار داخلي</div>
+                    <div class="card-sub">اختر نوع الإرسال، اكتب الرسالة، وسيتم توصيلها للي أونلاين لايف، واللي Offline هتوصلهم عند أول دخول.</div>
+                </div>
+                <div>
+                    <span style="font-size:11px; color:var(--text-muted);">المتصلين الآن:</span>
+                    <span id="onlineCountBadge" class="badge" style="background:#22c55e; color:#022c22;">0</span>
+                </div>
             </div>
 
-            <div id="employeesList" class="employees-list">
-                <!-- يتم تعبئتها من JS -->
+            <div>
+                <div class="field-label">نوع الإرسال:</div>
+                <div class="select-row">
+                    <select id="sendModeSelect">
+                        <option value="all_offline">إلى جميع الموظفين غير المتصلين الآن</option>
+                        <option value="all_online">إلى جميع الموظفين المتصلين الآن</option>
+                        <option value="specific_user">إلى موظف محدد</option>
+                        <option value="specific_role">إلى قسم / دور معين</option>
+                    </select>
+
+                    <!-- قيمة إضافية حسب النوع -->
+                    <input id="targetValueInput" type="text" placeholder="مثال: GHASIQ-IT-HEAD أو email أو role" />
+                </div>
+
+                <div class="field-muted">
+                    * انت مش هتتبعتلك إشعارات لنفسك أو لنفس حسابك حتى لو اخترت All.
+                </div>
+
+                <div class="field-label" style="margin-top:8px;">نص الإشعار:</div>
+                <textarea id="messageInput" placeholder="اكتب هنا محتوى الإشعار الذي تريد إرساله..."></textarea>
+
+                <div class="send-row">
+                    <div class="send-left">
+                        الإشعارات تحفظ في السيرفر كـ Unread للمستخدم حتى يفتح النظام.
+                    </div>
+                    <div style="display:flex; gap:6px;">
+                        <button id="btnClearForm" type="button" class="btn-outline">مسح الحقول</button>
+                        <button id="btnSendNotification" type="button" class="btn-primary">إرسال الإشعار</button>
+                    </div>
+                </div>
             </div>
         </div>
+
     </section>
 
-    <footer class="footer">
+    <footer class="footer" data-i18n="footer_text">
         © <span>Ghasiq</span> Logistical Support & Operations — جميع الحقوق محفوظة.
     </footer>
 </div>
 
+<!-- Toast -->
+<div id="notifToast" class="toast">
+    <button class="toast-close" onclick="hideToast()">✕</button>
+    <div class="toast-title" id="toastTitle">إشعار جديد</div>
+    <div class="toast-body" id="toastBody">محتوى الإشعار</div>
+</div>
+
 <script>
-    // ===== Theme + User Chip =====
+    // ===== ثابت WebSocket موحّد للسيستم كله =====
+    const WS_URL = "ws://localhost:8080"; // غيّرها لـ wss://domain/ws لو حابب
+
+    // ===== Theme & User =====
     const bodyEl = document.body;
     const themeToggle = document.getElementById("themeToggle");
     const themeLabel = document.getElementById("themeLabel");
+    const themeIcon = document.getElementById("themeIcon");
+    const userChip = document.getElementById("userChip");
+    const currentUser = window.__gh_user || { username: "User", role: "User", userId: null };
 
     function applyTheme(mode) {
         if (mode === "light") {
             bodyEl.classList.add("light");
+            bodyEl.classList.remove("dark");
             themeLabel.textContent = "Light";
+            themeIcon.textContent = "☀";
         } else {
+            bodyEl.classList.add("dark");
             bodyEl.classList.remove("light");
             themeLabel.textContent = "Dark";
+            themeIcon.textContent = "☾";
         }
         localStorage.setItem("ghasiq_theme", mode);
     }
@@ -415,214 +614,337 @@
 
     initTheme();
 
-    (function showUser() {
-        const chip = document.getElementById("userChip");
-        const user = window.__gh_user;
-        if (!user) return;
-        chip.textContent = `${user.username} (${user.role})`;
-    })();
+    if (currentUser && userChip) {
+        userChip.textContent = `${currentUser.username} (${currentUser.role})`;
+    }
 
     function logout() {
         localStorage.removeItem("ghasiq_user");
         window.location.href = "login.html";
     }
 
-    // ===== MODEL: الموظفين =====
-    // خليك مخلّي usernames هنا هي نفس usernames المستخدمين في صفحة اللوجين
-    const EMPLOYEES = [
-        {
-            username: "it.head",
-            displayName: "Eng/ Ahmed Gamal",
-            title: "Head of IT Department",
-            dept: "IT"
-        },
-        {
-            username: "hr.head",
-            displayName: "MR/ Mohamed Hamdy",
-            title: "Head of HR Department",
-            dept: "HR"
-        },
-        {
-            username: "finance.head",
-            displayName: "MR/ Emad Elden",
-            title: "Head of Finance Department",
-            dept: "Finance"
-        },
-        {
-            username: "gm",
-            displayName: "Eng/ Hamed ALAnazi",
-            title: "General Manager",
-            dept: "Management"
-        },
-        {
-            username: "operations.pm",
-            displayName: "MRS/ Randa Elarbory",
-            title: "Project Manager",
-            dept: "Operations"
-        }
-    ];
+    // ===== Toast helpers =====
+    const toastEl = document.getElementById("notifToast");
+    const toastTitleEl = document.getElementById("toastTitle");
+    const toastBodyEl = document.getElementById("toastBody");
+    let toastTimeout = null;
 
-    const NOTIF_STORAGE_KEY = "ghasiq_notifications";
-
-    function loadAllNotifications() {
-        try {
-            const raw = localStorage.getItem(NOTIF_STORAGE_KEY);
-            if (!raw) return [];
-            const arr = JSON.parse(raw);
-            return Array.isArray(arr) ? arr : [];
-        } catch {
-            return [];
-        }
+    function showToast(title, body) {
+        toastTitleEl.textContent = title || "إشعار جديد";
+        toastBodyEl.textContent = body || "";
+        toastEl.style.display = "block";
+        if (toastTimeout) clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => hideToast(), 6000);
     }
 
-    function saveAllNotifications(list) {
-        try {
-            localStorage.setItem(NOTIF_STORAGE_KEY, JSON.stringify(list || []));
-        } catch {
-            // ignore
-        }
+    function hideToast() {
+        toastEl.style.display = "none";
     }
 
-    function formatTime(date) {
-        const d = new Date(date);
-        if (isNaN(d.getTime())) return "";
-        const dd = String(d.getDate()).padStart(2, "0");
-        const mm = String(d.getMonth() + 1).padStart(2, "0");
-        const yy = d.getFullYear();
-        const hh = String(d.getHours()).padStart(2, "0");
-        const mi = String(d.getMinutes()).padStart(2, "0");
-        return `${dd}/${mm}/${yy} - ${hh}:${mi}`;
-    }
+    // ===== Notifications State =====
+    const notificationsListEl = document.getElementById("notificationsList");
+    const unreadBadge = document.getElementById("unreadCountBadge");
+    const navNotifBadge = document.getElementById("navNotifBadge");
+    const onlineBadge = document.getElementById("onlineCountBadge");
 
-    function renderMyNotifications() {
-        const user = window.__gh_user;
-        if (!user) return;
+    const sendModeSelect = document.getElementById("sendModeSelect");
+    const targetValueInput = document.getElementById("targetValueInput");
+    const messageInput = document.getElementById("messageInput");
+    const btnSendNotification = document.getElementById("btnSendNotification");
+    const btnClearForm = document.getElementById("btnClearForm");
 
-        const all = loadAllNotifications();
-        const mine = all
-            .filter(n => n.toUsername === user.username)
-            .sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+    let notifications = [];   // { id, message, fromName, createdAt, isRead, createdAtText }
+    let unreadCount = 0;
+    let onlineCount = 0;
 
-        const container = document.getElementById("notifList");
-        container.innerHTML = "";
-
-        if (mine.length === 0) {
-            const empty = document.createElement("div");
-            empty.className = "notif-empty";
-            empty.textContent = "لا توجد إشعارات حتى الآن.";
-            container.appendChild(empty);
+    function renderNotifications() {
+        notificationsListEl.innerHTML = "";
+        if (!notifications || notifications.length === 0) {
+            notificationsListEl.innerHTML = "<div style='font-size:13px; color:var(--text-muted);'>لا توجد إشعارات حتى الآن.</div>";
+            unreadBadge.textContent = "0";
+            navNotifBadge.style.display = "none";
             return;
         }
 
-        mine.forEach(n => {
-            const item = document.createElement("div");
-            item.className = "notif-item";
+        notifications.forEach(n => {
+            const wrapper = document.createElement("div");
+            wrapper.className = "notif-item" + (n.isRead ? "" : " unread");
 
-            const msg = document.createElement("div");
-            msg.textContent = n.message || "إشعار بدون رسالة.";
+            const topRow = document.createElement("div");
+            topRow.className = "notif-top-row";
 
-            const meta = document.createElement("div");
-            meta.className = "notif-meta";
-            meta.innerHTML = `<span>من: ${n.fromDisplayName}</span><span>${formatTime(n.createdAt)}</span>`;
+            const fromSpan = document.createElement("span");
+            fromSpan.className = "notif-from";
+            fromSpan.textContent = n.fromName || "غير معروف";
 
-            item.appendChild(msg);
-            item.appendChild(meta);
-            container.appendChild(item);
+            const metaSpan = document.createElement("span");
+            metaSpan.className = "notif-meta";
+            metaSpan.textContent = n.createdAtText || "";
+
+            topRow.appendChild(fromSpan);
+            topRow.appendChild(metaSpan);
+
+            const msgDiv = document.createElement("div");
+            msgDiv.className = "notif-message";
+            msgDiv.textContent = n.message || "";
+
+            const actionsDiv = document.createElement("div");
+            actionsDiv.className = "notif-actions";
+
+            if (!n.isRead) {
+                const btnRead = document.createElement("button");
+                btnRead.className = "btn-xs btn-xs-primary";
+                btnRead.textContent = "تعليم كمقروء";
+                btnRead.addEventListener("click", () => markNotificationAsRead(n));
+                actionsDiv.appendChild(btnRead);
+            }
+
+            wrapper.appendChild(topRow);
+            wrapper.appendChild(msgDiv);
+            if (actionsDiv.children.length > 0) {
+                wrapper.appendChild(actionsDiv);
+            }
+
+            notificationsListEl.appendChild(wrapper);
         });
+
+        unreadBadge.textContent = unreadCount.toString();
+        if (unreadCount > 0) {
+            navNotifBadge.style.display = "inline-flex";
+            navNotifBadge.textContent = unreadCount.toString();
+        } else {
+            navNotifBadge.style.display = "none";
+        }
     }
 
-    function renderEmployeesList() {
-        const user = window.__gh_user;
-        if (!user) return;
+    function markNotificationAsRead(n) {
+        if (!n || n.isRead) return;
+        n.isRead = true;
+        unreadCount = notifications.filter(x => !x.isRead).length;
+        renderNotifications();
 
-        const listContainer = document.getElementById("employeesList");
-        listContainer.innerHTML = "";
+        // TODO: نداء API لتحديث حالة الإشعار في الباك إند
+        // fetch(`/api/notifications/${n.id}/read`, { method: "POST" });
+    }
 
-        // فلترة: شيل الموظف الحالي من الليستة
-        const others = EMPLOYEES.filter(e => e.username !== user.username);
+    function setOnlineCount(count) {
+        onlineCount = count || 0;
+        onlineBadge.textContent = onlineCount.toString();
+    }
 
-        if (others.length === 0) {
-            const empty = document.createElement("div");
-            empty.className = "notif-empty";
-            empty.textContent = "لا يوجد موظفون آخرون لإرسال إشعار لهم.";
-            listContainer.appendChild(empty);
+    // ===== Load from API (Placeholder) =====
+    async function loadNotificationsFromServer() {
+        // TODO: ربط حقيقي بـ API
+        // const res = await fetch(`/api/notifications?userId=${encodeURIComponent(currentUser.userId)}`);
+        // const data = await res.json();
+        // notifications = data;
+
+        // مؤقتاً: Mock بيانات
+        notifications = [
+            {
+                id: 1,
+                message: "اختبار إشعار محفوظ من قبل.",
+                fromName: "نظام Ghasiq",
+                isRead: false,
+                createdAtText: "منذ 2 دقيقة"
+            }
+        ];
+
+        unreadCount = notifications.filter(n => !n.isRead).length;
+        renderNotifications();
+    }
+
+    // ===== إرسال إشعار =====
+    async function sendNotification() {
+        const mode = sendModeSelect.value;
+        const targetValue = targetValueInput.value.trim();
+        const message = messageInput.value.trim();
+
+        if (!message) {
+            alert("من فضلك اكتب نص الإشعار.");
             return;
         }
 
-        others.forEach(emp => {
-            const item = document.createElement("div");
-            item.className = "employee-item";
+        const payload = {
+            fromUserId: currentUser.userId,
+            fromName: currentUser.username,
+            mode,
+            targetValue,
+            message
+        };
 
-            const main = document.createElement("div");
-            main.className = "employee-main";
+        try {
+            // TODO: نداء API حقيقي
+            // await fetch("/api/notifications/send", {
+            //     method: "POST",
+            //     headers: { "Content-Type": "application/json" },
+            //     body: JSON.stringify(payload)
+            // });
 
-            const name = document.createElement("div");
-            name.className = "employee-name";
-            name.textContent = emp.displayName;
+            showToast("تم إرسال الإشعار", "سيتم توصيل الإشعار للمستهدفين حسب إعدادات الباك إند.");
+            clearForm();
+        } catch (err) {
+            console.error(err);
+            alert("حدث خطأ أثناء إرسال الإشعار.");
+        }
+    }
 
-            const title = document.createElement("div");
-            title.className = "employee-title";
-            title.textContent = emp.title;
+    function clearForm() {
+        messageInput.value = "";
+        // targetValueInput.value = "";
+    }
 
-            const dept = document.createElement("div");
-            dept.className = "employee-dept";
-            dept.textContent = emp.dept;
+    btnSendNotification.addEventListener("click", sendNotification);
+    btnClearForm.addEventListener("click", clearForm);
 
-            main.appendChild(name);
-            main.appendChild(title);
-            main.appendChild(dept);
+    // ===== WebSocket للاستقبال اللايف =====
+    let ws = null;
 
-            const btn = document.createElement("button");
-            btn.className = "btn-send";
-            btn.textContent = "إرسال إشعار";
-            btn.addEventListener("click", () => sendNotificationTo(emp));
+    function initNotificationsSocket() {
+        if (!currentUser || !currentUser.userId) return;
+        if (!WS_URL) return;
 
-            item.appendChild(main);
-            item.appendChild(btn);
-            listContainer.appendChild(item);
+        try {
+            ws = new WebSocket(WS_URL);
+        } catch (e) {
+            console.error("WS init error", e);
+            return;
+        }
+
+        ws.onopen = () => {
+            try {
+                ws.send(JSON.stringify({
+                    type: "register",
+                    userId: currentUser.userId,
+                    username: currentUser.username
+                }));
+            } catch (e) {
+                console.error("WS send register error", e);
+            }
+        };
+
+        ws.onmessage = (evt) => {
+            let msg;
+            try {
+                msg = JSON.parse(evt.data);
+            } catch (e) {
+                console.error("WS parse error", e);
+                return;
+            }
+
+            if (msg.type === "notification") {
+                // فلترة لو فيه تو ريسيفر محدد
+                if (msg.toUserId && currentUser.userId && msg.toUserId !== currentUser.userId) {
+                    return;
+                }
+
+                const n = {
+                    id: msg.id || Date.now(),
+                    message: msg.message,
+                    fromName: msg.fromName || "Ghasiq",
+                    isRead: false,
+                    createdAtText: msg.createdAtText || "الآن"
+                };
+                notifications.unshift(n);
+                unreadCount++;
+                renderNotifications();
+
+                if (document.visibilityState === "visible") {
+                    showToast(`إشعار من ${n.fromName}`, n.message);
+                }
+            }
+
+            if (msg.type === "onlineCount") {
+                setOnlineCount(msg.count);
+            }
+        };
+
+        ws.onerror = (err) => {
+            console.error("WS error", err);
+        };
+
+        ws.onclose = () => {
+            console.log("Notifications WS closed");
+            ws = null;
+            // لو حابب تعمل إعادة اتصال:
+            // setTimeout(initNotificationsSocket, 5000);
+        };
+    }
+
+    // ===== Language (نفس سيستم باقي الصفحات) =====
+    const translations = {
+        ar: {},
+        en: {
+            page_title: "Ghasiq - Internal Notifications",
+            nav_about: "About Ghasiq",
+            nav_services: "Services",
+            nav_call_system: "Call System",
+            nav_notifications: "Notifications",
+            btn_logout: "Log out",
+            footer_text: "© <span>Ghasiq</span> Logistical Support & Operations — All rights reserved."
+        }
+    };
+
+    function initArabicFromDom() {
+        document.querySelectorAll("[data-i18n]").forEach(el => {
+            const key = el.getAttribute("data-i18n");
+            if (!translations.ar[key]) {
+                translations.ar[key] = el.innerHTML;
+            }
+        });
+        translations.ar.page_title = document.title;
+    }
+
+    function applyTranslations(lang) {
+        document.querySelectorAll("[data-i18n]").forEach(el => {
+            const key = el.getAttribute("data-i18n");
+            const value = translations[lang] && translations[lang][key];
+            if (!value) return;
+            el.innerHTML = value;
+        });
+        if (translations[lang].page_title) {
+            document.title = translations[lang].page_title;
+        }
+    }
+
+    function applyLanguage(lang) {
+        localStorage.setItem("ghasiq_lang", lang);
+
+        if (lang === "en") {
+            document.documentElement.setAttribute("dir", "ltr");
+            document.documentElement.lang = "en";
+            document.getElementById("langLabel").textContent = "EN";
+        } else {
+            document.documentElement.setAttribute("dir", "rtl");
+            document.documentElement.lang = "ar";
+            document.getElementById("langLabel").textContent = "AR";
+        }
+
+        applyTranslations(lang);
+    }
+
+    function initLanguageToggle() {
+        initArabicFromDom();
+
+        const saved = localStorage.getItem("ghasiq_lang") || "ar";
+        applyLanguage(saved);
+
+        const langToggle = document.getElementById("langToggle");
+        if (!langToggle) return;
+
+        langToggle.addEventListener("click", () => {
+            const current = localStorage.getItem("ghasiq_lang") || "ar";
+            const nextLang = current === "ar" ? "en" : "ar";
+            applyLanguage(nextLang);
         });
     }
 
-    function sendNotificationTo(emp) {
-        const message = prompt(`اكتب نص الإشعار للموظف: ${emp.displayName}`, "");
-        if (!message || !message.trim()) return;
-
-        const user = window.__gh_user;
-        if (!user) return;
-
-        const all = loadAllNotifications();
-        all.push({
-            id: "notif_" + Date.now() + "_" + Math.random().toString(16).slice(2),
-            fromUsername: user.username,
-            fromDisplayName: user.username + " (" + user.role + ")",
-            toUsername: emp.username,
-            toDisplayName: emp.displayName,
-            message: message.trim(),
-            createdAt: new Date().toISOString(),
-            isRead: false
-        });
-
-        saveAllNotifications(all);
-
-        // لو أنت بنفسك بعت إشعار لنفسك (مع إننا شايلينك من الليستة) – برضه هيتعرض
-        renderMyNotifications();
-        alert("تم تسجيل الإشعار للموظف بنجاح (محاكاة داخلية).");
-    }
-
-    document.getElementById("btnClearMyNotifs").addEventListener("click", () => {
-        const user = window.__gh_user;
-        if (!user) return;
-        if (!confirm("هل أنت متأكد من مسح جميع إشعاراتك؟")) return;
-
-        const all = loadAllNotifications();
-        const remaining = all.filter(n => n.toUsername !== user.username);
-        saveAllNotifications(remaining);
-        renderMyNotifications();
+    // ===== Init =====
+    window.addEventListener("load", () => {
+        loadNotificationsFromServer();
+        initNotificationsSocket();
+        initLanguageToggle();
     });
-
-    // init
-    renderEmployeesList();
-    renderMyNotifications();
 </script>
 
 </body>
