@@ -576,16 +576,13 @@
 </div>
 
 <script>
-    // ===== ثابت WebSocket موحّد للسيستم كله =====
-    const WS_URL = "ws://localhost:8080"; // غيّرها لـ wss://domain/ws لو حابب
-
     // ===== Theme & User =====
     const bodyEl = document.body;
     const themeToggle = document.getElementById("themeToggle");
     const themeLabel = document.getElementById("themeLabel");
     const themeIcon = document.getElementById("themeIcon");
     const userChip = document.getElementById("userChip");
-    const currentUser = window.__gh_user || { username: "User", role: "User", userId: null };
+    const currentUser = window.__gh_user || { username: "User", role: "User", userId: "local-user" };
 
     function applyTheme(mode) {
         if (mode === "light") {
@@ -641,7 +638,7 @@
         toastEl.style.display = "none";
     }
 
-    // ===== Notifications State =====
+    // ===== Notifications State (محلي بس) =====
     const notificationsListEl = document.getElementById("notificationsList");
     const unreadBadge = document.getElementById("unreadCountBadge");
     const navNotifBadge = document.getElementById("navNotifBadge");
@@ -653,9 +650,9 @@
     const btnSendNotification = document.getElementById("btnSendNotification");
     const btnClearForm = document.getElementById("btnClearForm");
 
-    let notifications = [];   // { id, message, fromName, createdAt, isRead, createdAtText }
+    let notifications = [];   // { id, message, fromName, createdAtText, isRead }
     let unreadCount = 0;
-    let onlineCount = 0;
+    let onlineCount = 1; // تجريبي
 
     function renderNotifications() {
         notificationsListEl.innerHTML = "";
@@ -722,9 +719,7 @@
         n.isRead = true;
         unreadCount = notifications.filter(x => !x.isRead).length;
         renderNotifications();
-
-        // TODO: نداء API لتحديث حالة الإشعار في الباك إند
-        // fetch(`/api/notifications/${n.id}/read`, { method: "POST" });
+        // مفيش API – كله محلي
     }
 
     function setOnlineCount(count) {
@@ -732,30 +727,28 @@
         onlineBadge.textContent = onlineCount.toString();
     }
 
-    // ===== Load from API (Placeholder) =====
-    async function loadNotificationsFromServer() {
-        // TODO: ربط حقيقي بـ API
-        // const res = await fetch(`/api/notifications?userId=${encodeURIComponent(currentUser.userId)}`);
-        // const data = await res.json();
-        // notifications = data;
-
-        // مؤقتاً: Mock بيانات
-        notifications = [
-            {
-                id: 1,
-                message: "اختبار إشعار محفوظ من قبل.",
-                fromName: "نظام Ghasiq",
-                isRead: false,
-                createdAtText: "منذ 2 دقيقة"
-            }
-        ];
-
+    // تحميل/حفظ محلي في localStorage بنفس المتصفح
+    function loadLocalNotifications() {
+        const key = `ghasiq_notifs_${currentUser.username || "local"}`;
+        const raw = localStorage.getItem(key);
+        if (!raw) {
+            notifications = [];
+            unreadCount = 0;
+            renderNotifications();
+            return;
+        }
+        notifications = JSON.parse(raw);
         unreadCount = notifications.filter(n => !n.isRead).length;
         renderNotifications();
     }
 
-    // ===== إرسال إشعار =====
-    async function sendNotification() {
+    function saveLocalNotifications() {
+        const key = `ghasiq_notifs_${currentUser.username || "local"}`;
+        localStorage.setItem(key, JSON.stringify(notifications));
+    }
+
+    // ===== إرسال إشعار (محلي) =====
+    function sendNotification() {
         const mode = sendModeSelect.value;
         const targetValue = targetValueInput.value.trim();
         const message = messageInput.value.trim();
@@ -765,113 +758,32 @@
             return;
         }
 
-        const payload = {
-            fromUserId: currentUser.userId,
-            fromName: currentUser.username,
-            mode,
-            targetValue,
-            message
+        const n = {
+            id: Date.now(),
+            message: message,
+            fromName: currentUser.username || "Ghasiq",
+            isRead: false,
+            createdAtText: "الآن"
         };
 
-        try {
-            // TODO: نداء API حقيقي
-            // await fetch("/api/notifications/send", {
-            //     method: "POST",
-            //     headers: { "Content-Type": "application/json" },
-            //     body: JSON.stringify(payload)
-            // });
+        // تجريبي: هنضيفه على طول لنفس المستخدم
+        notifications.unshift(n);
+        unreadCount++;
+        saveLocalNotifications();
+        renderNotifications();
 
-            showToast("تم إرسال الإشعار", "سيتم توصيل الإشعار للمستهدفين حسب إعدادات الباك إند.");
-            clearForm();
-        } catch (err) {
-            console.error(err);
-            alert("حدث خطأ أثناء إرسال الإشعار.");
-        }
+        showToast("تم إرسال الإشعار (محلي)", "هذا مجرد وضع تجريبي بدون باك-إند.");
+        clearForm();
     }
 
     function clearForm() {
         messageInput.value = "";
-        // targetValueInput.value = "";
     }
 
     btnSendNotification.addEventListener("click", sendNotification);
     btnClearForm.addEventListener("click", clearForm);
 
-    // ===== WebSocket للاستقبال اللايف =====
-    let ws = null;
-
-    function initNotificationsSocket() {
-        if (!currentUser || !currentUser.userId) return;
-        if (!WS_URL) return;
-
-        try {
-            ws = new WebSocket(WS_URL);
-        } catch (e) {
-            console.error("WS init error", e);
-            return;
-        }
-
-        ws.onopen = () => {
-            try {
-                ws.send(JSON.stringify({
-                    type: "register",
-                    userId: currentUser.userId,
-                    username: currentUser.username
-                }));
-            } catch (e) {
-                console.error("WS send register error", e);
-            }
-        };
-
-        ws.onmessage = (evt) => {
-            let msg;
-            try {
-                msg = JSON.parse(evt.data);
-            } catch (e) {
-                console.error("WS parse error", e);
-                return;
-            }
-
-            if (msg.type === "notification") {
-                // فلترة لو فيه تو ريسيفر محدد
-                if (msg.toUserId && currentUser.userId && msg.toUserId !== currentUser.userId) {
-                    return;
-                }
-
-                const n = {
-                    id: msg.id || Date.now(),
-                    message: msg.message,
-                    fromName: msg.fromName || "Ghasiq",
-                    isRead: false,
-                    createdAtText: msg.createdAtText || "الآن"
-                };
-                notifications.unshift(n);
-                unreadCount++;
-                renderNotifications();
-
-                if (document.visibilityState === "visible") {
-                    showToast(`إشعار من ${n.fromName}`, n.message);
-                }
-            }
-
-            if (msg.type === "onlineCount") {
-                setOnlineCount(msg.count);
-            }
-        };
-
-        ws.onerror = (err) => {
-            console.error("WS error", err);
-        };
-
-        ws.onclose = () => {
-            console.log("Notifications WS closed");
-            ws = null;
-            // لو حابب تعمل إعادة اتصال:
-            // setTimeout(initNotificationsSocket, 5000);
-        };
-    }
-
-    // ===== Language (نفس سيستم باقي الصفحات) =====
+    // ===== Language =====
     const translations = {
         ar: {},
         en: {
@@ -941,11 +853,12 @@
 
     // ===== Init =====
     window.addEventListener("load", () => {
-        loadNotificationsFromServer();
-        initNotificationsSocket();
+        setOnlineCount(1);          // تجريبي
+        loadLocalNotifications();   // من نفس المتصفح فقط
         initLanguageToggle();
     });
 </script>
 
 </body>
 </html>
+
