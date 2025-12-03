@@ -613,13 +613,27 @@
 <body class="dark">
 
 <script>
-    // حماية الصفحة
+    // حماية الصفحة مع دعم "ضيف خارجي" عن طريق اللينك
     (function guard() {
-        const user = JSON.parse(localStorage.getItem("ghasiq_user") || "null");
-        if (!user || !user.login) {
-            window.location.href = "login.html";
+        const params = new URLSearchParams(window.location.search);
+        const isGuest = params.get("guest") === "1";
+
+        if (isGuest) {
+            // ضيف خارجي بدون لوجين
+            const guestName = params.get("name") || "ضيف خارجي";
+            window.__gh_user = {
+                username: guestName,
+                role: "Guest"
+            };
+        } else {
+            // نفس السيستم القديم
+            const user = JSON.parse(localStorage.getItem("ghasiq_user") || "null");
+            if (!user || !user.login) {
+                window.location.href = "login.html";
+                return;
+            }
+            window.__gh_user = user;
         }
-        window.__gh_user = user;
     })();
 </script>
 
@@ -663,27 +677,34 @@
             <div class="call-header sidebar-header">
                 <div class="call-header-title" data-i18n="call_title_ctrl">إدارة الاتصال</div>
                 <div class="call-header-sub" data-i18n="call_sub_ctrl">
-                    يتم توليد معرف ثابت لكل مستخدم. اكتب معرّف أي موظف واضغط "بدء الاتصال" ليتم إضافته للغرفة،
-                    وسيتم نشر وجوده لباقي المشاركين.
+                    افتح صفحة الاتصال، ثم اضغط "رابط ضيف خارجي" لإنشاء رابط يمكنك إرساله لأي ضيف من خارج الشركة للانضمام للمكالمة.
                 </div>
             </div>
 
             <div class="sidebar-section">
                 <div class="id-row">
-                    <div style="font-size:13px; margin-bottom:4px;" data-i18n="label_my_id">المعرّف الخاص بك:</div>
-                    <div id="myIdBox" class="my-id">جاري التحميل...</div>
+                    <div style="font-size:13px; margin-bottom:4px;">رابط دعوة ضيف خارجي:</div>
+
+                    <!-- نخزن الـ Peer ID هنا داخليًا فقط (مخفي) -->
+                    <div id="myIdBox" class="my-id" style="display:none;">جاري التحميل...</div>
+
+                    <div style="margin-top:4px;">
+                        <button type="button" id="btnGenerateGuestLink" class="btn-sm-outline">
+                            إنشاء رابط ضيف خارجي
+                        </button>
+                        <div id="guestLinkWrapper" style="margin-top:6px; display:none;">
+                            <input id="guestLinkInput"
+                                   type="text"
+                                   readonly
+                                   style="width:100%; padding:6px 8px; border-radius:8px; border:1px solid var(--border-subtle); background:rgba(15,23,42,0.9); color:var(--text-main); font-size:11px; direction:ltr;" />
+                            <small style="font-size:10px; color:var(--text-muted);">
+                                انسخ هذا الرابط وأرسله للضيف لينضم للمكالمة بدون حساب.
+                            </small>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="remote-input-row">
-                    <label style="font-size:13px;" data-i18n="label_remote_id">معرّف الموظف المراد إضافته:</label>
-                    <input id="remoteIdInput"
-                           type="text"
-                           data-i18n-placeholder="remote_id_placeholder"
-                           placeholder="مثال: GHASIQ-IT-HEAD أو GHASIQ-HR-HEAD">
-                    <small class="hint">
-                        كل مرة تكتب ID وتضغط "بدء الاتصال" هينضم للغرفة (لو أونلاين) ويتوصل بباقي الموجودين.
-                    </small>
-                </div>
+                <!-- شلنا إدخال المعرف اليدوي تماماً -->
             </div>
 
             <div class="sidebar-section">
@@ -695,17 +716,17 @@
                 </div>
 
                 <div class="buttons-row buttons-row-main">
-                    <button class="btn-primary" id="btnStartCall" data-i18n="btn_start_call">بدء / إضافة مشارك</button>
+                    <!-- ممكن تعتبرها "تهيئة المكالمة" لو حابب، بس حالياً مش مرتبطة بـ ID -->
+                    <button class="btn-primary" id="btnStartCall" data-i18n="btn_start_call">بدء المكالمة من هذا الجهاز</button>
                     <button class="btn-danger" id="btnEndCall" data-i18n="btn_end_call">مغادرة المكالمة</button>
                 </div>
             </div>
 
             <div class="sidebar-section sidebar-hint">
                 <div class="hint" data-i18n="hint_text">
-                    • تأكد أن جميع المشاركين فتحوا نفس صفحة الاتصال.<br>
-                    • لكل رئيس قسم معرف ثابت، مثل:
-                    <span>GHASIQ-IT-HEAD</span>، <span>GHASIQ-HR-HEAD</span>، <span>GHASIQ-FINANCE-HEAD</span>، <span>GHASIQ-GM</span>.<br>
-                    • عند إضافة مشارك جديد من أي جهاز، النظام يحاول ربطه بباقي الموجودين تلقائيًا.
+                    • افتح هذه الصفحة من جهاز الموظف المسؤول عن الاجتماع.<br>
+                    • اضغط "إنشاء رابط ضيف خارجي" وانسخ الرابط، ثم أرسله للضيف بالبريد أو الواتساب.<br>
+                    • بمجرد دخول الضيف على الرابط، سينضم للمكالمة مباشرة مع هذا الجهاز.
                 </div>
             </div>
         </aside>
@@ -716,7 +737,7 @@
                 <div class="call-header-title" data-i18n="call_title_main">غرفة الاتصال الداخلي للموظفين</div>
                 <div class="call-header-sub" data-i18n="call_sub_main">
                     استخدم هذه الغرفة لاجتماعات التشغيل السريعة بين أقسام Ghasiq
-                    (التشغيل، الصيانة، الموارد البشرية، المالية، الإدارة العامة).
+                    (التشغيل، الصيانة، الموارد البشرية، المالية، الإدارة العامة) أو لاستضافة ضيوف خارجيين عبر رابط الدعوة.
                 </div>
             </div>
 
@@ -865,19 +886,15 @@
         }
     }
 
-    // ===== PeerJS / Mesh Room =====
+    // ===== PeerJS / Guest Link Logic =====
+    const urlParams = new URLSearchParams(window.location.search);
+    const isGuest = urlParams.get("guest") === "1";
+    const hostPeerIdFromUrl = urlParams.get("host") || null;
+
     const user = window.__gh_user || { role: "User" };
-
-    function normalizeRole(r) {
-        if (!r) return "USER";
-        return r.replace(/\s+/g, "-").toUpperCase();
-    }
-
-    const baseRole = normalizeRole(user.role);
-    const myPeerId = "GHASIQ-" + baseRole;
+    let myPeerId = null; // دا هيتولد عشوائي من PeerJS
 
     const myIdBox = document.getElementById("myIdBox");
-    const remoteIdInput = document.getElementById("remoteIdInput");
     const localVideo = document.getElementById("localVideo");
     const remoteVideosGrid = document.getElementById("remoteVideosGrid");
     const callStatus = document.getElementById("callStatus");
@@ -889,6 +906,9 @@
     const btnShareScreen = document.getElementById("btnShareScreen");
     const callTimerEl = document.getElementById("callTimer");
     const participantsCountEl = document.getElementById("participantsCount");
+    const btnGenerateGuestLink = document.getElementById("btnGenerateGuestLink");
+    const guestLinkWrapper = document.getElementById("guestLinkWrapper");
+    const guestLinkInput = document.getElementById("guestLinkInput");
 
     // local fullscreen button
     const localFsBtn = document.querySelector('[data-fullscreen-target="local"]');
@@ -1202,22 +1222,6 @@
     function handleDataMessage(fromPeerId, msg) {
         if (!msg || typeof msg !== "object") return;
 
-        if (msg.type === "initPeers") {
-            const peers = msg.peers || [];
-            peers.forEach(pid => {
-                if (pid && pid !== myPeerId) {
-                    startCallToPeer(pid);
-                }
-            });
-        }
-
-        if (msg.type === "newPeer") {
-            const pid = msg.peerId;
-            if (pid && pid !== myPeerId) {
-                startCallToPeer(pid);
-            }
-        }
-
         if (msg.type === "chat") {
             appendChatMessage({
                 from: msg.from,
@@ -1261,16 +1265,6 @@
         return conn;
     }
 
-    function broadcastNewPeer(newPeerId) {
-        Object.entries(dataConnections).forEach(([pid, conn]) => {
-            if (!conn || !conn.open) return;
-            if (pid === newPeerId) return;
-            try {
-                conn.send({ type: "newPeer", peerId: newPeerId });
-            } catch (e) {}
-        });
-    }
-
     function startCallToPeer(peerId) {
         if (!peerId || peerId === myPeerId) return;
         if (activeCalls[peerId]) return;
@@ -1285,47 +1279,57 @@
         });
     }
 
-    function addParticipantById(remoteId) {
-        if (!remoteId || remoteId === myPeerId) return;
+    // توليد لينك ضيف خارجي من غير ما نعرض أي ID للمستخدم
+    if (btnGenerateGuestLink) {
+        if (isGuest) {
+            // الضيف نفسه مالوش لازمة يشوف الزر
+            btnGenerateGuestLink.style.display = "none";
+        } else {
+            btnGenerateGuestLink.addEventListener("click", () => {
+                if (!myPeerId) {
+                    // لسه PeerJS بيجهز، نخليها بسيطة
+                    alert("جاري تجهيز المكالمة، حاول مرة أخرى بعد ثوانٍ.");
+                    return;
+                }
 
-        getMediaStream().then((stream) => {
-            if (!activeCalls[remoteId]) {
-                const call = peer.call(remoteId, stream);
-                bindCallEvents(call);
-            }
+                const url = new URL(window.location.href);
 
-            const existingPeers = [myPeerId, ...Object.keys(activeCalls).filter(id => id !== remoteId)];
+                // نخلي اللينك وضع ضيف + يرن على هذا الـ host
+                url.searchParams.set("guest", "1");
+                url.searchParams.set("host", myPeerId);
+                // اختيارى: لو حابب تبعت اسم الضيف كـ placeholder
+                // url.searchParams.set("name", "External Guest");
 
-            let conn = ensureDataConnection(remoteId);
-            if (!conn) return;
+                const link = url.toString();
+                guestLinkWrapper.style.display = "block";
+                guestLinkInput.value = link;
 
-            const sendInitAndBroadcast = () => {
+                // محاولة نسخ أوتوماتيك
+                guestLinkInput.select();
                 try {
-                    conn.send({ type: "initPeers", peers: existingPeers });
-                } catch (e) {}
-                broadcastNewPeer(remoteId);
-            };
-
-            if (conn.open) {
-                sendInitAndBroadcast();
-            } else {
-                conn.on('open', () => {
-                    dataConnections[remoteId] = conn;
-                    sendInitAndBroadcast();
-                });
-            }
-        }).catch(err => {
-            console.error(err);
-            setStatus("media_error", true);
-        });
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(link);
+                    }
+                } catch (e) {
+                    // لو المتصفح مانع مفيش مشكلة، ينسخه يدوي
+                }
+            });
+        }
     }
 
     function initPeer() {
-        peer = new Peer(myPeerId, { debug: 1 });
+        // myPeerId = null → PeerJS هيولّد ID عشوائي
+        peer = new Peer(undefined, { debug: 1 });
 
         peer.on("open", (id) => {
-            myIdBox.textContent = id;
+            myPeerId = id;
+            if (myIdBox) myIdBox.textContent = id; // داخلي بس
             setStatus("ready", false);
+
+            // لو ضيف جاي من لينك فيه host → اتصل بالـ host مباشرة
+            if (isGuest && hostPeerIdFromUrl) {
+                startCallToPeer(hostPeerIdFromUrl);
+            }
         });
 
         peer.on("error", (err) => {
@@ -1414,15 +1418,16 @@
         }
     });
 
-    // إضافة مشارك جديد
+    // "بدء المكالمة من هذا الجهاز" = بس يتأكد إن الكاميرا والمايك شغالين
     btnStartCall.addEventListener("click", () => {
-        const remoteId = remoteIdInput.value.trim();
-        if (!remoteId) {
-            alert(trCall("alert_remote_required"));
-            return;
-        }
-        setStatus("incoming_call", false);
-        addParticipantById(remoteId);
+        getMediaStream()
+            .then(() => {
+                setStatus("ready", false);
+            })
+            .catch(err => {
+                console.error(err);
+                setStatus("media_error_onload", true);
+            });
     });
 
     // مغادرة المكالمة من هذا الجهاز فقط
@@ -1526,6 +1531,7 @@
     initPeer();
 
     window.addEventListener('load', () => {
+        // نجهز الكاميرا أول ما الصفحة تفتح (اختياري)
         getMediaStream().catch(err => {
             console.error(err);
             setStatus("media_error_onload", true);
@@ -1547,7 +1553,7 @@
             btn_logout: "Log out",
 
             call_title_main: "Internal call room for employees",
-            call_sub_main: "Use this room for quick operational meetings between Ghasiq departments (operations, maintenance, HR, finance, general management).",
+            call_sub_main: "Use this room for quick operational meetings between Ghasiq departments (operations, maintenance, HR, finance, general management), or to host external guests via invite links.",
 
             video_label_local: "Your video",
             video_label_remote: "Other participants",
@@ -1556,16 +1562,16 @@
             status_ready: "Ready to start a call",
 
             call_title_ctrl: "Call management",
-            call_sub_ctrl: "A fixed ID is generated for each user. Type any employee ID and press 'Start / Add participant' to add them to the room, and their presence will be shared with others.",
+            call_sub_ctrl: "Open this page on the employee's device, then click 'External guest link' to generate a link you can send to outside guests.",
 
             label_my_id: "Your ID:",
             label_remote_id: "Participant ID to add:",
             remote_id_placeholder: "Example: GHASIQ-IT-HEAD or GHASIQ-HR-HEAD",
 
-            btn_start_call: "Start / Add participant",
+            btn_start_call: "Start call on this device",
             btn_end_call: "Leave call",
 
-            hint_text: "• Make sure all participants open the same call page.<br>• Each department head has a fixed ID such as: <span>GHASIQ-IT-HEAD</span>, <span>GHASIQ-HR-HEAD</span>, <span>GHASIQ-FINANCE-HEAD</span>, <span>GHASIQ-GM</span>.<br>• When a new participant is added from any device, the system will try to connect them to all existing participants automatically.",
+            hint_text: "• Open this page from the meeting owner's device.<br>• Click 'Create external guest link' and send it to the guest via email or WhatsApp.<br>• Once the guest opens the link, they will join the call directly with this device.",
 
             footer_text: "© <span>Ghasiq</span> Logistical Support & Operations — All rights reserved."
         }
