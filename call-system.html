@@ -199,6 +199,7 @@
         }
 
         .call-card {
+            position:relative; /* overlay */
             border-radius:22px;
             background:var(--bg-elevated);
             border:1px solid var(--border-subtle);
@@ -206,6 +207,29 @@
             padding:18px 18px 20px;
             max-width:820px;
             margin-inline:auto;
+        }
+
+        /* overlay فوق الميتينج */
+        .meeting-overlay {
+            position:absolute;
+            top:12px;
+            left:18px;
+            padding:4px 12px;
+            border-radius:999px;
+            background:rgba(15,23,42,0.85);
+            border:1px solid rgba(148,163,184,0.45);
+            font-size:12px;
+            display:flex;
+            gap:8px;
+            align-items:center;
+            z-index:5;
+            color:var(--text-muted);
+        }
+
+        body.light .meeting-overlay {
+            background:rgba(255,255,255,0.9);
+            border-color:rgba(148,163,184,0.65);
+            color:#0f172a;
         }
 
         .controls-box {
@@ -647,7 +671,7 @@
             <div class="call-header sidebar-header">
                 <div class="call-header-title" data-i18n="call_title_ctrl">إدارة الاتصال</div>
                 <div class="call-header-sub" data-i18n="call_sub_ctrl">
-                    افتح صفحة الاتصال، ثم اضغط "إنشاء رابط ضيف خارجي" لإنشاء رابط يمكنك إرساله لأي ضيف من خارج الشركة للانضمام للمكالمة.
+                    افتح صفحة الاتصال من جهاز الموظف المسؤول عن الاجتماع، ثم اضغط "إنشاء رابط ضيف خارجي" لإنشاء رابط يمكنك إرساله لأي ضيف للانضمام للمكالمة.
                 </div>
             </div>
 
@@ -720,6 +744,13 @@
 
         <!-- MAIN -->
         <div class="call-card">
+            <!-- overlay يظهر على الميتينج وعلى التسجيل -->
+            <div class="meeting-overlay">
+                <span id="overlayDateTime">--/--/---- | --:--:--</span>
+                <span>•</span>
+                <span id="overlayDuration">00:00</span>
+            </div>
+
             <div class="call-header">
                 <div class="call-header-title" data-i18n="call_title_main">غرفة الاتصال الداخلي للموظفين</div>
                 <div class="call-header-sub" data-i18n="call_sub_main">
@@ -905,6 +936,10 @@
     const btnStopRecording = document.getElementById("btnStopRecording");
     const recordingStatusEl = document.getElementById("recordingStatus");
 
+    // overlay elements
+    const overlayDateTimeEl = document.getElementById("overlayDateTime");
+    const overlayDurationEl = document.getElementById("overlayDuration");
+
     // Canvas mixing
     let mixCanvas = null;
     let mixCanvasCtx = null;
@@ -968,15 +1003,39 @@
         return mm + ":" + ss;
     }
 
+    // تحديث التاريخ/الوقت على الواجهة
+    function updateOverlayDateTime() {
+        if (!overlayDateTimeEl) return;
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('ar-EG', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+        const timeStr = now.toLocaleTimeString('ar-EG', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+        overlayDateTimeEl.textContent = `${dateStr} | ${timeStr}`;
+    }
+
+    setInterval(updateOverlayDateTime, 1000);
+    updateOverlayDateTime();
+
     function startCallTimer() {
         if (callInProgress) return;
         callInProgress = true;
         callSecondsElapsed = 0;
         if (callTimerInterval) clearInterval(callTimerInterval);
         callTimerEl.textContent = "00:00";
+        if (overlayDurationEl) overlayDurationEl.textContent = "00:00";
+
         callTimerInterval = setInterval(() => {
             callSecondsElapsed++;
-            callTimerEl.textContent = formatTime(callSecondsElapsed);
+            const t = formatTime(callSecondsElapsed);
+            callTimerEl.textContent = t;
+            if (overlayDurationEl) overlayDurationEl.textContent = t;
         }, 1000);
     }
 
@@ -989,6 +1048,7 @@
         if (resetToZero) {
             callSecondsElapsed = 0;
             callTimerEl.textContent = "00:00";
+            if (overlayDurationEl) overlayDurationEl.textContent = "00:00";
         }
     }
 
@@ -1059,6 +1119,7 @@
             ctx.fillStyle = "#000";
             ctx.fillRect(0, 0, width, height);
 
+            // رسم الفيديوهات كجريد
             allVideos.forEach((video, idx) => {
                 if (video.readyState >= 2) {
                     const col = idx % cols;
@@ -1068,6 +1129,35 @@
                     ctx.drawImage(video, x, y, cellW, cellH);
                 }
             });
+
+            // overlay التاريخ / الوقت / المدة داخل التسجيل
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('ar-EG', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+            const timeStr = now.toLocaleTimeString('ar-EG', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            const durationStr = formatTime(callSecondsElapsed);
+
+            const boxWidth = 380;
+            const boxHeight = 80;
+            const padding = 10;
+
+            ctx.fillStyle = "rgba(0,0,0,0.6)";
+            ctx.fillRect(padding, padding, boxWidth, boxHeight);
+
+            ctx.font = "16px Cairo, Arial, sans-serif";
+            ctx.fillStyle = "#ffffff";
+            ctx.textBaseline = "top";
+
+            ctx.fillText(`التاريخ: ${dateStr}`, padding + 8, padding + 8);
+            ctx.fillText(`الوقت: ${timeStr}`,  padding + 8, padding + 8 + 22);
+            ctx.fillText(`المدة: ${durationStr}`, padding + 8, padding + 8 + 44);
 
             mixAnimationFrame = requestAnimationFrame(draw);
         }
@@ -1495,7 +1585,7 @@
 
                 recordedChunks = [];
                 mediaRecorder = new MediaRecorder(mixedStream, {
-                    mimeType: "video/webm;codecs=vp9,opus"
+                    mimeType: "video/webm;codecs=vp8,opus"
                 });
 
                 mediaRecorder.ondataavailable = (e) => {
