@@ -402,22 +402,6 @@
             gap:6px;
         }
 
-        .remote-input-row input {
-            width:100%;
-            padding:8px 10px;
-            border-radius:8px;
-            border:1px solid var(--border-subtle);
-            background:rgba(15,23,42,0.85);
-            color:var(--text-main);
-            font-size:13px;
-            outline:none;
-        }
-
-        body.light .remote-input-row input {
-            background:#ffffff;
-            color:#0f172a;
-        }
-
         .buttons-row {
             display:flex;
             flex-wrap:wrap;
@@ -681,6 +665,7 @@
                 </div>
             </div>
 
+            <!-- رابط ضيف خارجي -->
             <div class="sidebar-section">
                 <div class="id-row">
                     <div style="font-size:13px; margin-bottom:4px;">رابط دعوة ضيف خارجي:</div>
@@ -703,10 +688,9 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- شلنا إدخال المعرف اليدوي تماماً -->
             </div>
 
+            <!-- كنترول الكاميرا والمايك والشير -->
             <div class="sidebar-section">
                 <div class="buttons-row">
                     <button type="button" id="btnToggleCamera" class="btn-icon" title="تشغيل/إيقاف الكاميرا">🎥</button>
@@ -716,12 +700,34 @@
                 </div>
 
                 <div class="buttons-row buttons-row-main">
-                    <!-- ممكن تعتبرها "تهيئة المكالمة" لو حابب، بس حالياً مش مرتبطة بـ ID -->
                     <button class="btn-primary" id="btnStartCall" data-i18n="btn_start_call">بدء المكالمة من هذا الجهاز</button>
                     <button class="btn-danger" id="btnEndCall" data-i18n="btn_end_call">مغادرة المكالمة</button>
                 </div>
             </div>
 
+            <!-- تسجيل الاجتماع -->
+            <div class="sidebar-section">
+                <div style="font-size:13px; margin-bottom:4px;">تسجيل الاجتماع:</div>
+
+                <div class="buttons-row">
+                    <button type="button"
+                            id="btnStartRecording"
+                            class="btn-icon"
+                            title="بدء تسجيل الاجتماع">⏺</button>
+
+                    <button type="button"
+                            id="btnStopRecording"
+                            class="btn-icon off"
+                            title="إيقاف التسجيل"
+                            disabled>⏹</button>
+                </div>
+
+                <small id="recordingStatus" class="hint">
+                    لا يوجد تسجيل حاليًا.
+                </small>
+            </div>
+
+            <!-- Hint -->
             <div class="sidebar-section sidebar-hint">
                 <div class="hint" data-i18n="hint_text">
                     • افتح هذه الصفحة من جهاز الموظف المسؤول عن الاجتماع.<br>
@@ -892,7 +898,7 @@
     const hostPeerIdFromUrl = urlParams.get("host") || null;
 
     const user = window.__gh_user || { role: "User" };
-    let myPeerId = null; // دا هيتولد عشوائي من PeerJS
+    let myPeerId = null; // PeerJS هيولّد ID عشوائي
 
     const myIdBox = document.getElementById("myIdBox");
     const localVideo = document.getElementById("localVideo");
@@ -909,6 +915,15 @@
     const btnGenerateGuestLink = document.getElementById("btnGenerateGuestLink");
     const guestLinkWrapper = document.getElementById("guestLinkWrapper");
     const guestLinkInput = document.getElementById("guestLinkInput");
+
+    // Recording controls
+    const btnStartRecording = document.getElementById("btnStartRecording");
+    const btnStopRecording = document.getElementById("btnStopRecording");
+    const recordingStatusEl = document.getElementById("recordingStatus");
+
+    let mediaRecorder = null;
+    let recordingStream = null;
+    let recordedChunks = [];
 
     // local fullscreen button
     const localFsBtn = document.querySelector('[data-fullscreen-target="local"]');
@@ -985,6 +1000,28 @@
         if (resetToZero) {
             callSecondsElapsed = 0;
             callTimerEl.textContent = "00:00";
+        }
+    }
+
+    function updateRecordingUI(isRecording) {
+        if (!btnStartRecording || !btnStopRecording || !recordingStatusEl) return;
+
+        if (isRecording) {
+            btnStartRecording.disabled = true;
+            btnStopRecording.disabled = false;
+            btnStartRecording.classList.add("off");
+            btnStopRecording.classList.remove("off");
+
+            recordingStatusEl.textContent = "جاري تسجيل الاجتماع (سيتم تحميل الملف عند الإيقاف)...";
+            recordingStatusEl.style.color = "#f97373";
+        } else {
+            btnStartRecording.disabled = false;
+            btnStopRecording.disabled = true;
+            btnStartRecording.classList.remove("off");
+            btnStopRecording.classList.add("off");
+
+            recordingStatusEl.textContent = "لا يوجد تسجيل حاليًا.";
+            recordingStatusEl.style.color = "";
         }
     }
 
@@ -1287,7 +1324,6 @@
         } else {
             btnGenerateGuestLink.addEventListener("click", () => {
                 if (!myPeerId) {
-                    // لسه PeerJS بيجهز، نخليها بسيطة
                     alert("جاري تجهيز المكالمة، حاول مرة أخرى بعد ثوانٍ.");
                     return;
                 }
@@ -1297,14 +1333,11 @@
                 // نخلي اللينك وضع ضيف + يرن على هذا الـ host
                 url.searchParams.set("guest", "1");
                 url.searchParams.set("host", myPeerId);
-                // اختيارى: لو حابب تبعت اسم الضيف كـ placeholder
-                // url.searchParams.set("name", "External Guest");
 
                 const link = url.toString();
                 guestLinkWrapper.style.display = "block";
                 guestLinkInput.value = link;
 
-                // محاولة نسخ أوتوماتيك
                 guestLinkInput.select();
                 try {
                     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1355,6 +1388,95 @@
             conn.on('data', (msg) => handleDataMessage(pid, msg));
             conn.on('close', () => { delete dataConnections[pid]; });
             conn.on('error', () => {});
+        });
+    }
+
+    // ===== Recording (Screen + Audio) =====
+    if (btnStartRecording) {
+        btnStartRecording.addEventListener("click", async () => {
+            try {
+                if (mediaRecorder) {
+                    return; // تسجيل شغال بالفعل
+                }
+
+                recordingStream = await navigator.mediaDevices.getDisplayMedia({
+                    video: true,
+                    audio: true
+                });
+
+                recordedChunks = [];
+
+                mediaRecorder = new MediaRecorder(recordingStream, {
+                    mimeType: "video/webm;codecs=vp9,opus"
+                });
+
+                mediaRecorder.ondataavailable = (e) => {
+                    if (e.data && e.data.size > 0) {
+                        recordedChunks.push(e.data);
+                    }
+                };
+
+                mediaRecorder.onstop = () => {
+                    try {
+                        const blob = new Blob(recordedChunks, { type: "video/webm" });
+                        const url = URL.createObjectURL(blob);
+
+                        const a = document.createElement("a");
+                        const ts = new Date().toISOString().replace(/[:.]/g, "-");
+                        a.href = url;
+                        a.download = `ghasiq-meeting-${ts}.webm`;
+                        document.body.appendChild(a);
+                        a.click();
+
+                        setTimeout(() => {
+                            URL.revokeObjectURL(url);
+                            document.body.removeChild(a);
+                        }, 100);
+
+                    } catch (err) {
+                        console.error("Error while saving recording:", err);
+                    }
+
+                    if (recordingStream) {
+                        recordingStream.getTracks().forEach(t => t.stop());
+                    }
+                    recordingStream = null;
+                    mediaRecorder = null;
+                    recordedChunks = [];
+                    updateRecordingUI(false);
+                };
+
+                const [videoTrack] = recordingStream.getVideoTracks();
+                if (videoTrack) {
+                    videoTrack.addEventListener("ended", () => {
+                        if (mediaRecorder && mediaRecorder.state !== "inactive") {
+                            mediaRecorder.stop();
+                        }
+                    });
+                }
+
+                mediaRecorder.start(1000); // chunk كل ثانية
+                updateRecordingUI(true);
+
+            } catch (err) {
+                console.error("Recording error:", err);
+                alert("تعذر بدء تسجيل الشاشة. تأكد من إعطاء صلاحية تسجيل الشاشة/التبويب من المتصفح.");
+                if (recordingStream) {
+                    recordingStream.getTracks().forEach(t => t.stop());
+                    recordingStream = null;
+                }
+                mediaRecorder = null;
+                recordedChunks = [];
+                updateRecordingUI(false);
+            }
+        });
+    }
+
+    if (btnStopRecording) {
+        btnStopRecording.addEventListener("click", () => {
+            if (mediaRecorder && mediaRecorder.state !== "inactive") {
+                mediaRecorder.stop();
+            }
         });
     }
 
@@ -1432,6 +1554,20 @@
 
     // مغادرة المكالمة من هذا الجهاز فقط
     btnEndCall.addEventListener("click", () => {
+        // وقف التسجيل لو شغال
+        if (mediaRecorder && mediaRecorder.state !== "inactive") {
+            try { mediaRecorder.stop(); } catch (e) {}
+        }
+        if (recordingStream) {
+            try {
+                recordingStream.getTracks().forEach(t => t.stop());
+            } catch (e) {}
+            recordingStream = null;
+        }
+        mediaRecorder = null;
+        recordedChunks = [];
+        updateRecordingUI(false);
+
         // وقف الشير لو شغال
         stopScreenShare();
 
@@ -1537,6 +1673,7 @@
             setStatus("media_error_onload", true);
         });
         updateParticipantsCount();
+        updateRecordingUI(false);
     });
 </script>
 
