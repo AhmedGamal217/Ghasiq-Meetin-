@@ -610,6 +610,7 @@
 
 <div class="page">
 
+    <!-- NAVBAR -->
     <header class="navbar">
         <div class="navbar-left">
             <a href="index.html">
@@ -622,7 +623,6 @@
                 <a href="call-system.html" class="active" data-i18n="nav_call_system">نظام الاتصال</a>
                 <a href="notifications.html" data-i18n="nav_notifications">الإشعارات</a>
             </nav>
-
         </div>
 
         <div class="nav-actions">
@@ -642,11 +642,12 @@
     </header>
 
     <section class="call-layout">
+        <!-- SIDEBAR -->
         <aside class="controls-box">
             <div class="call-header sidebar-header">
                 <div class="call-header-title" data-i18n="call_title_ctrl">إدارة الاتصال</div>
                 <div class="call-header-sub" data-i18n="call_sub_ctrl">
-                    افتح صفحة الاتصال، ثم اضغط "رابط ضيف خارجي" لإنشاء رابط يمكنك إرساله لأي ضيف من خارج الشركة للانضمام للمكالمة.
+                    افتح صفحة الاتصال، ثم اضغط "إنشاء رابط ضيف خارجي" لإنشاء رابط يمكنك إرساله لأي ضيف من خارج الشركة للانضمام للمكالمة.
                 </div>
             </div>
 
@@ -712,11 +713,12 @@
                 <div class="hint" data-i18n="hint_text">
                     • افتح هذه الصفحة من جهاز الموظف المسؤول عن الاجتماع.<br>
                     • اضغط "إنشاء رابط ضيف خارجي" وانسخ الرابط، ثم أرسله للضيف بالبريد أو الواتساب.<br>
-                    • بمجرد دخول الضيف على الرابط، سينضم للمكالمة مباشرة مع هذا الجهاز.
+                    • بمجرد دخول الضيف على الرابط، سينضم للمكالمة مباشرة مع هذا الجهاز، والتسجيل سيشمل كل المشاركين.
                 </div>
             </div>
         </aside>
 
+        <!-- MAIN -->
         <div class="call-card">
             <div class="call-header">
                 <div class="call-header-title" data-i18n="call_title_main">غرفة الاتصال الداخلي للموظفين</div>
@@ -751,6 +753,7 @@
                 <span id="participantsCount" class="status-timer">1</span>
             </div>
 
+            <!-- CHAT -->
             <div class="chat-panel">
                 <div class="chat-header">
                     <span>الشات الداخلي</span>
@@ -775,7 +778,11 @@
     </footer>
 </div>
 
+<!-- كانفاس مخفي لدمج الفيديوهات -->
+<canvas id="mixCanvas" style="display:none;"></canvas>
+
 <script>
+    // ===== Theme & User =====
     const bodyEl = document.body;
     const themeToggle = document.getElementById("themeToggle");
     const themeLabel = document.getElementById("themeLabel");
@@ -857,6 +864,7 @@
         return dict[key] || key;
     }
 
+    // ===== Fullscreen helper =====
     function toggleFullscreen(element) {
         if (!element) return;
         if (!document.fullscreenElement) {
@@ -868,6 +876,7 @@
         }
     }
 
+    // ===== PeerJS / Meeting Logic =====
     const urlParams = new URLSearchParams(window.location.search);
     const isGuest = urlParams.get("guest") === "1";
     const hostPeerIdFromUrl = urlParams.get("host") || null;
@@ -891,13 +900,20 @@
     const guestLinkWrapper = document.getElementById("guestLinkWrapper");
     const guestLinkInput = document.getElementById("guestLinkInput");
 
+    // Recording controls
     const btnStartRecording = document.getElementById("btnStartRecording");
     const btnStopRecording = document.getElementById("btnStopRecording");
     const recordingStatusEl = document.getElementById("recordingStatus");
 
+    // Canvas mixing
+    let mixCanvas = null;
+    let mixCanvasCtx = null;
+    let mixAnimationFrame = null;
+
     let mediaRecorder = null;
     let recordedChunks = [];
 
+    // local fullscreen button
     const localFsBtn = document.querySelector('[data-fullscreen-target="local"]');
     if (localFsBtn) {
         localFsBtn.addEventListener('click', (e) => {
@@ -998,16 +1014,108 @@
         }
     }
 
+    // ===== Build mixed recording stream (canvas + audio mix) =====
     function buildRecordingStream() {
-        const mixedStream = new MediaStream();
+        if (!mixCanvas) {
+            mixCanvas = document.getElementById("mixCanvas");
+            mixCanvasCtx = mixCanvas.getContext("2d");
+        }
+
+        const canvas = mixCanvas;
+        const ctx = mixCanvasCtx;
+
+        const allVideos = [];
+
+        // local video
+        if (localVideo && localVideo.srcObject) {
+            allVideos.push(localVideo);
+        }
+
+        // remote videos (from DOM)
+        const remoteVideoEls = remoteVideosGrid.querySelectorAll("video");
+        remoteVideoEls.forEach(v => {
+            if (v && v.srcObject) {
+                allVideos.push(v);
+            }
+        });
+
+        if (allVideos.length === 0) {
+            return null;
+        }
+
+        // final canvas size
+        const width = 1280;
+        const height = 720;
+        canvas.width = width;
+        canvas.height = height;
+
+        const count = allVideos.length;
+        const cols = count > 1 ? Math.ceil(Math.sqrt(count)) : 1;
+        const rows = Math.ceil(count / cols);
+        const cellW = width / cols;
+        const cellH = height / rows;
+
+        function draw() {
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, 0, width, height);
+
+            allVideos.forEach((video, idx) => {
+                if (video.readyState >= 2) {
+                    const col = idx % cols;
+                    const row = Math.floor(idx / cols);
+                    const x = col * cellW;
+                    const y = row * cellH;
+                    ctx.drawImage(video, x, y, cellW, cellH);
+                }
+            });
+
+            mixAnimationFrame = requestAnimationFrame(draw);
+        }
+
+        draw();
+
+        const canvasStream = canvas.captureStream(25); // ~25fps
+
+        // audio mix
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const audioDestination = audioContext.createMediaStreamDestination();
+
+        const allAudioStreams = [];
 
         if (localStream) {
-            localStream.getTracks().forEach(t => mixedStream.addTrack(t));
+            allAudioStreams.push(localStream);
         }
 
         remoteStreams.forEach(rs => {
-            rs.getTracks().forEach(t => mixedStream.addTrack(t));
+            if (rs) allAudioStreams.push(rs);
         });
+
+        allAudioStreams.forEach(stream => {
+            try {
+                const src = audioContext.createMediaStreamSource(stream);
+                src.connect(audioDestination);
+            } catch (e) {
+                console.warn("Audio mix error:", e);
+            }
+        });
+
+        const mixedStream = new MediaStream();
+
+        // video from canvas
+        canvasStream.getVideoTracks().forEach(t => mixedStream.addTrack(t));
+
+        // mixed audio
+        audioDestination.stream.getAudioTracks().forEach(t => mixedStream.addTrack(t));
+
+        mixedStream._stopMixing = () => {
+            if (mixAnimationFrame) {
+                cancelAnimationFrame(mixAnimationFrame);
+                mixAnimationFrame = null;
+            }
+            try {
+                audioContext.close();
+            } catch (e) {}
+        };
 
         return mixedStream;
     }
@@ -1170,6 +1278,7 @@
         });
     }
 
+    // ===== Chat & DataChannel =====
     const chatMessagesEl = document.getElementById("chatMessages");
     const chatForm = document.getElementById("chatForm");
     const chatInput = document.getElementById("chatInput");
@@ -1301,6 +1410,7 @@
         });
     }
 
+    // ===== Guest link (host side) =====
     if (btnGenerateGuestLink) {
         if (isGuest) {
             btnGenerateGuestLink.style.display = "none";
@@ -1329,12 +1439,16 @@
         }
     }
 
+    // ===== Peer init =====
     function initPeer() {
         peer = new Peer(undefined, { debug: 1 });
 
         peer.on("open", (id) => {
             myPeerId = id;
-            if (myIdBox) myIdBox.textContent = id;
+            if (myIdBox) {
+                myIdBox.style.display = "block";
+                myIdBox.textContent = id;
+            }
             setStatus("ready", false);
 
             if (isGuest && hostPeerIdFromUrl) {
@@ -1368,6 +1482,7 @@
         });
     }
 
+    // ===== Recording buttons =====
     if (btnStartRecording) {
         btnStartRecording.addEventListener("click", () => {
             try {
@@ -1388,6 +1503,10 @@
                 };
 
                 mediaRecorder.onstop = () => {
+                    if (mixedStream._stopMixing) {
+                        mixedStream._stopMixing();
+                    }
+
                     try {
                         const blob = new Blob(recordedChunks, { type: "video/webm" });
                         const url = URL.createObjectURL(blob);
@@ -1429,6 +1548,7 @@
         });
     }
 
+    // ===== Buttons Logic =====
     btnToggleCamera.addEventListener("click", () => {
         if (isScreenSharing) {
             alert("أوقف مشاركة الشاشة أولاً لإيقاف الكاميرا.");
@@ -1593,6 +1713,7 @@
         reader.readAsDataURL(file);
     });
 
+    // Init Peer
     initPeer();
 
     window.addEventListener('load', () => {
@@ -1606,6 +1727,7 @@
 </script>
 
 <script>
+    // ========== ترجمات الواجهة الثابتة ==========
     const translations = {
         ar: {},
         en: {
@@ -1626,12 +1748,12 @@
             status_ready: "Ready to start a call",
 
             call_title_ctrl: "Call management",
-            call_sub_ctrl: "Open this page on the employee's device, then click 'External guest link' to generate a link you can send to outside guests.",
+            call_sub_ctrl: "Open this page on the meeting owner's device, then click 'Create external guest link' to generate a link to send to outside guests.",
 
             btn_start_call: "Start call on this device",
             btn_end_call: "Leave call",
 
-            hint_text: "• Open this page from the meeting owner's device.<br>• Click 'Create external guest link' and send it to the guest via email or WhatsApp.<br>• Once the guest opens the link, they will join the call directly with this device.",
+            hint_text: "• Open this page from the meeting owner's device.<br>• Click 'Create external guest link' and send it to the guest via email or WhatsApp.<br>• Once the guest opens the link, they will join the call directly with this device, and the recording will include all participants.",
 
             footer_text: "© <span>Ghasiq</span> Logistical Support & Operations — All rights reserved."
         }
