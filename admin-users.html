@@ -91,6 +91,33 @@
             color:var(--text-muted);
         }
 
+        .nav-links a {
+            position:relative;
+            padding-bottom:4px;
+        }
+
+        .nav-links a::after {
+            content:"";
+            position:absolute;
+            right:0;
+            bottom:0;
+            width:0;
+            height:2px;
+            border-radius:999px;
+            background:linear-gradient(90deg,var(--primary-light),var(--primary));
+            transition:width .18s ease;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width:100%;
+        }
+
+        .nav-links a.active {
+            color:#e5e7eb;
+            font-weight:600;
+        }
+
         .nav-actions {
             display:flex;
             align-items:center;
@@ -346,7 +373,12 @@
                 <img src="logo.png" alt="GHASIQ Logo" class="logo" />
             </a>
             <nav class="nav-links">
-                <span>لوحة الإدارة</span>
+                <a href="index.html#about">عن Ghasiq</a>
+                <a href="services.html">الخدمات</a>
+                <a href="call-system.html">نظام الاتصال</a>
+                <a href="notifications.html">الإشعارات</a>
+                <a href="admin-users.html" class="active">إدارة المستخدمين</a>
+                <!-- عدّل admin-users.html حسب اسم ملف صفحة الإدارة عندك -->
             </nav>
         </div>
 
@@ -672,7 +704,7 @@
 
             saveUsers(users);
 
-            // لو عدّل نفسه (اسم أو role او admin) نحدّث ghasiq_user
+            // لو عدّل نفسه
             if (currentUser && currentUser.username.toLowerCase() === u.username.toLowerCase()) {
                 localStorage.setItem("ghasiq_user", JSON.stringify({
                     username: u.username,
@@ -735,17 +767,15 @@
         users.splice(index, 1);
         saveUsers(users);
 
-        // لو كان في وضع تعديل على نفس اليوزر رجّع الفورم لوضع إنشاء
         if (editingIndex === index) {
             setFormModeCreate();
         } else if (editingIndex !== null && index < editingIndex) {
-            editingIndex--; // عشان ترتيب الأندكسات بعد الحذف
+            editingIndex--;
         }
 
         renderUsers();
         showMessage("success", "تم حذف المستخدم.");
 
-        // لو حذف نفسه فعلاً
         if (currentUser && currentUser.username.toLowerCase() === userToDelete.username.toLowerCase()) {
             logout();
         }
