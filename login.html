@@ -228,6 +228,29 @@
             margin-bottom: 12px;
         }
 
+        .login-mode-switch {
+            display:flex;
+            gap:8px;
+            margin-bottom:10px;
+        }
+
+        .mode-btn {
+            flex:1;
+            padding:7px 10px;
+            border-radius:999px;
+            border:1px solid var(--border-subtle);
+            background:var(--bg-card);
+            color:var(--text-main);
+            font-size:12px;
+            cursor:pointer;
+        }
+
+        .mode-btn.active {
+            background:linear-gradient(135deg,var(--primary),var(--primary-light));
+            border:none;
+            color:#fff;
+        }
+
         .input-group {
             margin-bottom: 12px;
         }
@@ -356,6 +379,12 @@
             <h2 class="login-title" data-i18n="login_title">تسجيل الدخول</h2>
             <p class="login-sub" data-i18n="login_sub">أدخل بياناتك للمتابعة.</p>
 
+            <!-- اختيار نوع الدخول -->
+            <div class="login-mode-switch">
+                <button type="button" class="mode-btn active" id="modeUserBtn">دخول الموظفين</button>
+                <button type="button" class="mode-btn" id="modeAdminBtn">دخول الإدارة</button>
+            </div>
+
             <div id="errorBox" class="error-box"></div>
 
             <div class="input-group">
@@ -442,7 +471,8 @@
 
             error_required: "من فضلك أدخل اسم المستخدم وكلمة المرور.",
             error_password: "كلمة المرور غير صحيحة.",
-            error_unauthorized: "اسم المستخدم غير مصرح له بالدخول."
+            error_unauthorized: "اسم المستخدم غير مصرح له بالدخول.",
+            error_not_admin: "هذا المستخدم ليس أدمن. استخدم وضع دخول الموظفين أو أدخل حساب أدمن."
         },
         en: {
             page_title: "Ghasiq – Login",
@@ -473,7 +503,8 @@
 
             error_required: "Please enter username and password.",
             error_password: "Incorrect password.",
-            error_unauthorized: "This username is not authorized to access."
+            error_unauthorized: "This username is not authorized to access.",
+            error_not_admin: "This user is not an admin. Please use employee mode or an admin account."
         }
     };
 
@@ -527,16 +558,47 @@
 
     initLanguageToggle();
 
-    // ===== Role Mapping =====
-    function mapRole(username) {
-        const u = username.toLowerCase();
+    // ===== Login mode (user / admin) =====
+    let loginMode = "user";
+    const modeUserBtn = document.getElementById("modeUserBtn");
+    const modeAdminBtn = document.getElementById("modeAdminBtn");
 
-        if (u.includes("ahmed")) return "IT Head";
-        if (u.includes("mohamed") || u.includes("mohammad")) return "HR Head";
-        if (u.includes("emad")) return "Finance Head";
-        if (u.includes("hamed") || u.includes("hamad")) return "General Manager";
+    modeUserBtn.addEventListener("click", () => {
+        loginMode = "user";
+        modeUserBtn.classList.add("active");
+        modeAdminBtn.classList.remove("active");
+    });
 
-        return null; // غير مسموح
+    modeAdminBtn.addEventListener("click", () => {
+        loginMode = "admin";
+        modeAdminBtn.classList.add("active");
+        modeUserBtn.classList.remove("active");
+    });
+
+    // ===== Users store =====
+    const USERS_KEY = "ghasiq_users";
+
+    function loadUsers() {
+        let arr;
+        try {
+            arr = JSON.parse(localStorage.getItem(USERS_KEY) || "[]");
+        } catch {
+            arr = [];
+        }
+        if (!Array.isArray(arr)) arr = [];
+
+        // Seed default admin لو مفيش ولا أدمن
+        if (!arr.some(u => u.isAdmin)) {
+            arr.push({
+                username: "admin",
+                password: "admin123",
+                role: "Administrator",
+                isAdmin: true
+            });
+            localStorage.setItem(USERS_KEY, JSON.stringify(arr));
+        }
+
+        return arr;
     }
 
     // ===== Login =====
@@ -560,28 +622,42 @@
             return;
         }
 
-        if (password !== "12345") {
-            errorBox.style.display = "block";
-            errorBox.textContent = t.error_password;
-            return;
-        }
+        const users = loadUsers();
+        const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
 
-        const role = mapRole(username);
-        if (!role) {
+        if (!user) {
             errorBox.style.display = "block";
             errorBox.textContent = t.error_unauthorized;
             return;
         }
 
+        if (user.password !== password) {
+            errorBox.style.display = "block";
+            errorBox.textContent = t.error_password;
+            return;
+        }
+
+        // حفظ اليوزر في الذاكرة
         const userObj = {
-            username: username,
-            role: role,
+            username: user.username,
+            role: user.role || (user.isAdmin ? "Administrator" : "Employee"),
+            isAdmin: !!user.isAdmin,
             login: true
         };
-
         localStorage.setItem("ghasiq_user", JSON.stringify(userObj));
 
-        window.location.href = "index.html";
+        // توجيه حسب وضع الدخول
+        if (loginMode === "admin") {
+            if (!user.isAdmin) {
+                errorBox.style.display = "block";
+                errorBox.textContent = t.error_not_admin || t.error_unauthorized;
+                return;
+            }
+            window.location.href = "admin-users.html";
+        } else {
+            // وضع الموظف دايمًا يروح index حتى لو هو أدمن
+            window.location.href = "index.html";
+        }
     }
 
     // Enter = Login
