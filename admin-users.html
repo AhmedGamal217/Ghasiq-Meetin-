@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <title>Ghasiq – إدارة المستخدمين</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --accent: #22c55e;
+
+            --bg-main: #020617;
+            --bg-elevated: rgba(15, 23, 42, 0.94);
+            --bg-card: rgba(15, 23, 42, 0.98);
+            --border-subtle: rgba(148, 163, 184, 0.35);
+
+            --text-main: #e5e7eb;
+            --text-muted: #9ca3af;
+            --shadow-strong: 0 20px 45px rgba(0, 0, 0, 0.8);
+        }
+
+        body.light {
+            --bg-main: #f5f7fb;
+            --bg-elevated: #ffffff;
+            --bg-card: #ffffff;
+            --border-subtle: rgba(148, 163, 184, 0.5);
+            --text-main: #0f172a;
+            --text-muted: #6b7280;
+            --shadow-strong: 0 20px 45px rgba(15, 23, 42, 0.15);
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            font-family:"Cairo",system-ui;
+            background:
+                radial-gradient(circle at top left, rgba(37, 99, 235, 0.35), transparent 55%),
+                radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.28), transparent 55%),
+                linear-gradient(135deg, #00020b, var(--bg-main) 45%, #00010a);
+            color:var(--text-main);
+            min-height:100vh;
+        }
+
+        body.light {
+            background:
+                radial-gradient(circle at top left, rgba(191, 219, 254, 0.7), transparent 55%),
+                radial-gradient(circle at bottom right, rgba(219, 234, 254, 0.7), transparent 55%),
+                linear-gradient(135deg, #e5edff, #f9fafb 50%, #eff6ff);
+        }
+
+        a { text-decoration:none; color:inherit; }
+
+        .page {
+            max-width:1140px;
+            margin:0 auto;
+            padding:20px 18px 40px;
+        }
+
+        .navbar {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:14px 18px;
+            border-radius:16px;
+            background:var(--bg-elevated);
+            box-shadow:
+                0 16px 35px rgba(0,0,0,0.75),
+                0 0 0 1px rgba(148,163,184,0.3);
+            margin-bottom:26px;
+            backdrop-filter:blur(14px);
+        }
+
+        .navbar-left {
+            display:flex;
+            align-items:center;
+            gap:14px;
+        }
+
+        .logo {
+            height:46px;
+            cursor:pointer;
+        }
+
+        .nav-links {
+            display:flex;
+            gap:16px;
+            font-size:14px;
+            color:var(--text-muted);
+        }
+
+        .nav-actions {
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+
+        .btn-toggle-theme,
+        .btn-logout {
+            border-radius:999px;
+            border:1px solid var(--border-subtle);
+            background:transparent;
+            color:var(--text-main);
+            padding:6px 12px;
+            font-size:13px;
+            cursor:pointer;
+            display:flex;
+            align-items:center;
+            gap:6px;
+        }
+
+        .btn-logout {
+            border-color:#f97373;
+            color:#fecaca;
+        }
+
+        body.light .btn-logout {
+            color:#b91c1c;
+        }
+
+        .user-chip {
+            font-size:11px;
+            padding:4px 10px;
+            border-radius:999px;
+            border:1px solid rgba(148,163,184,0.7);
+            color:var(--text-muted);
+        }
+
+        .layout {
+            display:grid;
+            grid-template-columns:minmax(0, 0.9fr) minmax(0, 1.1fr);
+            gap:20px;
+        }
+
+        @media(max-width:900px){
+            .layout { grid-template-columns:1fr; }
+        }
+
+        .card {
+            border-radius:20px;
+            background:var(--bg-elevated);
+            border:1px solid var(--border-subtle);
+            box-shadow:var(--shadow-strong);
+            padding:18px 16px 18px;
+        }
+
+        .card-title {
+            font-size:17px;
+            margin-bottom:4px;
+        }
+
+        .card-sub {
+            font-size:12px;
+            color:var(--text-muted);
+            margin-bottom:12px;
+        }
+
+        .input-group {
+            margin-bottom:10px;
+        }
+
+        .input-group label {
+            display:block;
+            margin-bottom:4px;
+            font-size:13px;
+        }
+
+        .input-group input,
+        .input-group select {
+            width:100%;
+            padding:8px 10px;
+            border-radius:10px;
+            border:1px solid var(--border-subtle);
+            background:rgba(15,23,42,0.9);
+            color:var(--text-main);
+            font-size:13px;
+            outline:none;
+        }
+
+        body.light .input-group input,
+        body.light .input-group select {
+            background:#ffffff;
+            color:#0f172a;
+        }
+
+        .input-inline {
+            display:flex;
+            align-items:center;
+            gap:8px;
+            font-size:13px;
+            margin-top:4px;
+        }
+
+        .input-inline input[type="checkbox"] {
+            width:auto;
+        }
+
+        .btn-primary {
+            border-radius:999px;
+            padding:9px 16px;
+            border:none;
+            cursor:pointer;
+            background:linear-gradient(135deg,var(--primary),var(--primary-light));
+            color:white;
+            font-size:13px;
+            margin-top:6px;
+        }
+
+        .btn-secondary {
+            border-radius:999px;
+            padding:7px 12px;
+            border:1px solid var(--border-subtle);
+            cursor:pointer;
+            background:transparent;
+            color:var(--text-muted);
+            font-size:12px;
+            margin-top:6px;
+            margin-right:8px;
+        }
+
+        .error-box,
+        .success-box {
+            margin-bottom:8px;
+            padding:7px 9px;
+            border-radius:10px;
+            font-size:12px;
+            display:none;
+        }
+
+        .error-box {
+            background:rgba(239,68,68,0.1);
+            border:1px solid rgba(248,113,113,0.7);
+            color:#fecaca;
+        }
+
+        .success-box {
+            background:rgba(22,163,74,0.12);
+            border:1px solid rgba(34,197,94,0.8);
+            color:#bbf7d0;
+        }
+
+        body.light .error-box {
+            background:#fee2e2;
+            color:#b91c1c;
+            border-color:#fecaca;
+        }
+
+        body.light .success-box {
+            background:#dcfce7;
+            color:#166534;
+            border-color:#22c55e;
+        }
+
+        table {
+            width:100%;
+            border-collapse:collapse;
+            font-size:13px;
+        }
+
+        th, td {
+            padding:8px 6px;
+            border-bottom:1px dashed rgba(148,163,184,0.35);
+            text-align:right;
+        }
+
+        th {
+            color:var(--text-muted);
+            font-weight:500;
+        }
+
+        .badge-admin {
+            padding:2px 8px;
+            border-radius:999px;
+            font-size:11px;
+            background:rgba(37,99,235,0.15);
+            border:1px solid rgba(59,130,246,0.7);
+        }
+
+        .badge-user {
+            padding:2px 8px;
+            border-radius:999px;
+            font-size:11px;
+            background:rgba(15,23,42,0.9);
+            border:1px solid rgba(148,163,184,0.6);
+        }
+
+        .btn-small {
+            padding:4px 8px;
+            font-size:11px;
+            border-radius:999px;
+            border:1px solid rgba(148,163,184,0.8);
+            background:transparent;
+            color:#e5e7eb;
+            cursor:pointer;
+            margin-left:4px;
+        }
+
+        .btn-small.danger {
+            border-color:rgba(248,113,113,0.9);
+            color:#fecaca;
+        }
+
+        body.light .btn-small {
+            color:#0f172a;
+        }
+
+        body.light .btn-small.danger {
+            color:#b91c1c;
+        }
+
+        tr.editing-row {
+            background:rgba(37,99,235,0.15);
+        }
+
+        .footer {
+            margin-top:24px;
+            text-align:center;
+            font-size:12px;
+            color:var(--text-muted);
+        }
+
+        .footer span { color:var(--primary-light); }
+    </style>
+</head>
+<body class="dark">
+
+<script>
+    // حماية الصفحة: لازم أدمن
+    (function guardAdmin() {
+        const u = JSON.parse(localStorage.getItem("ghasiq_user") || "null");
+        if (!u || !u.login || !u.isAdmin) {
+            window.location.href = "login.html";
+            return;
+        }
+        window.__gh_user = u;
+    })();
+</script>
+
+<div class="page">
+
+    <header class="navbar">
+        <div class="navbar-left">
+            <a href="index.html">
+                <img src="logo.png" alt="GHASIQ Logo" class="logo" />
+            </a>
+            <nav class="nav-links">
+                <span>لوحة الإدارة</span>
+            </nav>
+        </div>
+
+        <div class="nav-actions">
+            <span id="userChip" class="user-chip"></span>
+
+            <button class="btn-toggle-theme" id="themeToggle" type="button">
+                <span id="themeLabel">Dark</span>
+                <span id="themeIcon">☾</span>
+            </button>
+
+            <button class="btn-logout" type="button" onclick="logout()">تسجيل الخروج</button>
+        </div>
+    </header>
+
+    <section class="layout">
+        <!-- إنشاء / تعديل مستخدم -->
+        <aside class="card">
+            <h2 class="card-title" id="formTitle">إنشاء مستخدم جديد</h2>
+            <p class="card-sub" id="formSub">
+                أدخل بيانات المستخدم. المستخدم الأدمن يستطيع الدخول لهذه الصفحة وإنشاء مستخدمين آخرين.
+            </p>
+
+            <div id="msgError" class="error-box"></div>
+            <div id="msgSuccess" class="success-box"></div>
+
+            <div class="input-group">
+                <label for="newUsername">اسم المستخدم</label>
+                <input id="newUsername" type="text" autocomplete="off" />
+            </div>
+
+            <div class="input-group">
+                <label for="newPassword">كلمة المرور</label>
+                <input id="newPassword" type="password" autocomplete="off" />
+            </div>
+
+            <div class="input-group">
+                <label for="newPassword2">تأكيد كلمة المرور</label>
+                <input id="newPassword2" type="password" autocomplete="off" />
+            </div>
+
+            <div class="input-group">
+                <label for="newRole">المنصب / الدور (يظهر في نظام الاتصال)</label>
+                <input id="newRole" type="text" placeholder="مثال: IT Head أو HR Head" />
+            </div>
+
+            <div class="input-inline">
+                <input id="newIsAdmin" type="checkbox" />
+                <label for="newIsAdmin">هذا المستخدم أدمن (يمكنه إدارة المستخدمين)</label>
+            </div>
+
+            <div>
+                <button class="btn-primary" type="button" onclick="saveUser()">حفظ المستخدم</button>
+                <button class="btn-secondary" type="button" id="btnCancelEdit" style="display:none;" onclick="cancelEdit()">إلغاء التعديل</button>
+            </div>
+        </aside>
+
+        <!-- قائمة المستخدمين -->
+        <article class="card">
+            <h2 class="card-title">قائمة المستخدمين</h2>
+            <p class="card-sub">
+                البيانات مخزّنة محليًا في المتصفح (LocalStorage) لأغراض التجربة. يمكنك تعديل أو حذف المستخدمين، مع عدم السماح بحذف أو إلغاء آخر أدمن.
+            </p>
+
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>اسم المستخدم</th>
+                        <th>الدور</th>
+                        <th>النوع</th>
+                        <th>إجراءات</th>
+                    </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                    <!-- rows -->
+                    </tbody>
+                </table>
+            </div>
+        </article>
+    </section>
+
+    <footer class="footer">
+        © <span>Ghasiq</span> Logistical Support & Operations — لوحة إدارة المستخدمين.
+    </footer>
+</div>
+
+<script>
+    // Theme
+    const bodyEl = document.body;
+    const themeToggle = document.getElementById("themeToggle");
+    const themeLabel = document.getElementById("themeLabel");
+    const themeIcon = document.getElementById("themeIcon");
+
+    function applyTheme(mode) {
+        if (mode === "light") {
+            bodyEl.classList.add("light");
+            bodyEl.classList.remove("dark");
+            themeLabel.textContent = "Light";
+            themeIcon.textContent = "☀";
+        } else {
+            bodyEl.classList.add("dark");
+            bodyEl.classList.remove("light");
+            themeLabel.textContent = "Dark";
+            themeIcon.textContent = "☾";
+        }
+        localStorage.setItem("ghasiq_theme", mode);
+    }
+
+    function initTheme() {
+        const saved = localStorage.getItem("ghasiq_theme");
+        applyTheme(saved === "light" ? "light" : "dark");
+    }
+
+    themeToggle.addEventListener("click", () => {
+        const isLight = bodyEl.classList.contains("light");
+        applyTheme(isLight ? "dark" : "light");
+    });
+
+    initTheme();
+
+    // User chip
+    (function showUser() {
+        const chip = document.getElementById("userChip");
+        const user = window.__gh_user;
+        if (!user) return;
+        chip.textContent = `${user.username} (${user.role})`;
+    })();
+
+    function logout() {
+        localStorage.removeItem("ghasiq_user");
+        window.location.href = "login.html";
+    }
+
+    // Users store
+    const USERS_KEY = "ghasiq_users";
+    let editingIndex = null;
+
+    function loadUsers() {
+        let arr;
+        try {
+            arr = JSON.parse(localStorage.getItem(USERS_KEY) || "[]");
+        } catch { arr = []; }
+        if (!Array.isArray(arr)) arr = [];
+
+        // تأكد أن في أدمن واحد على الأقل
+        if (!arr.some(u => u.isAdmin)) {
+            arr.push({
+                username: "admin",
+                password: "admin123",
+                role: "Administrator",
+                isAdmin: true
+            });
+            localStorage.setItem(USERS_KEY, JSON.stringify(arr));
+        }
+
+        return arr;
+    }
+
+    function saveUsers(users) {
+        localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    }
+
+    function renderUsers() {
+        const tbody = document.getElementById("usersTableBody");
+        const users = loadUsers();
+        tbody.innerHTML = "";
+
+        users.forEach((u, index) => {
+            const tr = document.createElement("tr");
+            if (editingIndex === index) {
+                tr.classList.add("editing-row");
+            }
+
+            const tdUsername = document.createElement("td");
+            tdUsername.textContent = u.username;
+
+            const tdRole = document.createElement("td");
+            tdRole.textContent = u.role || "-";
+
+            const tdType = document.createElement("td");
+            const span = document.createElement("span");
+            span.className = u.isAdmin ? "badge-admin" : "badge-user";
+            span.textContent = u.isAdmin ? "أدمن" : "موظف";
+            tdType.appendChild(span);
+
+            const tdActions = document.createElement("td");
+            const btnEdit = document.createElement("button");
+            btnEdit.className = "btn-small";
+            btnEdit.textContent = "تعديل";
+            btnEdit.onclick = function () { startEditUser(index); };
+
+            const btnDel = document.createElement("button");
+            btnDel.className = "btn-small danger";
+            btnDel.textContent = "حذف";
+            btnDel.onclick = function () { deleteUser(index); };
+
+            tdActions.appendChild(btnEdit);
+            tdActions.appendChild(btnDel);
+
+            tr.appendChild(tdUsername);
+            tr.appendChild(tdRole);
+            tr.appendChild(tdType);
+            tr.appendChild(tdActions);
+
+            tbody.appendChild(tr);
+        });
+    }
+
+    function showMessage(type, text) {
+        const err = document.getElementById("msgError");
+        const ok = document.getElementById("msgSuccess");
+        err.style.display = "none";
+        ok.style.display = "none";
+
+        if (type === "error") {
+            err.textContent = text;
+            err.style.display = "block";
+        } else if (type === "success") {
+            ok.textContent = text;
+            ok.style.display = "block";
+        }
+    }
+
+    function clearForm() {
+        document.getElementById("newUsername").value = "";
+        document.getElementById("newPassword").value = "";
+        document.getElementById("newPassword2").value = "";
+        document.getElementById("newRole").value = "";
+        document.getElementById("newIsAdmin").checked = false;
+    }
+
+    function setFormModeCreate() {
+        editingIndex = null;
+        document.getElementById("formTitle").textContent = "إنشاء مستخدم جديد";
+        document.getElementById("formSub").textContent = "أدخل بيانات المستخدم. المستخدم الأدمن يستطيع الدخول لهذه الصفحة وإنشاء مستخدمين آخرين.";
+        document.getElementById("btnCancelEdit").style.display = "none";
+        clearForm();
+        renderUsers();
+    }
+
+    function startEditUser(index) {
+        const users = loadUsers();
+        const u = users[index];
+        if (!u) return;
+
+        editingIndex = index;
+        document.getElementById("formTitle").textContent = "تعديل مستخدم";
+        document.getElementById("formSub").textContent = "يمكنك تعديل بيانات المستخدم أو كلمة المرور أو صلاحية الأدمن.";
+        document.getElementById("btnCancelEdit").style.display = "inline-flex";
+
+        document.getElementById("newUsername").value = u.username;
+        document.getElementById("newPassword").value = "";
+        document.getElementById("newPassword2").value = "";
+        document.getElementById("newRole").value = u.role || "";
+        document.getElementById("newIsAdmin").checked = !!u.isAdmin;
+
+        showMessage(null, "");
+        renderUsers();
+    }
+
+    function cancelEdit() {
+        setFormModeCreate();
+        showMessage(null, "");
+    }
+
+    function saveUser() {
+        const username = document.getElementById("newUsername").value.trim();
+        const password = document.getElementById("newPassword").value;
+        const password2 = document.getElementById("newPassword2").value;
+        const role = document.getElementById("newRole").value.trim();
+        const isAdmin = document.getElementById("newIsAdmin").checked;
+
+        if (!username) {
+            showMessage("error", "يرجى إدخال اسم المستخدم.");
+            return;
+        }
+
+        const users = loadUsers();
+        const currentUser = window.__gh_user;
+
+        // تحقق uniqueness لاسم المستخدم
+        const lower = username.toLowerCase();
+        const duplicateIndex = users.findIndex((u, idx) =>
+            u.username.toLowerCase() === lower && idx !== editingIndex
+        );
+        if (duplicateIndex !== -1) {
+            showMessage("error", "اسم المستخدم مستخدم بالفعل.");
+            return;
+        }
+
+        // لو تعديل
+        if (editingIndex !== null) {
+            const u = users[editingIndex];
+            if (!u) {
+                showMessage("error", "المستخدم المطلوب للتعديل غير موجود.");
+                return;
+            }
+
+            // منع تحويل آخر أدمن لعادي
+            const adminsCount = users.filter(x => x.isAdmin).length;
+            const willBeAdmin = isAdmin;
+            if (u.isAdmin && !willBeAdmin && adminsCount <= 1) {
+                showMessage("error", "لا يمكن إزالة صلاحية الأدمن من آخر مستخدم أدمن.");
+                return;
+            }
+
+            u.username = username;
+            u.role = role || (willBeAdmin ? "Administrator" : "Employee");
+            u.isAdmin = willBeAdmin;
+
+            if (password || password2) {
+                if (!password || !password2) {
+                    showMessage("error", "أدخل كلمة المرور وتأكيدها معًا أو اتركهما فارغين.");
+                    return;
+                }
+                if (password !== password2) {
+                    showMessage("error", "تأكيد كلمة المرور غير مطابق.");
+                    return;
+                }
+                u.password = password;
+            }
+
+            saveUsers(users);
+
+            // لو عدّل نفسه (اسم أو role او admin) نحدّث ghasiq_user
+            if (currentUser && currentUser.username.toLowerCase() === u.username.toLowerCase()) {
+                localStorage.setItem("ghasiq_user", JSON.stringify({
+                    username: u.username,
+                    role: u.role,
+                    login: true,
+                    isAdmin: !!u.isAdmin
+                }));
+                window.__gh_user = JSON.parse(localStorage.getItem("ghasiq_user"));
+                const chip = document.getElementById("userChip");
+                chip.textContent = `${u.username} (${u.role})`;
+            }
+
+            showMessage("success", "تم تحديث بيانات المستخدم.");
+            setFormModeCreate();
+            return;
+        }
+
+        // إنشاء جديد
+        if (!password || !password2) {
+            showMessage("error", "يرجى إدخال كلمة المرور وتأكيدها.");
+            return;
+        }
+        if (password !== password2) {
+            showMessage("error", "تأكيد كلمة المرور غير مطابق.");
+            return;
+        }
+
+        users.push({
+            username,
+            password,
+            role: role || (isAdmin ? "Administrator" : "Employee"),
+            isAdmin: isAdmin
+        });
+
+        saveUsers(users);
+        clearForm();
+        renderUsers();
+        showMessage("success", "تم إنشاء المستخدم بنجاح.");
+    }
+
+    function deleteUser(index) {
+        const users = loadUsers();
+        const currentUser = window.__gh_user;
+
+        const userToDelete = users[index];
+        if (!userToDelete) return;
+
+        const adminsCount = users.filter(u => u.isAdmin).length;
+
+        // ممنوع حذف آخر أدمن
+        if (userToDelete.isAdmin && adminsCount <= 1) {
+            showMessage("error", "لا يمكن حذف آخر مستخدم أدمن.");
+            return;
+        }
+
+        if (currentUser && currentUser.username.toLowerCase() === userToDelete.username.toLowerCase()) {
+            if (!confirm("أنت على وشك حذف المستخدم الحالي. سيتم تسجيل خروجك بعد الحذف. هل أنت متأكد؟")) return;
+        }
+
+        users.splice(index, 1);
+        saveUsers(users);
+
+        // لو كان في وضع تعديل على نفس اليوزر رجّع الفورم لوضع إنشاء
+        if (editingIndex === index) {
+            setFormModeCreate();
+        } else if (editingIndex !== null && index < editingIndex) {
+            editingIndex--; // عشان ترتيب الأندكسات بعد الحذف
+        }
+
+        renderUsers();
+        showMessage("success", "تم حذف المستخدم.");
+
+        // لو حذف نفسه فعلاً
+        if (currentUser && currentUser.username.toLowerCase() === userToDelete.username.toLowerCase()) {
+            logout();
+        }
+    }
+
+    // init
+    renderUsers();
+</script>
+</body>
+</html>
