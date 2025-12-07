@@ -353,8 +353,8 @@
 </head>
 <body class="dark">
 
+<!-- حماية الصفحة: لازم أدمن -->
 <script>
-    // حماية الصفحة: لازم أدمن
     (function guardAdmin() {
         const u = JSON.parse(localStorage.getItem("ghasiq_user") || "null");
         if (!u || !u.login || !u.isAdmin) {
@@ -372,14 +372,15 @@
             <a href="index.html">
                 <img src="logo.png" alt="GHASIQ Logo" class="logo" />
             </a>
-            <nav class="nav-links">
-                <a href="index.html#about">عن Ghasiq</a>
-                <a href="services.html">الخدمات</a>
-                <a href="call-system.html">نظام الاتصال</a>
-                <a href="notifications.html">الإشعارات</a>
-                <a href="admin-users.html" class="active">إدارة المستخدمين</a>
-                <!-- عدّل admin-users.html حسب اسم ملف صفحة الإدارة عندك -->
-            </nav>
+         <nav class="nav-links">
+    <a href="index.html#about">عن Ghasiq</a>
+    <a href="services.html">الخدمات</a>
+    <a href="call-system.html">نظام الاتصال</a>
+    <a href="notifications.html">الإشعارات</a>
+    <a href="admin-users.html" id="navAdminLink" style="display:none;">إدارة المستخدمين</a>
+</nav>
+
+
         </div>
 
         <div class="nav-actions">
@@ -440,7 +441,7 @@
         <article class="card">
             <h2 class="card-title">قائمة المستخدمين</h2>
             <p class="card-sub">
-                البيانات مخزّنة محليًا في المتصفح (LocalStorage) لأغراض التجربة. يمكنك تعديل أو حذف المستخدمين، مع عدم السماح بحذف أو إلغاء آخر أدمن.
+                البيانات تُدار من خلال الـ API. يمكنك تعديل أو حذف المستخدمين، مع عدم السماح بحذف أو إلغاء آخر أدمن.
             </p>
 
             <div style="overflow-x:auto;">
@@ -513,80 +514,13 @@
         window.location.href = "login.html";
     }
 
-    // Users store
-    const USERS_KEY = "ghasiq_users";
-    let editingIndex = null;
+    // =========================
+    //  API CONFIG + STATE
+    // =========================
+    const API_URL = "https://filesregsiteration.sstli.com/users.php";
 
-    function loadUsers() {
-        let arr;
-        try {
-            arr = JSON.parse(localStorage.getItem(USERS_KEY) || "[]");
-        } catch { arr = []; }
-        if (!Array.isArray(arr)) arr = [];
-
-        // تأكد أن في أدمن واحد على الأقل
-        if (!arr.some(u => u.isAdmin)) {
-            arr.push({
-                username: "admin",
-                password: "admin123",
-                role: "Administrator",
-                isAdmin: true
-            });
-            localStorage.setItem(USERS_KEY, JSON.stringify(arr));
-        }
-
-        return arr;
-    }
-
-    function saveUsers(users) {
-        localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    }
-
-    function renderUsers() {
-        const tbody = document.getElementById("usersTableBody");
-        const users = loadUsers();
-        tbody.innerHTML = "";
-
-        users.forEach((u, index) => {
-            const tr = document.createElement("tr");
-            if (editingIndex === index) {
-                tr.classList.add("editing-row");
-            }
-
-            const tdUsername = document.createElement("td");
-            tdUsername.textContent = u.username;
-
-            const tdRole = document.createElement("td");
-            tdRole.textContent = u.role || "-";
-
-            const tdType = document.createElement("td");
-            const span = document.createElement("span");
-            span.className = u.isAdmin ? "badge-admin" : "badge-user";
-            span.textContent = u.isAdmin ? "أدمن" : "موظف";
-            tdType.appendChild(span);
-
-            const tdActions = document.createElement("td");
-            const btnEdit = document.createElement("button");
-            btnEdit.className = "btn-small";
-            btnEdit.textContent = "تعديل";
-            btnEdit.onclick = function () { startEditUser(index); };
-
-            const btnDel = document.createElement("button");
-            btnDel.className = "btn-small danger";
-            btnDel.textContent = "حذف";
-            btnDel.onclick = function () { deleteUser(index); };
-
-            tdActions.appendChild(btnEdit);
-            tdActions.appendChild(btnDel);
-
-            tr.appendChild(tdUsername);
-            tr.appendChild(tdRole);
-            tr.appendChild(tdType);
-            tr.appendChild(tdActions);
-
-            tbody.appendChild(tr);
-        });
-    }
+    let usersCache = [];    // Users from API
+    let editingUserId = null;
 
     function showMessage(type, text) {
         const err = document.getElementById("msgError");
@@ -603,6 +537,76 @@
         }
     }
 
+    // =========================
+    //  FETCH + RENDER
+    // =========================
+    async function fetchUsers() {
+        try {
+            const res = await fetch(API_URL, {
+                method: "GET"
+            });
+            const json = await res.json();
+
+            if (!json.success) {
+                throw new Error(json.message || "تعذر جلب المستخدمين من السيرفر.");
+            }
+
+            usersCache = (json.data && json.data.users) || [];
+            renderUsers();
+        } catch (err) {
+            console.error(err);
+            showMessage("error", err.message || "تعذر جلب المستخدمين من السيرفر.");
+        }
+    }
+
+    function renderUsers() {
+        const tbody = document.getElementById("usersTableBody");
+        tbody.innerHTML = "";
+
+        usersCache.forEach((u) => {
+            const tr = document.createElement("tr");
+            if (editingUserId === u.user_id) {
+                tr.classList.add("editing-row");
+            }
+
+            const tdUsername = document.createElement("td");
+            tdUsername.textContent = u.username;
+
+            const tdRole = document.createElement("td");
+            tdRole.textContent = u.role || "-";
+
+            const tdType = document.createElement("td");
+            const span = document.createElement("span");
+            span.className = u.is_admin ? "badge-admin" : "badge-user";
+            span.textContent = u.is_admin ? "أدمن" : "موظف";
+            tdType.appendChild(span);
+
+            const tdActions = document.createElement("td");
+            const btnEdit = document.createElement("button");
+            btnEdit.className = "btn-small";
+            btnEdit.textContent = "تعديل";
+            btnEdit.onclick = function () { startEditUser(u.user_id); };
+
+            const btnDel = document.createElement("button");
+            btnDel.className = "btn-small danger";
+            btnDel.textContent = "حذف";
+            btnDel.onclick = function () { deleteUser(u.user_id); };
+
+            tdActions.appendChild(btnEdit);
+            tdActions.appendChild(btnDel);
+
+            tr.appendChild(tdUsername);
+            tr.appendChild(tdRole);
+            tr.appendChild(tdType);
+            tr.appendChild(tdActions);
+
+            tbody.appendChild(tr);
+        });
+    }
+
+    // =========================
+    //  FORM HELPERS
+    // =========================
     function clearForm() {
         document.getElementById("newUsername").value = "";
         document.getElementById("newPassword").value = "";
@@ -612,29 +616,30 @@
     }
 
     function setFormModeCreate() {
-        editingIndex = null;
+        editingUserId = null;
         document.getElementById("formTitle").textContent = "إنشاء مستخدم جديد";
-        document.getElementById("formSub").textContent = "أدخل بيانات المستخدم. المستخدم الأدمن يستطيع الدخول لهذه الصفحة وإنشاء مستخدمين آخرين.";
+        document.getElementById("formSub").textContent =
+            "أدخل بيانات المستخدم. المستخدم الأدمن يستطيع الدخول لهذه الصفحة وإنشاء مستخدمين آخرين.";
         document.getElementById("btnCancelEdit").style.display = "none";
         clearForm();
         renderUsers();
     }
 
-    function startEditUser(index) {
-        const users = loadUsers();
-        const u = users[index];
+    function startEditUser(userId) {
+        const u = usersCache.find(x => x.user_id === userId);
         if (!u) return;
 
-        editingIndex = index;
+        editingUserId = userId;
         document.getElementById("formTitle").textContent = "تعديل مستخدم";
-        document.getElementById("formSub").textContent = "يمكنك تعديل بيانات المستخدم أو كلمة المرور أو صلاحية الأدمن.";
+        document.getElementById("formSub").textContent =
+            "يمكنك تعديل بيانات المستخدم أو كلمة المرور أو صلاحية الأدمن.";
         document.getElementById("btnCancelEdit").style.display = "inline-flex";
 
         document.getElementById("newUsername").value = u.username;
         document.getElementById("newPassword").value = "";
         document.getElementById("newPassword2").value = "";
         document.getElementById("newRole").value = u.role || "";
-        document.getElementById("newIsAdmin").checked = !!u.isAdmin;
+        document.getElementById("newIsAdmin").checked = !!u.is_admin;
 
         showMessage(null, "");
         renderUsers();
@@ -645,50 +650,53 @@
         showMessage(null, "");
     }
 
-    function saveUser() {
+    // =========================
+    //  CREATE / UPDATE
+    // =========================
+    async function saveUser() {
         const username = document.getElementById("newUsername").value.trim();
         const password = document.getElementById("newPassword").value;
         const password2 = document.getElementById("newPassword2").value;
         const role = document.getElementById("newRole").value.trim();
         const isAdmin = document.getElementById("newIsAdmin").checked;
+        const currentUser = window.__gh_user;
 
         if (!username) {
             showMessage("error", "يرجى إدخال اسم المستخدم.");
             return;
         }
 
-        const users = loadUsers();
-        const currentUser = window.__gh_user;
-
-        // تحقق uniqueness لاسم المستخدم
+        // تأكد من uniqueness اسم المستخدم
         const lower = username.toLowerCase();
-        const duplicateIndex = users.findIndex((u, idx) =>
-            u.username.toLowerCase() === lower && idx !== editingIndex
+        const duplicate = usersCache.find(
+            (u) => (u.username || "").toLowerCase() === lower && u.user_id !== editingUserId
         );
-        if (duplicateIndex !== -1) {
+        if (duplicate) {
             showMessage("error", "اسم المستخدم مستخدم بالفعل.");
             return;
         }
 
-        // لو تعديل
-        if (editingIndex !== null) {
-            const u = users[editingIndex];
+        // تعديل
+        if (editingUserId !== null) {
+            const u = usersCache.find(x => x.user_id === editingUserId);
             if (!u) {
                 showMessage("error", "المستخدم المطلوب للتعديل غير موجود.");
                 return;
             }
 
-            // منع تحويل آخر أدمن لعادي
-            const adminsCount = users.filter(x => x.isAdmin).length;
+            const adminsCount = usersCache.filter(x => x.is_admin).length;
             const willBeAdmin = isAdmin;
-            if (u.isAdmin && !willBeAdmin && adminsCount <= 1) {
+            if (u.is_admin && !willBeAdmin && adminsCount <= 1) {
                 showMessage("error", "لا يمكن إزالة صلاحية الأدمن من آخر مستخدم أدمن.");
                 return;
             }
 
-            u.username = username;
-            u.role = role || (willBeAdmin ? "Administrator" : "Employee");
-            u.isAdmin = willBeAdmin;
+            const payload = {
+                id: u.user_id,
+                username: username,
+                role: role || u.role || (willBeAdmin ? "Administrator" : "Employee"),
+                is_admin: willBeAdmin
+            };
 
             if (password || password2) {
                 if (!password || !password2) {
@@ -699,26 +707,42 @@
                     showMessage("error", "تأكيد كلمة المرور غير مطابق.");
                     return;
                 }
-                u.password = password;
+                payload.password = password;
             }
 
-            saveUsers(users);
+            try {
+                const res = await fetch(API_URL, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                const json = await res.json();
+                if (!json.success) {
+                    throw new Error(json.message || "فشل تحديث المستخدم.");
+                }
 
-            // لو عدّل نفسه
-            if (currentUser && currentUser.username.toLowerCase() === u.username.toLowerCase()) {
-                localStorage.setItem("ghasiq_user", JSON.stringify({
-                    username: u.username,
-                    role: u.role,
-                    login: true,
-                    isAdmin: !!u.isAdmin
-                }));
-                window.__gh_user = JSON.parse(localStorage.getItem("ghasiq_user"));
-                const chip = document.getElementById("userChip");
-                chip.textContent = `${u.username} (${u.role})`;
+                // لو عدّل نفسه، حدّث بيانات localStorage
+                if (currentUser && currentUser.username.toLowerCase() === u.username.toLowerCase()) {
+                    const updatedUser = {
+                        username: payload.username,
+                        role: payload.role,
+                        login: true,
+                        isAdmin: !!payload.is_admin
+                    };
+                    localStorage.setItem("ghasiq_user", JSON.stringify(updatedUser));
+                    window.__gh_user = updatedUser;
+                    const chip = document.getElementById("userChip");
+                    chip.textContent = `${updatedUser.username} (${updatedUser.role})`;
+                }
+
+                await fetchUsers();
+                showMessage("success", "تم تحديث بيانات المستخدم.");
+                setFormModeCreate();
+            } catch (err) {
+                console.error(err);
+                showMessage("error", err.message || "حدث خطأ أثناء التعديل.");
             }
 
-            showMessage("success", "تم تحديث بيانات المستخدم.");
-            setFormModeCreate();
             return;
         }
 
@@ -732,30 +756,43 @@
             return;
         }
 
-        users.push({
-            username,
-            password,
+        const newPayload = {
+            username: username,
+            password: password,
             role: role || (isAdmin ? "Administrator" : "Employee"),
-            isAdmin: isAdmin
-        });
+            is_admin: isAdmin
+        };
 
-        saveUsers(users);
-        clearForm();
-        renderUsers();
-        showMessage("success", "تم إنشاء المستخدم بنجاح.");
+        try {
+            const res = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newPayload)
+            });
+            const json = await res.json();
+            if (!json.success) {
+                throw new Error(json.message || "فشل إنشاء المستخدم.");
+            }
+
+            clearForm();
+            await fetchUsers();
+            showMessage("success", "تم إنشاء المستخدم بنجاح.");
+        } catch (err) {
+            console.error(err);
+            showMessage("error", err.message || "حدث خطأ أثناء إنشاء المستخدم.");
+        }
     }
 
-    function deleteUser(index) {
-        const users = loadUsers();
+    // =========================
+    //  DELETE
+    // =========================
+    async function deleteUser(userId) {
         const currentUser = window.__gh_user;
-
-        const userToDelete = users[index];
+        const userToDelete = usersCache.find(u => u.user_id === userId);
         if (!userToDelete) return;
 
-        const adminsCount = users.filter(u => u.isAdmin).length;
-
-        // ممنوع حذف آخر أدمن
-        if (userToDelete.isAdmin && adminsCount <= 1) {
+        const adminsCount = usersCache.filter(u => u.is_admin).length;
+        if (userToDelete.is_admin && adminsCount <= 1) {
             showMessage("error", "لا يمكن حذف آخر مستخدم أدمن.");
             return;
         }
@@ -764,25 +801,64 @@
             if (!confirm("أنت على وشك حذف المستخدم الحالي. سيتم تسجيل خروجك بعد الحذف. هل أنت متأكد؟")) return;
         }
 
-        users.splice(index, 1);
-        saveUsers(users);
+        try {
+            const res = await fetch(API_URL + "?id=" + encodeURIComponent(userId), {
+                method: "DELETE"
+            });
+            const json = await res.json();
+            if (!json.success) {
+                throw new Error(json.message || "فشل حذف المستخدم.");
+            }
 
-        if (editingIndex === index) {
-            setFormModeCreate();
-        } else if (editingIndex !== null && index < editingIndex) {
-            editingIndex--;
-        }
+            // إزالة من الكاش
+            usersCache = usersCache.filter(u => u.user_id !== userId);
 
-        renderUsers();
-        showMessage("success", "تم حذف المستخدم.");
+            if (editingUserId === userId) {
+                setFormModeCreate();
+            }
 
-        if (currentUser && currentUser.username.toLowerCase() === userToDelete.username.toLowerCase()) {
-            logout();
+            renderUsers();
+            showMessage("success", "تم حذف المستخدم.");
+
+            if (currentUser && currentUser.username.toLowerCase() === userToDelete.username.toLowerCase()) {
+                logout();
+            }
+        } catch (err) {
+            console.error(err);
+            showMessage("error", err.message || "حدث خطأ أثناء حذف المستخدم.");
         }
     }
 
     // init
-    renderUsers();
+    fetchUsers();
 </script>
+<script>
+(function handleAdminNav() {
+    const adminLink = document.getElementById("navAdminLink");
+    const userChip  = document.getElementById("userChip");
+
+    let u = null;
+    try {
+        u = JSON.parse(localStorage.getItem("ghasiq_user") || "null");
+    } catch { u = null; }
+
+    // تحديث الشيب اللي فوق باسم اليوزر (لو موجود)
+    if (userChip && u && u.username) {
+        const role = u.role || (u.isAdmin || u.is_admin ? "admin" : "user");
+        userChip.textContent = `${u.username} (${role})`;
+    }
+
+    if (!adminLink) return;
+
+    // لو أدمن → أظهر اللينك
+    if (u && u.login && (u.isAdmin || u.is_admin == 1 || u.role === "admin")) {
+        adminLink.style.display = "inline-flex";
+    } else {
+        adminLink.style.display = "none";
+    }
+})();
+</script>
+
+
 </body>
 </html>
