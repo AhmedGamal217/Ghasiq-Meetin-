@@ -645,12 +645,14 @@
                 <img src="logo.png" alt="GHASIQ Logo" class="logo" />
             </a>
 
-            <nav class="nav-links">
-                <a href="index.html#about">عن Ghasiq</a>
-                <a href="services.html">الخدمات</a>
-                <a href="call-system.html" class="active">نظام الاتصال</a>
-                <a href="notifications.html">الإشعارات</a>
-            </nav>
+          <nav class="nav-links">
+    <a href="index.html#about">عن Ghasiq</a>
+    <a href="services.html">الخدمات</a>
+    <a href="call-system.html">نظام الاتصال</a>
+    <a href="notifications.html">الإشعارات</a>
+    <a href="admin-users.html" id="navAdminLink" style="display:none;">إدارة المستخدمين</a>
+</nav>
+
         </div>
 
         <div class="nav-actions">
@@ -1763,6 +1765,33 @@
         autoConnectIfGuest();
     });
 </script>
+<script>
+(function handleAdminNav() {
+    const adminLink = document.getElementById("navAdminLink");
+    const userChip  = document.getElementById("userChip");
+
+    let u = null;
+    try {
+        u = JSON.parse(localStorage.getItem("ghasiq_user") || "null");
+    } catch { u = null; }
+
+    // تحديث الشيب اللي فوق باسم اليوزر (لو موجود)
+    if (userChip && u && u.username) {
+        const role = u.role || (u.isAdmin || u.is_admin ? "admin" : "user");
+        userChip.textContent = `${u.username} (${role})`;
+    }
+
+    if (!adminLink) return;
+
+    // لو أدمن → أظهر اللينك
+    if (u && u.login && (u.isAdmin || u.is_admin == 1 || u.role === "admin")) {
+        adminLink.style.display = "inline-flex";
+    } else {
+        adminLink.style.display = "none";
+    }
+})();
+</script>
+
 
 </body>
 </html>
