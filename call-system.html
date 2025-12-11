@@ -627,11 +627,34 @@
 <body class="dark">
 
 <script>
-    // حماية الصفحة
+    // حماية الصفحة + دعم الضيف
     (function guard() {
-        const user = JSON.parse(localStorage.getItem("ghasiq_user") || "null");
+        const url = new URL(window.location.href);
+        const isGuest = url.searchParams.get("guest") === "1";
+
+        let user = null;
+        try {
+            user = JSON.parse(localStorage.getItem("ghasiq_user") || "null");
+        } catch { user = null; }
+
+        if (isGuest) {
+            // ضيف الاجتماع: صلاحية الصفحة دي بس
+            const guestUser = {
+                username: "ضيف الاجتماع",
+                role: "guest",
+                login: true,
+                isGuest: true
+            };
+            window.__gh_user = guestUser;
+            localStorage.setItem("ghasiq_session_role", "guest");
+            return;
+        }
+
+        // موظف داخلي: لازم يكون عامل لوجين من النظام
+        localStorage.setItem("ghasiq_session_role", "user");
         if (!user || !user.login) {
             window.location.href = "login.html";
+            return;
         }
         window.__gh_user = user;
     })();
@@ -645,13 +668,13 @@
                 <img src="logo.png" alt="GHASIQ Logo" class="logo" />
             </a>
 
-          <nav class="nav-links">
-    <a href="index.html#about">عن Ghasiq</a>
-    <a href="services.html">الخدمات</a>
-    <a href="call-system.html">نظام الاتصال</a>
-    <a href="notifications.html">الإشعارات</a>
-    <a href="admin-users.html" id="navAdminLink" style="display:none;">إدارة المستخدمين</a>
-</nav>
+            <nav class="nav-links">
+                <a href="index.html#about">عن Ghasiq</a>
+                <a href="services.html">الخدمات</a>
+                <a href="call-system.html">نظام الاتصال</a>
+                <a href="notifications.html">الإشعارات</a>
+                <a href="admin-users.html" id="navAdminLink" style="display:none;">إدارة المستخدمين</a>
+            </nav>
 
         </div>
 
@@ -852,8 +875,26 @@
         chip.textContent = `${user.username} (${user.role})`;
     })();
 
+    // لو الضيف حاول يضغط أي لينك من الهيدر → يتحدّف على اللوجين
+    (function blockGuestNav() {
+        const role = localStorage.getItem("ghasiq_session_role");
+        if (role !== "guest") return;
+        const links = document.querySelectorAll(".nav-links a");
+        links.forEach(a => {
+            const href = (a.getAttribute("href") || "").toLowerCase();
+            if (href.includes("call-system")) return; // يفضل في نفس الصفحة
+            a.addEventListener("click", function (e) {
+                e.preventDefault();
+                localStorage.removeItem("ghasiq_session_role");
+                localStorage.removeItem("ghasiq_user");
+                window.location.href = "login.html";
+            });
+        });
+    })();
+
     function logout() {
         localStorage.removeItem("ghasiq_user");
+        localStorage.removeItem("ghasiq_session_role");
         window.location.href = "login.html";
     }
 
@@ -1305,6 +1346,7 @@
 
             const url = new URL(window.location.href);
             url.searchParams.set("host", id);
+            url.searchParams.set("guest", "1"); // اللينك اللي يتبعت للضيف
             inviteLinkInput.value = url.toString();
         });
 
@@ -1741,7 +1783,7 @@
         }
     });
 
-    // لو أنا ضيف وجاي من رابط host
+    // لو أنا جاي من لينك فيه host (ضيف أو موظف)
     function autoConnectIfGuest() {
         const url = new URL(window.location.href);
         const hostId = url.searchParams.get("host");
