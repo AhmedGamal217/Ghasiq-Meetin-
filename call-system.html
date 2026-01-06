@@ -36,11 +36,7 @@
             --shadow-strong: 0 20px 45px rgba(15, 23, 42, 0.15);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: "Cairo", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -59,10 +55,7 @@
                 linear-gradient(135deg, #e5edff, #f9fafb 50%, #eff6ff);
         }
 
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
+        a { text-decoration: none; color: inherit; }
 
         .page {
             max-width: 1140px;
@@ -84,16 +77,8 @@
             backdrop-filter: blur(14px);
         }
 
-        .navbar-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .logo {
-            height: 46px;
-            cursor: pointer;
-        }
+        .navbar-left { display: flex; align-items: center; gap: 14px; }
+        .logo { height: 46px; cursor: pointer; }
 
         .nav-links {
             display: flex;
@@ -102,11 +87,7 @@
             color: var(--text-muted);
         }
 
-        .nav-links a {
-            position: relative;
-            padding-bottom: 4px;
-        }
-
+        .nav-links a { position: relative; padding-bottom: 4px; }
         .nav-links a::after {
             content: "";
             position: absolute;
@@ -120,24 +101,13 @@
         }
 
         .nav-links a:hover::after,
-        .nav-links a.active::after {
-            width: 100%;
-        }
+        .nav-links a.active::after { width: 100%; }
 
-        .nav-links a.active {
-            color: #e5e7eb;
-            font-weight: 600;
-        }
+        .nav-links a.active { color: #e5e7eb; font-weight: 600; }
 
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .nav-actions { display: flex; align-items: center; gap: 8px; }
 
-        .btn-toggle-theme,
-        .btn-logout,
-        .btn-sm-outline {
+        .btn-toggle-theme, .btn-logout, .btn-sm-outline {
             border-radius: 999px;
             padding: 6px 12px;
             font-size: 12px;
@@ -154,23 +124,11 @@
             color: #0f172a;
         }
 
-        .btn-sm-outline {
-            border-color: var(--primary-light);
-            color: #dbeafe;
-        }
+        .btn-sm-outline { border-color: var(--primary-light); color: #dbeafe; }
+        body.light .btn-sm-outline { color: #1d4ed8; }
 
-        body.light .btn-sm-outline {
-            color: #1d4ed8;
-        }
-
-        .btn-logout {
-            border-color: #f97373;
-            color: #fecaca;
-        }
-
-        body.light .btn-logout {
-            color: #b91c1c;
-        }
+        .btn-logout { border-color: #f97373; color: #fecaca; }
+        body.light .btn-logout { color: #b91c1c; }
 
         .user-chip {
             font-size: 11px;
@@ -188,18 +146,9 @@
         }
 
         @media (max-width: 900px) {
-            .call-layout {
-                grid-template-columns: 1fr;
-            }
-
-            .call-card {
-                order: 1;
-                max-width: 100%;
-            }
-
-            .controls-box {
-                order: 2;
-            }
+            .call-layout { grid-template-columns: 1fr; }
+            .call-card { order: 1; max-width: 100%; }
+            .controls-box { order: 2; }
         }
 
         .controls-box {
@@ -232,23 +181,11 @@
             border-bottom: 1px dashed rgba(148, 163, 184, 0.25);
         }
 
-        .sidebar-section:last-of-type {
-            border-bottom: none;
-        }
+        .sidebar-section:last-of-type { border-bottom: none; }
+        .sidebar-hint { font-size: 11px; }
 
-        .sidebar-hint {
-            font-size: 11px;
-        }
-
-        .hint {
-            margin-top: 6px;
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .hint span {
-            color: var(--primary-light);
-        }
+        .hint { margin-top: 6px; font-size: 12px; color: var(--text-muted); }
+        .hint span { color: var(--primary-light); }
 
         .call-card {
             position: relative;
@@ -261,19 +198,10 @@
             margin-inline: auto;
         }
 
-        .call-header {
-            margin-bottom: 12px;
-        }
+        .call-header { margin-bottom: 12px; }
 
-        .call-header-title {
-            font-size: 18px;
-            margin-bottom: 4px;
-        }
-
-        .call-header-sub {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
+        .call-header-title { font-size: 18px; margin-bottom: 4px; }
+        .call-header-sub { font-size: 13px; color: var(--text-muted); }
 
         @media (max-width: 600px) {
             .call-header-title { font-size: 16px; }
@@ -301,9 +229,7 @@
         }
 
         @media (max-width: 900px) {
-            .video-grid {
-                grid-template-columns: 1fr;
-            }
+            .video-grid { grid-template-columns: 1fr; }
         }
 
         .video-box {
@@ -315,15 +241,9 @@
             flex-direction: column;
         }
 
-        .video-label {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-        }
+        .video-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
 
-        .video-inner {
-            position: relative;
-        }
+        .video-inner { position: relative; }
 
         video {
             width: 100%;
@@ -331,9 +251,7 @@
             background: #000;
         }
 
-        #localVideo.mirrored {
-            transform: scaleX(-1);
-        }
+        #localVideo.mirrored { transform: scaleX(-1); }
 
         .remote-grid {
             display: grid;
@@ -341,9 +259,7 @@
             gap: 8px;
         }
 
-        .remote-video-wrapper {
-            position: relative;
-        }
+        .remote-video-wrapper { position: relative; }
 
         .remote-video-wrapper video {
             width: 100%;
@@ -392,22 +308,11 @@
             align-items: center;
         }
 
-        .status-green {
-            color: #22c55e;
-        }
+        .status-green { color: #22c55e; }
+        .status-timer-label { margin-inline-start: 10px; }
+        .status-timer { font-family: monospace; }
 
-        .status-timer-label {
-            margin-inline-start: 10px;
-        }
-
-        .status-timer {
-            font-family: monospace;
-        }
-
-        .id-row {
-            margin-bottom: 12px;
-            font-size: 13px;
-        }
+        .id-row { margin-bottom: 12px; font-size: 13px; }
 
         .my-id {
             padding: 8px 10px;
@@ -425,8 +330,7 @@
             gap: 6px;
         }
 
-        .remote-input-row input,
-        #inviteLinkInput {
+        .remote-input-row input, #inviteLinkInput {
             width: 100%;
             padding: 8px 10px;
             border-radius: 8px;
@@ -491,14 +395,9 @@
             font-size: 18px;
         }
 
-        body.light .btn-icon {
-            background: #ffffff;
-        }
+        body.light .btn-icon { background: #ffffff; }
 
-        .btn-icon.off {
-            border-color: #f97373;
-            color: #fecaca;
-        }
+        .btn-icon.off { border-color: #f97373; color: #fecaca; }
 
         .chat-panel {
             margin-top: 14px;
@@ -552,25 +451,11 @@
             opacity: .85;
         }
 
-        .chat-meta {
-            font-size: 10px;
-            color: var(--text-muted);
-            margin-bottom: 2px;
-        }
+        .chat-meta { font-size: 10px; color: var(--text-muted); margin-bottom: 2px; }
+        .chat-text { word-wrap: break-word; }
 
-        .chat-text {
-            word-wrap: break-word;
-        }
-
-        .chat-file {
-            margin-top: 3px;
-            font-size: 11px;
-        }
-
-        .chat-file a {
-            color: var(--primary-light);
-            text-decoration: underline;
-        }
+        .chat-file { margin-top: 3px; font-size: 11px; }
+        .chat-file a { color: var(--primary-light); text-decoration: underline; }
 
         .chat-form {
             margin-top: 4px;
@@ -590,27 +475,12 @@
             outline: none;
         }
 
-        body.light .chat-input {
-            background: #ffffff;
-            color: #0f172a;
-        }
+        body.light .chat-input { background: #ffffff; color: #0f172a; }
 
-        .chat-send-btn {
-            padding: 6px 12px;
-            font-size: 12px;
-        }
+        .chat-send-btn { padding: 6px 12px; font-size: 12px; }
+        .chat-attach-btn { width: 32px; height: 32px; font-size: 16px; }
 
-        .chat-attach-btn {
-            width: 32px;
-            height: 32px;
-            font-size: 16px;
-        }
-
-        .chat-file-hint {
-            font-size: 10px;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
+        .chat-file-hint { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
 
         .footer {
             margin-top: 26px;
@@ -619,9 +489,7 @@
             color: var(--text-muted);
         }
 
-        .footer span {
-            color: var(--primary-light);
-        }
+        .footer span { color: var(--primary-light); }
     </style>
 </head>
 <body class="dark">
@@ -633,9 +501,8 @@
         const isGuest = url.searchParams.get("guest") === "1";
 
         let user = null;
-        try {
-            user = JSON.parse(localStorage.getItem("ghasiq_user") || "null");
-        } catch { user = null; }
+        try { user = JSON.parse(localStorage.getItem("ghasiq_user") || "null"); }
+        catch { user = null; }
 
         if (isGuest) {
             // ضيف الاجتماع: صلاحية الصفحة دي بس
@@ -713,9 +580,7 @@
 
                 <div class="remote-input-row">
                     <label style="font-size:13px;">معرّف الموظف المراد إضافته:</label>
-                    <input id="remoteIdInput"
-                           type="text"
-                           placeholder="مثال: peer-id من جهاز آخر">
+                    <input id="remoteIdInput" type="text" placeholder="مثال: peer-id من جهاز آخر">
                     <small class="hint">
                         كل مرة تكتب ID وتضغط "بدء / إضافة مشارك" هينضم للغرفة (لو أونلاين).
                     </small>
@@ -758,9 +623,7 @@
                 </div>
                 <div id="recordingStatus" class="sidebar-hint"></div>
                 <a id="recordingDownloadLink" style="display:none;" download>تحميل التسجيل</a>
-                <video id="recordedPreview"
-                       controls
-                       style="display:none; width:100%; margin-top:8px; border-radius:10px; background:#000;"></video>
+                <video id="recordedPreview" controls style="display:none; width:100%; margin-top:8px; border-radius:10px; background:#000;"></video>
             </div>
 
             <div class="sidebar-section sidebar-hint">
@@ -882,7 +745,7 @@
         const links = document.querySelectorAll(".nav-links a");
         links.forEach(a => {
             const href = (a.getAttribute("href") || "").toLowerCase();
-            if (href.includes("call-system")) return; // يفضل في نفس الصفحة
+            if (href.includes("call-system")) return;
             a.addEventListener("click", function (e) {
                 e.preventDefault();
                 localStorage.removeItem("ghasiq_session_role");
@@ -949,9 +812,7 @@
     function randomIdPart(len) {
         const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
         let out = "";
-        for (let i = 0; i < len; i++) {
-            out += chars[Math.floor(Math.random() * chars.length)];
-        }
+        for (let i = 0; i < len; i++) out += chars[Math.floor(Math.random() * chars.length)];
         return out;
     }
 
@@ -980,6 +841,79 @@
     const activeCalls = {};
     const dataConnections = {};
     const remoteStreams = {};
+
+    // ===== Mesh / Roster (FIX: خلي كل المشاركين يشوفوا بعض) =====
+    const knownPeers = new Set();
+
+    function getAllKnownPeerIds() {
+        const ids = new Set([myPeerId]);
+        Object.keys(activeCalls).forEach(id => ids.add(id));
+        Object.keys(dataConnections).forEach(id => ids.add(id));
+        knownPeers.forEach(id => ids.add(id));
+        return Array.from(ids);
+    }
+
+    function sendToPeer(peerId, msg) {
+        const conn = dataConnections[peerId];
+        if (conn && conn.open) {
+            try { conn.send(msg); } catch (e) {}
+        }
+    }
+
+    function sendRosterTo(peerId) {
+        sendToPeer(peerId, {
+            type: "roster",
+            from: myPeerId,
+            peers: getAllKnownPeerIds()
+        });
+    }
+
+    function broadcastExcept(exceptPeerId, msg) {
+        Object.entries(dataConnections).forEach(([pid, conn]) => {
+            if (pid === exceptPeerId) return;
+            if (conn && conn.open) {
+                try { conn.send(msg); } catch (e) {}
+            }
+        });
+    }
+
+    function onPeerConnected(peerId) {
+        if (!peerId || peerId === myPeerId) return;
+
+        knownPeers.add(peerId);
+
+        // ابعت للداخل الجديد قائمة الموجودين
+        sendRosterTo(peerId);
+
+        // عرف الباقيين إن فيه حد جديد
+        broadcastExcept(peerId, { type: "peerJoined", from: myPeerId, peerId });
+
+        // واطلب منه هو كمان يبعت roster لو عنده
+        sendToPeer(peerId, { type: "requestRoster", from: myPeerId });
+    }
+
+    function connectMeshToPeers(peers) {
+        if (!Array.isArray(peers)) return;
+
+        peers.forEach(pid => {
+            if (!pid || pid === myPeerId) return;
+
+            knownPeers.add(pid);
+
+            // Data channel
+            ensureDataConnection(pid);
+
+            // Media call
+            if (!activeCalls[pid]) {
+                getMediaStream().then(stream => {
+                    if (!activeCalls[pid]) {
+                        const call = peer.call(pid, stream);
+                        bindCallEvents(call);
+                    }
+                }).catch(() => {});
+            }
+        });
+    }
 
     let isCameraOn = true;
     let isMicOn = true;
@@ -1071,9 +1005,7 @@
                 localVideo.classList.remove('mirrored');
 
                 const screenTrack = screenStream.getVideoTracks()[0];
-                screenTrack.addEventListener('ended', () => {
-                    stopScreenShare();
-                });
+                screenTrack.addEventListener('ended', () => { stopScreenShare(); });
 
                 switchVideoTrack(screenStream);
             })
@@ -1226,7 +1158,6 @@
         const meta = document.createElement("div");
         meta.className = "chat-meta";
         meta.textContent = isSystem ? "النظام" : (isOwn ? "أنت" : (from || "مشارك"));
-
         msgEl.appendChild(meta);
 
         if (text) {
@@ -1267,13 +1198,7 @@
             file: fileObj || null
         };
         broadcastData(payload);
-        appendChatMessage({
-            from: myPeerId,
-            text,
-            isOwn: true,
-            isSystem: false,
-            file: fileObj
-        });
+        appendChatMessage({ from: myPeerId, text, isOwn: true, isSystem: false, file: fileObj });
     }
 
     function handleDataMessage(fromPeerId, msg) {
@@ -1304,6 +1229,27 @@
                 isSystem: true
             });
         }
+
+        // ===== Mesh messages =====
+        if (msg.type === "hello") {
+            knownPeers.add(fromPeerId);
+            sendRosterTo(fromPeerId);
+        }
+
+        if (msg.type === "requestRoster") {
+            sendRosterTo(fromPeerId);
+        }
+
+        if (msg.type === "roster") {
+            connectMeshToPeers(msg.peers || []);
+        }
+
+        if (msg.type === "peerJoined") {
+            const pid = msg.peerId;
+            if (pid && pid !== myPeerId) {
+                connectMeshToPeers([pid]);
+            }
+        }
     }
 
     function ensureDataConnection(peerId) {
@@ -1317,6 +1263,10 @@
         conn.on('error', () => {});
         conn.on('open', () => {
             dataConnections[peerId] = conn;
+
+            // Mesh handshake
+            sendToPeer(peerId, { type: "hello", from: myPeerId });
+            onPeerConnected(peerId);
         });
 
         return conn;
@@ -1346,7 +1296,7 @@
 
             const url = new URL(window.location.href);
             url.searchParams.set("host", id);
-            url.searchParams.set("guest", "1"); // اللينك اللي يتبعت للضيف
+            url.searchParams.set("guest", "1");
             inviteLinkInput.value = url.toString();
         });
 
@@ -1367,9 +1317,23 @@
             });
         });
 
+        // FIX: منع ازدواج الكونكشن + mesh handshake
         peer.on("connection", (conn) => {
             const pid = conn.peer;
+
+            const existing = dataConnections[pid];
+            if (existing && existing.open) {
+                try { conn.close(); } catch (e) {}
+                return;
+            }
+
             dataConnections[pid] = conn;
+
+            conn.on('open', () => {
+                sendToPeer(pid, { type: "hello", from: myPeerId });
+                onPeerConnected(pid);
+            });
+
             conn.on('data', (msg) => handleDataMessage(pid, msg));
             conn.on('close', () => { delete dataConnections[pid]; });
             conn.on('error', () => {});
@@ -1399,10 +1363,7 @@
     function ensureAudioContext() {
         if (audioContext) return;
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (!AudioCtx) {
-            console.warn("AudioContext غير مدعوم في هذا المتصفح");
-            return;
-        }
+        if (!AudioCtx) return;
         audioContext = new AudioCtx();
         audioDestination = audioContext.createMediaStreamDestination();
     }
@@ -1422,16 +1383,8 @@
     function formatDateTimeForOverlay(date) {
         const lang = getCurrentLang();
         const locale = lang === "en" ? "en-US" : "ar-EG";
-        const d = date.toLocaleDateString(locale, {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit"
-        });
-        const t = date.toLocaleTimeString(locale, {
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit"
-        });
+        const d = date.toLocaleDateString(locale, { year: "numeric", month: "2-digit", day: "2-digit" });
+        const t = date.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", second: "2-digit" });
         return `${d} | ${t}`;
     }
 
@@ -1447,7 +1400,6 @@
         recordingOverlayEl.textContent = `${dtText} • مدة التسجيل: ${durationText}`;
     }
 
-    // يرسم الشريط الأسود + التاريخ والوقت + مدة التسجيل داخل الفيديو نفسه
     function drawOverlayOnCanvas(ctx, width, height, infoBarHeight) {
         const now = new Date();
         const dtText = formatDateTimeForOverlay(now);
@@ -1477,9 +1429,7 @@
     function getVideoElementsForMix() {
         const videos = [];
         if (localVideo && localVideo.srcObject) videos.push(localVideo);
-        remoteVideosGrid.querySelectorAll("video").forEach(v => {
-            if (v.srcObject) videos.push(v);
-        });
+        remoteVideosGrid.querySelectorAll("video").forEach(v => { if (v.srcObject) videos.push(v); });
         return videos;
     }
 
@@ -1489,7 +1439,7 @@
 
         const width = 1280;
         const height = 720;
-        const infoBarHeight = 70; // شريط المعلومات أسفل الفيديو
+        const infoBarHeight = 70;
         const videoAreaHeight = height - infoBarHeight;
 
         mixCanvas.width = width;
@@ -1512,9 +1462,7 @@
             mixCtx.drawImage(v, x, y, cellW, cellH);
         });
 
-        // شريط أسود + تاريخ + وقت + مدة التسجيل داخل الفريم
         drawOverlayOnCanvas(mixCtx, width, height, infoBarHeight);
-
         mixAnimationFrameId = requestAnimationFrame(drawMixFrame);
     }
 
@@ -1529,9 +1477,7 @@
         ensureAudioContext();
 
         if (cameraStream) attachAudioStream(cameraStream, "local");
-        Object.entries(remoteStreams).forEach(([pid, stream]) => {
-            attachAudioStream(stream, pid);
-        });
+        Object.entries(remoteStreams).forEach(([pid, stream]) => { attachAudioStream(stream, pid); });
 
         recordingStartTime = new Date();
         updateRecordingOverlayText();
@@ -1553,9 +1499,7 @@
 
         mediaRecorder = new MediaRecorder(mixedStream, { mimeType });
         recordedChunks = [];
-        mediaRecorder.ondataavailable = e => {
-            if (e.data && e.data.size > 0) recordedChunks.push(e.data);
-        };
+        mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) recordedChunks.push(e.data); };
         mediaRecorder.onstop = handleRecordingStop;
         mediaRecorder.start(1000);
 
@@ -1608,6 +1552,9 @@
     if (btnStopRecording) btnStopRecording.addEventListener("click", stopMeetingRecording);
 
     // ===== Buttons Logic =====
+    updateCameraButtonUI();
+    updateMicButtonUI();
+
     btnToggleCamera.addEventListener("click", () => {
         if (isScreenSharing) {
             alert("أوقف مشاركة الشاشة أولاً لإيقاف الكاميرا.");
@@ -1656,11 +1603,8 @@
     });
 
     btnShareScreen.addEventListener("click", () => {
-        if (isScreenSharing) {
-            stopScreenShare();
-        } else {
-            startScreenShare();
-        }
+        if (isScreenSharing) stopScreenShare();
+        else startScreenShare();
     });
 
     btnStartCall.addEventListener("click", () => {
@@ -1676,15 +1620,13 @@
     btnEndCall.addEventListener("click", () => {
         stopMeetingRecording();
 
-        Object.values(activeCalls).forEach(call => {
-            try { call.close(); } catch (e) {}
-        });
+        Object.values(activeCalls).forEach(call => { try { call.close(); } catch (e) {} });
         for (const k in activeCalls) delete activeCalls[k];
 
-        Object.values(dataConnections).forEach(conn => {
-            try { conn.close(); } catch (e) {}
-        });
+        Object.values(dataConnections).forEach(conn => { try { conn.close(); } catch (e) {} });
         for (const k in dataConnections) delete dataConnections[k];
+
+        knownPeers.clear();
 
         remoteVideosGrid.querySelectorAll('.remote-video-wrapper').forEach(w => {
             const vid = w.querySelector('video');
@@ -1726,7 +1668,6 @@
     chatForm.addEventListener("submit", (e) => {
         e.preventDefault();
         const text = chatInput.value.trim();
-
         if (!text && !pendingFile) return;
 
         sendChatMessage(text, pendingFile);
@@ -1736,9 +1677,7 @@
         chatFileInput.value = "";
     });
 
-    btnAttachFile.addEventListener("click", () => {
-        chatFileInput.click();
-    });
+    btnAttachFile.addEventListener("click", () => { chatFileInput.click(); });
 
     chatFileInput.addEventListener("change", () => {
         const file = chatFileInput.files[0];
@@ -1789,9 +1728,7 @@
         const hostId = url.searchParams.get("host");
         if (hostId) {
             remoteIdInput.value = hostId;
-            setTimeout(() => {
-                addParticipantById(hostId);
-            }, 2000);
+            setTimeout(() => { addParticipantById(hostId); }, 2000);
         }
     }
 
@@ -1807,17 +1744,16 @@
         autoConnectIfGuest();
     });
 </script>
+
 <script>
 (function handleAdminNav() {
     const adminLink = document.getElementById("navAdminLink");
     const userChip  = document.getElementById("userChip");
 
     let u = null;
-    try {
-        u = JSON.parse(localStorage.getItem("ghasiq_user") || "null");
-    } catch { u = null; }
+    try { u = JSON.parse(localStorage.getItem("ghasiq_user") || "null"); }
+    catch { u = null; }
 
-    // تحديث الشيب اللي فوق باسم اليوزر (لو موجود)
     if (userChip && u && u.username) {
         const role = u.role || (u.isAdmin || u.is_admin ? "admin" : "user");
         userChip.textContent = `${u.username} (${role})`;
@@ -1825,7 +1761,6 @@
 
     if (!adminLink) return;
 
-    // لو أدمن → أظهر اللينك
     if (u && u.login && (u.isAdmin || u.is_admin == 1 || u.role === "admin")) {
         adminLink.style.display = "inline-flex";
     } else {
@@ -1833,7 +1768,6 @@
     }
 })();
 </script>
-
 
 </body>
 </html>
